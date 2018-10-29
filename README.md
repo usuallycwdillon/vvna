@@ -1,8 +1,3 @@
-Most importantly and before I forget...
-
-`username: neo4j`
-`password: george`
-
 To use this script, you can invoke Neo4j's cypher-shell from the command line at the root of your Neo4j instance:
 `cat allTheCows.cql | bin/cypher-shell -u neo4j -p <password> --format plain`
 ...of course, replacing <password> with your actual Neo4j password.
@@ -68,30 +63,34 @@ In those cases where it is not possible to simply read the originating author's 
 data files will need to wait until I (have a chance) to request permission from the authors to reshare their work.
 
 Data gets created/imported in this order, with resources metadata (the provenance chain) preceding each import:
-1. Time tree -- an in-graph representation of weeks and months in years in a timeline, beginning 1815
-2. Levy Great Powers, Great Power Wars
-3. import states2016.csv 
-2. (DONE) import major2016
-4. (DONE) import NMC_5_0-wsupplementary.csv 
-5. (DONE) import Gleditsch extended war data
-6. (DONE) import Diplomatic_Exchange_2006v1.csv 
-7. import COW_Trade_4.0 and Trade Supplements
-8. import cow_alliances
-9. import Intergovernmental_Organizations(v2.3)
-10. import MIDA_4.csv / 
-11.    import MIDB_4.csv / 
-11. import MIDLOC_1.1.csv  
-12. import Inter-StateWarData_v4.0.csv
-13. import Intra-StateWarData_v4.1.csv
-14. import Extra-StateWarData_v4.0.csv /
-15. import MID Narratives 200
-16. revise tasks 1-15 so that data is parsed correctly (regex?) from original sources without modifications.
-end of tasks
+0. (NA) Time tree -- an in-graph representation of weeks and months in years in a timeline, beginning 1815
+1. (DONE) import Levy Great Power Wars data
+2. (DONE) import `states2016.csv` and `major2016.csv`
+3. (DONE) import COW Diplomatic Exchange
+4. (DONE) import COW_Trade_4.0 and Supplemental Trade Data
+5. (DONE) import `NMC_5_0-wsupplementary.csv` 
+6. (DONE) import Gleditsch extended war data
+6. (DONE) import Diplomatic Exchange_`2006v1.csv` 
+7. (DONE) import COW Alliance-Orgs
+8. (DONE) import World Religion
+9. (DONE) import `MIDA_4.csv and import MIDB_4.csv` 
+10. (TODO) import COW Territorial Change  
+11. (DONE) import `MIDLOC_1.1.csv`
+12. (TODO) import Inter-, Intra-, Extra-State Wars  
+13. (TODO) import COW Territorial Contiguities
+14. (DONE) Intergovernmental_Organizations(v2.3)
+15. (TODO) import MID Narratives
+16. (TODO) revise all above scripts so that data is parsed directly from original sources data without modifications.
+17. TBD
+18. TBD
+19. TBD
+20. (DONE) Add metadata fro geospatial information used in the [historical basemaps](https://github.com/usuallycwdillon/historical-basemaps)
+_end of tasks_
 
 
-Before I get started, I want to add nodes in the graph to represent years, since some data is about
+Before getting started, we want to add nodes in the graph to represent years, since some data is about
 years as much as it about the state. e.g., `(state)-[:HAS_MILEX_IN]->(1818{began:date({year:1818, month:1, day:1})})`
-I am trying to follow ISO 8601, which specifies that the first week of the year begins on the first Thursday of the 
+The goal is to follow ISO 8601, which specifies that the first week of the year begins on the first Thursday of the 
 year (even though there was no ISO when the bulk of the data begins, in 1815. The last week of the year always 
 includes 28 December. The last day of the year, 31 December could occur on the first week of the following year.)
 
@@ -101,6 +100,8 @@ CREATE CONSTRAINT ON (y:Year) ASSERT y.began IS UNIQUE;
 CREATE CONSTRAINT ON (w:Week) ASSERT w.began IS UNIQUE;
 ```
 
+## Time
+* Update 4 SEP 2018: this seems have been corrected in Neo4j v3.4.6.
 Discussed and reported on Neo4j's Slack channel on 18 June 2018, Neo4j has a bug that intermittently reports bad first 
 day of the week when given a year and week number. My workaround was to create a spreadsheet of values and read it in.
 
