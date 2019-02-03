@@ -94,6 +94,7 @@ CREATE (d)-[:PROVIDES]->(:File{
   purpose:"Documentation for the colonial contiguity data set.",
   url:"http://correlatesofwar.org/data-sets/colonial-dependency-contiguity/colonial-dependency-contiguity-v3-1/at_download/file",
   filename:"Colonial Contiguity Codebook.pdf"
-})
+});
+
 MATCH (f:File{filename:"Entities.pdf"})
 CREATE (d)-[:PROVIDES]->(f);

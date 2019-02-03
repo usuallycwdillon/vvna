@@ -6,7 +6,7 @@ CREATE (d:Source{
   version:toFloat(2016.1),
   published:date({year:2007, month:5, day:18}),
   validFrom:date({year:1817, month:1, day:1}),
-  falidUntil:date({year:2005, month:12, day:31}),
+  validUntil:date({year:2005, month:12, day:31}),
   citation:"Bayer, Reşat. 2006. 'Diplomatic Exchange Data set, v2006.1.' Online: http://correlatesofwar.org",
   host:"Reşat Bayer (Koç University)",
   url:"http://correlatesofwar.org/data-sets/formal-alliances",
@@ -33,6 +33,7 @@ CREATE (d)-[:PROVIDES]->(:File{
 });
 
 
+// TODO: Update counts after modifying DURATION relations
 // The Diplomatic Exchange dataset added 621640 labels, created 621640 nodes, set 3108200 properties,
 // created 2486560 relationships. It can take a long time. On my machine, it completed after 145788 ms.
 USING PERIODIC COMMIT 1000
@@ -63,7 +64,8 @@ LOAD CSV WITH HEADERS FROM "file:///Diplomatic_Exchange_2006v1.csv" AS row
     code:toInteger(row.DR_at_2),
     level:dr2
   })-[:REPRESENTED_AT]->(s1)
-  CREATE (s1)-[r1:REPRESENTED]->(f1)-[:DURING]->(y)
-  CREATE (s2)-[r2:REPRESENTED]->(f2)-[:DURING]->(y);
+  CREATE (s1)-[r1:REPRESENTED]->(f1)-[:DURING{year:toInteger(row.year)}]->(y)
+  CREATE (s2)-[r2:REPRESENTED]->(f2)-[:DURING{year:toInteger(row.year)}]->(y);
 // End of the Dip Ex data
+
 RETURN "Successfully loaded the 6th (third COW) file, Diplomatic_Exchange_2006v1";

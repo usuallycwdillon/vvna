@@ -15,7 +15,7 @@ CREATE (d:Source{
   url:"http://correlatesofwar.org/data-sets/state-system-membership",
   host:["Volker Krause (Eastern Michigan University)", "Phil Schafer (University of Michigan)", "Karen Ruth Adams (University of Montana)"],
   poc:"Volker Krause (vkrause@emich.edu)",
-  overview:"This data set contains the list of states in the international system as updated and distributed by the Correlates of War Project. These data sets identify states, their standard Correlates of War 'country code' or state number (used throughout the Correlates of War project data sets), state abbreviations, and dates of membership as states and major powers in the international system. Version 2016 extends the temporal domain of the collection through December 2016. \nThe Correlates of War project includes a state in the international system from 1816-2016 for the following criteria. Prior to 1920, the entity must have had a population greater than 500,000 and have had diplomatic missions at or above the rank of charge d’affaires with Britain and France. After 1920, the entity must be a member of the League of Nations or the United Nations, or have a population greater than 500,000 and receive diplomatic missions from two major powers.",
+  overview:"This data set contains the list of states in the international system as updated and distributed by the Correlates of War Project. These data sets identify states, their standard Correlates of War 'country code' or state number (used throughout the Correlates of War project data sets), state abbreviations, and dates of membership as states and major powers in the international system. Version 2016 extends the temporal domain of the collection through December 2016. \nThe Correlates of War project includes a state in the international system from 1816-2016 for the following criteria. Prior to 1920, the entity must have had a pax greater than 500,000 and have had diplomatic missions at or above the rank of charge d’affaires with Britain and France. After 1920, the entity must be a member of the League of Nations or the United Nations, or have a pax greater than 500,000 and receive diplomatic missions from two major powers.",
   purpose:"This data set records the fluctuating composition of the state system since 1816. It also identifies countries corresponding to the standard Correlates of War country codes."
 })
 CREATE (d)-[:PROVIDES]->(:File{
@@ -85,6 +85,7 @@ LOAD CSV WITH HEADERS FROM "file:///states2016.csv" AS row
 WITH d, y, row
 MERGE (d)-[:CONTRIBUTES{asOf:d.published}]->(f:Fact:MembershipFact{
   name:"System Membership",
+  source:"COW State System",
   from:date({year:toInteger(row.styear), month:toInteger(row.stmonth), day:toInteger(row.stday)}),
   until:date({year:toInteger(row.endyear), month:toInteger(row.endmonth), day:toInteger(row.endday)})
 })-[:MEMBER_OF]->(y)
@@ -122,13 +123,26 @@ MERGE (mp)-[:PART_OF]->(sy);
 MATCH (maj:Dataset{filename:"majors2016.csv"}), (sys:System{name:"COW Major Powers System"})
 LOAD CSV WITH HEADERS FROM "file:///majors2016.csv" AS row
 CREATE (maj)-[:CONTRIBUTES]->(f:Fact:MembershipFact{
+  name:"System Membership",
+  source:"COW Major Powers System",
   from:date({year:toInteger(row.styear), month:toInteger(row.stmonth), day:toInteger(row.stday)}),
   until:date({year:toInteger(row.endyear), month:toInteger(row.endmonth), day:toInteger(row.endday)})
 })-[:MEMBER_OF]->(sys)
 WITH f, row
 MATCH (state:State{cowcode:row.ccode})
-MERGE (state)-[:MEMBER]-(f);
+MERGE (state)-[:MEMBER{
+  from:date({year:toInteger(row.styear), month:toInteger(row.stmonth), day:toInteger(row.stday)}),
+  until:date({year:toInteger(row.endyear), month:toInteger(row.endmonth), day:toInteger(row.endday)})
+  }]-(f);
 // End of majors2016.csv
+
+MATCH (:Source{name:"State System Membership"})-[:PROVIDES]->(d:Dataset)-[:CONTRIBUTES]->(f:Fact), (w:Week)
+  WHERE w.began <= f.from <= w.ended
+MERGE (f)-[:FROM_WEEK]->(w);
+
+MATCH (:Source{name:"State System Membership"})-[:PROVIDES]->(d:Dataset)-[:CONTRIBUTES]->(f:Fact), (w:Week)
+  WHERE w.began <= f.until <= w.ended
+MERGE (f)-[:UNTIL_WEEK]->(w);
 
 RETURN "Successfully imported the 5th (second COW) file, majors2016.csv";
 // End COW state system membership source

@@ -65,10 +65,30 @@ FOREACH (yr IN years |
   y.lastWeekBegins = date({year:yr, week:y.weeksThisYear})
   FOREACH (wk IN range(1,y.weeksThisYear) |
     MERGE (w:Week{weekYear:((yr * 100) + wk), forYear:yr})
-    SET w.name = toString(w.weekYear),
+    SET w.name = (toString(yr) + "-" + toString(wk)),
     w.began = date({year:yr, week:wk}),
     w.ended = date(w.began + duration('P5D') )
-    CREATE (w)-[:PART_OF{weekCount:wk}]->(y)
+    CREATE (w)-[:PART_OF{index:wk}]->(y)
   )
 );
+
+MATCH (w:Week)-[:PART_OF]->(y:Year)
+WITH w, y
+ORDER BY w.weekYear ASC
+WITH collect(w) as weeks
+FOREACH (i in RANGE(0, size(weeks)-2) |
+  FOREACH (wk1 in [weeks[i]] |
+    FOREACH (wk2 in [weeks[i+1]] |
+      MERGE (wk1)-[:NEXT_WEEK]->(wk2)
+      SET wk1.stepNumber = i
+      SET wk1.weekYear = null)));
+
+MATCH (y:Year) WITH y ORDER BY y.began.year ASC
+WITH COLLECT(y) AS years
+FOREACH (i IN RANGE (0, size(years)-2) |
+  FOREACH (yr1 in [years[i]] |
+    FOREACH (yr2 in [years[i+1]] |
+      MERGE (yr1)-[:NEXT_YEAR]->(yr2)
+    )));
+
 

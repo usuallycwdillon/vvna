@@ -61,7 +61,7 @@ CREATE (d)-[:PROVIDES]->(:File{
 
 // Following the model described above, my graph schema for the Levy Great Power system looks like this:
 //
-// (PC)-[:ASSERTS{asOf:date()}]->(:Fact{from, until})<-[:MEMBER]-(state:State)
+// (PC)-[:CONTRIBUTES{asOf:date()}]->(:Fact{from, until})<-[:MEMBER]-(state:State)
 //                                                       \-[:MEMBER_OF]-(system:System)<-[:DEFINES]-(source:Source)
 
 MATCH (source:Source{name:"Levy Great Power Wars"})
@@ -90,22 +90,34 @@ CREATE (df)-[:CONTRIBUTES{asOf:date({year:1994, month:4})}]->(f:Fact:MembershipF
   from:date({year:toInteger(row.GreatPowerFrom)}),
   until:date({year:toInteger(row.GreatPowerTo)})
 })
-MERGE (state)-[:MEMBER]->(f)-[:MEMBER_OF]->(gp)
+MERGE (state)-[:MEMBER{
+  from:date({year:toInteger(row.GreatPowerFrom)}),
+  until:date({year:toInteger(row.GreatPowerTo)})
+  }]->(f)-[:MEMBER_OF]->(gp)
 FOREACH (specific IN CASE WHEN trim(row.cowcode) <> "" THEN [1] ELSE [] END | SET state.cowRelation = row.cowcode);
 RETURN "Successfully imported the 1st file, Levy_GPW_system.csv";
 
 // End of Levy_GPW_system.csv
 
 
-// Levy differentiates begin/end of wars and begin/end of wars as GPW; wars have a from/until as GPW which may be
-// different than the first from/until of states' participation in it. There are multiple facts: when the war was a
+// Levy differentiates begin/end of wars and begin/end of wars as GPW; wars have a from/until date as GPW which may be
+// different than the first from/until date of states' participation in it. There are multiple facts: when the war was a
 // GPW, when each state participated in the war.
 // The model looks like this:
 //
 // (PC)-[:CONTRIBUTES]->(:Fact)<-[:PARTICIPATED]-(state)
 //    \-[:CONTRIBUTES]         \-[:PARTICIPATED_IN]->(war:War:GreatPowerWar)
-//                \->(:Fact)<--[:IN_LIST]----------/
+//                \->(:Fact)<--[:IS_ONE]----------/
 //                         \-[:ONE_OF]->(:List{name:"Great Power Wars"})
+// More generically,
+//
+// (PC)-[:CONTRIBUTES]->(:Fact:WarMakingFact)<-[:PARTICIPATED]-(state)
+//    \-[:CONTRIBUTES]                      \--[:PARTICIPATED_IN]->(war:War)
+//                   \->(:Fact:WarFact)<--[:IS_ONE]----------------/
+//                                    \-[:ONE_OF]->(:List{name:<war type>})
+//
+// warnum,warname,factName,ybegan,mthbegan,daybegan,yrend,mthend,dayend, yrgpw,mthgpw,daygpw,yrgpwe,mthgpwe,daygpwe,
+// extent,durwar,durgpw,magnitud,severity,concent
 
 CREATE CONSTRAINT ON (war:War) ASSERT war.levycode IS UNIQUE;
 
@@ -117,43 +129,56 @@ MATCH (d:Dataset{filename:"Levy_GPW_war_data.csv"})
 LOAD CSV WITH HEADERS FROM "file:///Levy_GPW_war_data.csv" AS row
 CREATE (war:War:GreatPowerWar{
   levycode:row.warnum,
-  name:row.warname,
+  name:row.warname
+})
+// gf is the fact _of a great power war_, wf is the fact of a war
+CREATE (d)-[:CONTRIBUTES]->(gf:Fact:WarFact{
+  name:"Great Power War",
+  from:date({year:toInteger(row.yrgpw), month:toInteger(row.mthgpw)}),
+  until:date({year:toInteger(trim(row.yrgpwe)), month:toInteger(trim(row.mthgpwe))}),
+  description:row.factName,
+  numParticipants:toInteger(row.extent),
+  durationMonths:toFloat(row.durgpw),
+  participantMonths:toFloat(row.magnitud),
+  magnitude:toFloat(row.severity),
+  concentration:toFloat(row.concent)
+})-[go:ONE_OF]->(g)
+CREATE (d)-[:CONTRIBUTES]->(wf:Fact:WarFact{
+  name:"War",
+  from:date({year:toInteger(row.ybegan), month:toInteger(row.mthbegan)}),
+  until:date({year:toInteger(row.yrend), month:toInteger(row.mthend)}),
   description:row.factName,
   numParticipants:toInteger(row.extent),
   durationMonths:toFloat(row.durwar),
   participantMonths:toFloat(row.magnitud),
   magnitude:toFloat(row.severity),
   concentration:toFloat(row.concent)
-})
-// gf is the fact _of a war_
-CREATE (d)-[:CONTRIBUTES]->(gf:Fact:WarFact{
-  name:"Great Power War",
-  from:date({year:toInteger(row.ybegan), month:toInteger(row.mthbegan)}),
-  until:date({year:toInteger(row.yrend), month:toInteger(row.mthend)})
-})-[go:ONE_OF]->(g)
-CREATE (d)-[:CONTRIBUTES]->(wf:Fact:WarFact{
-  name:"War",
+})-[wo:ONE_OF]->(w)
+FOREACH (specific IN CASE WHEN trim(row.daybegan) <> "" THEN [1] ELSE [] END | 
+  SET wf.from = date({year:toInteger(row.ybegan), month:toInteger(row.mthbegan), day:toInteger(row.daybegan)}))
+FOREACH (specific IN CASE WHEN trim(row.dayend) <> "" THEN [1] ELSE [] END | 
+  SET wf.until = date({year:toInteger(row.yrend), month:toInteger(row.mthend), day:toInteger(row.dayend)}))
+FOREACH (specific IN CASE WHEN trim(row.daygpw) <> "" THEN [1] ELSE [] END | 
+  SET gf.from = date({year:toInteger(row.yrgpw), month:toInteger(row.mthgpw), day:toInteger(row.daygpw)}))
+FOREACH (specific IN CASE WHEN trim(row.daygpwe) <> "" THEN [1] ELSE [] END | 
+  SET gf.until = date({year:toInteger(row.yrgpwe), month:toInteger(row.mthgpwe), day:toInteger(row.daygpwe)}))
+CREATE (war)-[gio:IS_ONE{
   from:date({year:toInteger(row.yrgpw), month:toInteger(row.mthgpw)}),
   until:date({year:toInteger(trim(row.yrgpwe)), month:toInteger(trim(row.mthgpwe))})
-})-[wo:ONE_OF]->(w)
-FOREACH (specific IN CASE WHEN trim(row.daybegan) <> "" THEN [1] ELSE [] END | SET wf.from = date({year:toInteger(row.ybegan),
-                                                                                                   month:toInteger(row.mthbegan), day:toInteger(row.daybegan)}))
-FOREACH (specific IN CASE WHEN trim(row.dayend) <> "" THEN [1] ELSE [] END | SET wf.until = date({year:toInteger(row.yrend),
-                                                                                                  month:toInteger(row.mthend), day:toInteger(row.dayend)}))
-FOREACH (specific IN CASE WHEN trim(row.daygpw) <> "" THEN [1] ELSE [] END | SET gf.from = date({year:toInteger(row.yrgpw),
-                                                                                                 month:toInteger(row.mthgpw), day:toInteger(row.daygpw)}))
-FOREACH (specific IN CASE WHEN trim(row.daygpwe) <> "" THEN [1] ELSE [] END | SET gf.until = date({year:toInteger(row.yrgpwe),
-                                                                                                   month:toInteger(row.mthgpwe), day:toInteger(row.daygpwe)}))
-CREATE (war)-[:IN_LIST]->(gf)
-CREATE (war)-[:IN_LIST]->(wf);
-
-MATCH (d:Dataset{filename:"Levy_GPW_war_data.csv"})-[:CONTRIBUTES]->(f:Fact), (w:Week)
-  WHERE w.began <= f.from <= w.ended
-MERGE (f)-[:FROM_WEEK]->(w);
-
-MATCH (d:Dataset{filename:"Levy_GPW_war_data.csv"})-[:CONTRIBUTES]->(f:Fact), (w:Week)
-  WHERE w.began <= f.until <= w.ended
-MERGE (f)-[:UNTIL_WEEK]->(w);
+}]->(gf)
+CREATE (war)-[wio:IS_ONE{
+  from:date({year:toInteger(row.ybegan), month:toInteger(row.mthbegan)}),
+  until:date({year:toInteger(row.yrend), month:toInteger(row.mthend)})
+}]->(wf)
+WITH row, wio, gio
+FOREACH (specific IN CASE WHEN trim(row.daybegan) <> "" THEN [1] ELSE [] END | 
+  SET wio.from = date({year:toInteger(row.ybegan), month:toInteger(row.mthbegan), day:toInteger(row.daybegan)}))
+FOREACH (specific IN CASE WHEN trim(row.dayend) <> "" THEN [1] ELSE [] END | 
+  SET wio.until = date({year:toInteger(row.yrend), month:toInteger(row.mthend), day:toInteger(row.dayend)}))
+FOREACH (specific IN CASE WHEN trim(row.daygpw) <> "" THEN [1] ELSE [] END | 
+  SET gio.from = date({year:toInteger(row.yrgpw), month:toInteger(row.mthgpw), day:toInteger(row.daygpw)}))
+FOREACH (specific IN CASE WHEN trim(row.daygpwe) <> "" THEN [1] ELSE [] END | 
+  SET gio.until = date({year:toInteger(row.yrgpwe), month:toInteger(row.mthgpwe), day:toInteger(row.daygpwe)}));
 
 RETURN "Initial load of Levy Levy_GPW_war_data is complete.";
 
@@ -163,7 +188,7 @@ LOAD CSV WITH HEADERS FROM "file:///Levy_GPW_participation_data.csv" AS row
 WITH d, row
 MATCH (war:War{levycode:row.warnum})
 // p is a fact _of participation in a war_
-CREATE (d)-[:CONTRIBUTES]->(p:Fact:WarkmakingFact{name:"Participation",
+CREATE (d)-[:CONTRIBUTES]->(p:Fact:WarmakingFact{name:"Participation",
                                    from:date({year:toInteger(row.ybegan), month:toInteger(row.mthbegan), day:toInteger(row.daybegan)}),
                                    until:date({year:toInteger(row.yrend), month:toInteger(row.mthend), day:toInteger(row.dayend)}),
                                    durationMonths:toFloat(row.durwar),
@@ -173,6 +198,14 @@ CREATE (d)-[:CONTRIBUTES]->(p:Fact:WarkmakingFact{name:"Participation",
 WITH p, row
 MATCH (state:GreatPower{levycode:row.stnum})
 MERGE (state)-[:PARTICIPATED]->(p);
+
+MATCH (:Source{name:"Levy Great Power Wars"})-[:PROVIDES]->(d:Dataset)-[:CONTRIBUTES]->(f:Fact), (w:Week)
+  WHERE w.began <= f.from <= w.ended
+MERGE (f)-[:FROM_WEEK]->(w);
+
+MATCH (:Source{name:"Levy Great Power Wars"})-[:PROVIDES]->(d:Dataset)-[:CONTRIBUTES]->(f:Fact), (w:Week)
+  WHERE w.began <= f.until <= w.ended
+MERGE (f)-[:UNTIL_WEEK]->(w);
 
 // end Levy_GPW_participation_data.csv
 RETURN "Successfully imported the 3rd file, Levy_GPW_participation_data.csv";

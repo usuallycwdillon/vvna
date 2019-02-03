@@ -6,7 +6,7 @@ CREATE (d:Source{
   version:toFloat(4.1),
   published:date({year:2013, month:4, day:11}),
   validFrom:date({year:1816, month:1, day:1}),
-  falidUntil:date({year:2012, month:12, day:31}),
+  validUntil:date({year:2012, month:12, day:31}),
   citation:"Gibler, Douglas M. 2009. International military alliances, 1648-2008. CQ Press.",
   host:"Douglas Gibler (University of Alabama)",
   poc:"Douglas Gibler (dmgibler@bama.ua.edu)",
@@ -40,6 +40,11 @@ CREATE (d)-[:PROVIDES]->(:File{
   url:"http://correlatesofwar.org/data-sets/formal-alliances/alliances-data-csv-zip/at_download/file",
   filename:"Alliance_v4.1_ReleaseNotes.pdf"
 });
+
+CREATE (d)-[:DEFINES]->(:List{name:"Alliances", type:"Defense"})
+CREATE (d)-[:DEFINES]->(:List{name:"Alliances", type:"Neutrality"})
+CREATE (d)-[:DEFINES]->(:List{name:"Alliances", type:"Non-Aggression"})
+CREATE (d)-[:DEFINES]->(:List{name:"Alliances", type:"Entente"});
 
 MATCH (d:Dataset{filename:"alliance_v4.1_by_member.csv"})
 LOAD CSV WITH HEADERS FROM "file:///alliance_v4.1_by_member.csv" AS row
@@ -84,8 +89,15 @@ FOREACH (datum IN CASE WHEN row.neutrality="1" THEN [1] ELSE [] END | SET a:Neut
 FOREACH (datum IN CASE WHEN row.nonaggression="1" THEN [1] ELSE [] END | SET a:NonaggressionAgreement )
 FOREACH (datum IN CASE WHEN row.entente="1" THEN [1] ELSE [] END | SET a:Entente );
 RETURN "Successfully loaded the 18th file, alliance_v4.1_by_member";
-// End of Alliances data
 
+MATCH (:Source{name:"Formal Alliances"})-[:PROVIDES]->(d:Dataset)-[:CONTRIBUTES]->(f:Fact), (w:Week)
+  WHERE w.began <= f.from <= w.ended
+MERGE (f)-[:FROM_WEEK]->(w);
+
+MATCH (:Source{name:"Formal Alliances"})-[:PROVIDES]->(d:Dataset)-[:CONTRIBUTES]->(f:Fact), (w:Week)
+  WHERE w.began <= f.until <= w.ended
+MERGE (f)-[:UNTIL_WEEK]->(w);
+// End of Alliances data
 
 // Intergovernmental Organizations
 CREATE (d:Source{
@@ -169,22 +181,24 @@ CREATE (d)-[:CONTRIBUTES{asOf:d.published}]->(f:Fact:IGOFact{
   formed:date({year:toInteger(row.formed)})
 })-[:PART_OF]->(y)
 CREATE (i:IGO{cowcode:row.id, updated:"F"})-[:PART]->(f)
+WITH i, f, row
 FOREACH (var IN CASE WHEN row.notes <> "" THEN [1] ELSE [] END | SET i.notes = row.notes )
 FOREACH (var IN CASE WHEN row.inactive <> "" THEN [1] ELSE [] END | SET f.active = toBoolean(FALSE) )
 FOREACH (var IN CASE WHEN row.missingdata <> "" THEN [1] ELSE [] END | SET i.missingData = row.missingdata )
-FOREACH (var IN CASE WHEN row.terminated<> "" THEN [1] ELSE [] END | SET f.terminated = date({year:toInteger(row.terminated)}) )
+FOREACH (var IN CASE WHEN row.terminated<> "" THEN [1] ELSE [] END | SET f.terminated = date({year:toInteger(row.terminated)}) );
 
 // ioname+,orgname-,year-,dead+,deaddate+,integrated,replaced,igocode,ionum,longorgname+,sdate+,version,Sources,Sources2
 LOAD CSV WITH HEADERS FROM "file:///igounit_v2.3.csv" AS row
-MERGE (i:IGO{cowcode:row.ionum})
+MERGE (i:IGO{cowcode:row.ionum})-[fo:FORMED]-(f:IGOFact)
   ON CREATE
-  SET i.name = row.ioname, i.longname = row.longorgname, i.from = date({year:toInteger(row.sdate)}), i.updated = "T"
+  SET i.name = row.ioname, i.longname = row.longorgname, i.began = date({year:toInteger(row.sdate)}), i.updated = "T"
 FOREACH (var IN CASE WHEN row.igocode <> "" THEN [1] ELSE [] END | SET i.oldCOW = row.igocode )
-FOREACH (var IN CASE WHEN row.deaddate<> "" THEN [1] ELSE [] END | SET i.until = date({year:toInteger(row.deaddate)}))
-
-LOAD CSV WITH HEADERS FROM "file:///igounit_v2.3.csv" AS row
+FOREACH (var IN CASE WHEN row.deaddate<> "" THEN [1] ELSE [] END | SET i.ended = date({year:toInteger(row.deaddate)}))
+WITH row, i
 MERGE (i:IGO{cowcode:row.ionum, updated:"F"})
   ON MATCH
-  SET i.name = row.ioname, i.longname = row.longorgname, i.from = date({year:toInteger(row.sdate)}), i.updated = "T"
+  SET i.name = row.ioname, i.longname = row.longorgname, i.began = date({year:toInteger(row.sdate)}), i.updated = "T"
 FOREACH (var IN CASE WHEN row.igocode <> "" THEN [1] ELSE [] END | SET i.oldCOW = row.igocode )
-FOREACH (var IN CASE WHEN row.deaddate<> "" THEN [1] ELSE [] END | SET i.until = date({year:toInteger(row.deaddate)}))
+FOREACH (var IN CASE WHEN row.deaddate<> "" THEN [1] ELSE [] END | SET i.ended = date({year:toInteger(row.deaddate)}));
+
+// End of igo descriptions and unit data

@@ -5,8 +5,8 @@
 // ## There is a small script for each column of IGO data. It does not create connections for missing or null relations//
 // ## There are 529 columns of IGOs, so this script runs 529 times, once for each IGO. ############################### //
 //    The data model follows the same pattern as other fact, subject, object year datasets.
-//  (PC1)-[c]-(fact1)<-[:MEMBER]-(state)         (fact2)<-[c]-(PC2)
-// (year)-[]-/      \-[:MEMBER_OF]-(IGO)-[PART]-/      \-[PART_OF]->(system)
+//  (PC1)-[c]-(fact1)<-[:MEMBERSHIP{status:membership, year:row.year}]-(state)           (fact2)<-[c]-(PC2)
+// (year)-[]-/      \-[:WITHIN_ORGANIZATION]-(IGO)-[FORMED]-/      \-[FORMED_WITHIN]->(system)
 //
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
 LOAD CSV WITH HEADERS FROM "file:///IGO_stateunit_v2.3.csv" AS row
@@ -21,10 +21,12 @@ WITH *,
     END AS membership
 FOREACH (datum IN CASE WHEN row.AAAID<>"-1" OR row.AAID<>"-9" THEN [1] ELSE [] END | 
   CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
-  name:"IGO Membership",
+      name:"IGO Membership",
   membershipCode:row.AAAID,
-  status:membership
-})-[:DURING]->(p) CREATE (s)-[m:MEMBERSHIP]->(f)-[:MEMBER_OF]->(i) );
+  status:membership, year:row.year,
+  year:row.year
+})-[:DURING]->(p) 
+  CREATE (s)-[m:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i) );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
 LOAD CSV WITH HEADERS FROM "file:///IGO_stateunit_v2.3.csv" AS row
@@ -38,8 +40,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AAB<> "-1" OR row.ABB<>"-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", membershipCode:row.AAB, status:membership})-[:DURING]->(p)
-  CREATE (s)-[m:MEMBERSHIP]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", membershipCode:row.AAB, status:membership, year:row.year})-[:DURING]->(p)
+  CREATE (s)-[m:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -54,8 +57,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AAAID<> "-1" OR row.AAAID <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AAAID})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AAAID})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -70,8 +74,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AAB<> "-1" OR row.AAB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AAB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AAB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -86,8 +91,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AACB<> "-1" OR row.AACB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AACB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AACB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -102,8 +108,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AACarib<> "-1" OR row.AACarib <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AACarib})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AACarib})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -118,8 +125,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AALCO<> "-1" OR row.AALCO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AALCO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AALCO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -134,8 +142,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AARO<> "-1" OR row.AARO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AARO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AARO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -150,8 +159,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AATA<> "-1" OR row.AATA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AATA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AATA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -166,8 +176,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AATPO<> "-1" OR row.AATPO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AATPO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AATPO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -182,8 +193,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ABEDA<> "-1" OR row.ABEDA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ABEDA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ABEDA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -198,8 +210,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ABEPSEAC<> "-1" OR row.ABEPSEAC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ABEPSEAC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ABEPSEAC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -214,8 +227,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ACC<> "-1" OR row.ACC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ACC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ACC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -230,8 +244,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ACCT<> "-1" OR row.ACCT <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ACCT})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ACCT})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
 LOAD CSV WITH HEADERS FROM "file:///IGO_stateunit_v2.3.csv" AS row
@@ -245,8 +260,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ACDT<> "-1" OR row.ACDT <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ACDT})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ACDT})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -261,8 +277,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ACI<> "-1" OR row.ACI <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ACI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ACI})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -277,8 +294,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ACML<> "-1" OR row.ACML <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ACML})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ACML})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -293,8 +311,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ACP<> "-1" OR row.ACP <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ACP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ACP})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -309,8 +328,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ACPEU<> "-1" OR row.ACPEU <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ACPEU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ACPEU})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -325,8 +345,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ACS<> "-1" OR row.ACS <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ACS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ACS})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -341,8 +362,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ACSO<> "-1" OR row.ACSO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ACSO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ACSO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -357,8 +379,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ACSSRB<> "-1" OR row.ACSSRB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ACSSRB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ACSSRB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -373,8 +396,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ACU<> "-1" OR row.ACU <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ACU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ACU})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -389,8 +413,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ACWL<> "-1" OR row.ACWL <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ACWL})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ACWL})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -405,8 +430,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AFESD<> "-1" OR row.AFESD <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AFESD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AFESD})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -421,8 +447,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AFEXIMB<> "-1" OR row.AFEXIMB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AFEXIMB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AFEXIMB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -437,8 +464,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AFGEC<> "-1" OR row.AFGEC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AFGEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AFGEC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -453,8 +481,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AFPU<> "-1" OR row.AFPU <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AFPU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AFPU})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -469,8 +498,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AFRAND<> "-1" OR row.AFRAND <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AFRAND})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AFRAND})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -485,8 +515,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AFSPC<> "-1" OR row.AFSPC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AFSPC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AFSPC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -501,8 +532,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AFTE<> "-1" OR row.AFTE <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AFTE})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AFTE})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -517,8 +549,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AGC<> "-1" OR row.AGC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AGC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AGC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -533,8 +566,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AGPUNDO<> "-1" OR row.AGPUNDO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AGPUNDO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AGPUNDO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -549,8 +583,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AIC<> "-1" OR row.AIC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AIC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AIC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -565,8 +600,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AIDC<> "-1" OR row.AIDC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AIDC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AIDC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -581,8 +617,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AIDO<> "-1" OR row.AIDO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AIDO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AIDO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -597,8 +634,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AIOEC<> "-1" OR row.AIOEC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AIOEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AIOEC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -613,8 +651,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AIPO<> "-1" OR row.AIPO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AIPO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AIPO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -629,8 +668,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AITIC<> "-1" OR row.AITIC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AITIC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AITIC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -645,8 +685,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ALO<> "-1" OR row.ALO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ALO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ALO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -661,8 +702,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AMCO<> "-1" OR row.AMCO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AMCO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AMCO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -677,8 +719,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AMCOW<> "-1" OR row.AMCOW <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AMCOW})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AMCOW})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -693,8 +736,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AMF<> "-1" OR row.AMF <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AMF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AMF})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -709,8 +753,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AMIPO<> "-1" OR row.AMIPO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AMIPO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AMIPO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -725,8 +770,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AMPTU<> "-1" OR row.AMPTU <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AMPTU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AMPTU})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -741,8 +787,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AMSC<> "-1" OR row.AMSC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AMSC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AMSC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -757,8 +804,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AMU<> "-1" OR row.AMU <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AMU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AMU})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -773,8 +821,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ANZUS<> "-1" OR row.ANZUS <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ANZUS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ANZUS})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -789,8 +838,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AOAD<> "-1" OR row.AOAD <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AOAD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AOAD})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -805,8 +855,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AOCRS<> "-1" OR row.AOCRS <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AOCRS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AOCRS})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -821,8 +872,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AOMR<> "-1" OR row.AOMR <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AOMR})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AOMR})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -837,8 +889,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AOPU<> "-1" OR row.AOPU <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AOPU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AOPU})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -853,8 +906,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AP<> "-1" OR row.AP <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AP})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -869,8 +923,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.APCC<> "-1" OR row.APCC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.APCC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.APCC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -885,8 +940,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.APEC<> "-1" OR row.APEC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.APEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.APEC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -901,8 +957,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.APFIC<> "-1" OR row.APFIC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.APFIC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.APFIC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -917,8 +974,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.APIBD<> "-1" OR row.APIBD <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.APIBD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.APIBD})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -933,8 +991,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.APO<> "-1" OR row.APO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.APO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.APO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -949,8 +1008,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.APPA<> "-1" OR row.APPA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.APPA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.APPA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -965,8 +1025,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.APT<> "-1" OR row.APT <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.APT})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.APT})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -981,8 +1042,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.APTU<> "-1" OR row.APTU <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.APTU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.APTU})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -997,8 +1059,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ARC<> "-1" OR row.ARC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ARC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ARC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1013,8 +1076,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ARCAL<> "-1" OR row.ARCAL <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ARCAL})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ARCAL})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1029,8 +1093,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ARIPO<> "-1" OR row.ARIPO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ARIPO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ARIPO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1045,8 +1110,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ARPU<> "-1" OR row.ARPU <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ARPU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ARPU})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1061,8 +1127,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ASATP<> "-1" OR row.ASATP <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ASATP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ASATP})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1077,8 +1144,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ASBLAC<> "-1" OR row.ASBLAC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ASBLAC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ASBLAC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1093,8 +1161,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ASCBC<> "-1" OR row.ASCBC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ASCBC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ASCBC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1109,8 +1178,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ASCRubber<> "-1" OR row.ASCRubber <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ASCRubber})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ASCRubber})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1125,8 +1195,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ASEAN<> "-1" OR row.ASEAN <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ASEAN})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ASEAN})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1141,8 +1212,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ASECNA<> "-1" OR row.ASECNA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ASECNA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ASECNA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1157,8 +1229,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ASEF<> "-1" OR row.ASEF <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ASEF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ASEF})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1173,8 +1246,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ASPAC<> "-1" OR row.ASPAC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ASPAC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ASPAC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1189,8 +1263,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ATO<> "-1" OR row.ATO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ATO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ATO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1205,8 +1280,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ATPC<> "-1" OR row.ATPC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ATPC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ATPC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1221,8 +1297,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AU<> "-1" OR row.AU <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AU})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1237,8 +1314,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AVRDC<> "-1" OR row.AVRDC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AVRDC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AVRDC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1253,8 +1331,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AfDB<> "-1" OR row.AfDB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AfDB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AfDB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1269,8 +1348,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AfrOPDA<> "-1" OR row.AfrOPDA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AfrOPDA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AfrOPDA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1285,8 +1365,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.Africare<> "-1" OR row.Africare <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.Africare})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.Africare})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1301,8 +1382,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AmCC<> "-1" OR row.AmCC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AmCC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AmCC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1317,8 +1399,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.Andean<> "-1" OR row.Andean <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.Andean})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.Andean})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1333,8 +1416,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AralSea<> "-1" OR row.AralSea <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AralSea})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AralSea})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1349,8 +1433,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ArticC<> "-1" OR row.ArticC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ArticC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ArticC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1365,8 +1450,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.AsDB<> "-1" OR row.AsDB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.AsDB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.AsDB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1381,8 +1467,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.BALTBAT<> "-1" OR row.BALTBAT <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.BALTBAT})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.BALTBAT})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1397,8 +1484,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.BC<> "-1" OR row.BC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.BC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.BC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1413,8 +1501,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.BCSC<> "-1" OR row.BCSC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.BCSC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.BCSC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1429,8 +1518,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.BEF<> "-1" OR row.BEF <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.BEF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.BEF})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1445,8 +1535,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.BEN<> "-1" OR row.BEN <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.BEN})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.BEN})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1461,8 +1552,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.BENELUX<> "-1" OR row.BENELUX <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.BENELUX})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.BENELUX})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1477,8 +1569,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.BESCC<> "-1" OR row.BESCC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.BESCC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.BESCC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1493,8 +1586,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.BIISEF<> "-1" OR row.BIISEF <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.BIISEF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.BIISEF})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1509,8 +1603,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.BIONET<> "-1" OR row.BIONET <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.BIONET})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.BIONET})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1525,8 +1620,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.BIPM<> "-1" OR row.BIPM <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.BIPM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.BIPM})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1541,8 +1637,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.BIS<> "-1" OR row.BIS <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.BIS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.BIS})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1557,8 +1654,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.BNDP<> "-1" OR row.BNDP <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.BNDP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.BNDP})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1573,8 +1671,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.BOBP<> "-1" OR row.BOBP <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.BOBP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.BOBP})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1589,8 +1688,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.BONN<> "-1" OR row.BONN <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.BONN})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.BONN})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1605,8 +1705,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.BSEC<> "-1" OR row.BSEC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.BSEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.BSEC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1621,8 +1722,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CAAD<> "-1" OR row.CAAD <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CAAD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CAAD})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1637,8 +1739,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CAARC<> "-1" OR row.CAARC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CAARC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CAARC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1653,8 +1756,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CAB<> "-1" OR row.CAB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CAB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CAB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1669,8 +1773,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CABI<> "-1" OR row.CABI <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CABI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CABI})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1685,8 +1790,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CACB<> "-1" OR row.CACB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CACB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CACB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1701,8 +1807,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CACI<> "-1" OR row.CACI <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CACI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CACI})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1717,8 +1824,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CAEC<> "-1" OR row.CAEC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CAEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CAEC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1733,8 +1841,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CAECC<> "-1" OR row.CAECC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CAECC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CAECC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1749,8 +1858,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CAIPA<> "-1" OR row.CAIPA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CAIPA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CAIPA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1765,8 +1875,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CAMES<> "-1" OR row.CAMES <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CAMES})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CAMES})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1781,8 +1892,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CAMRSD<> "-1" OR row.CAMRSD <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CAMRSD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CAMRSD})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1797,8 +1909,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CAMSF<> "-1" OR row.CAMSF <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CAMSF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CAMSF})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1813,8 +1926,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CARICOM<> "-1" OR row.CARICOM <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CARICOM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CARICOM})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1829,8 +1943,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CARIFTA<> "-1" OR row.CARIFTA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CARIFTA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CARIFTA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1845,8 +1960,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CARII<> "-1" OR row.CARII <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CARII})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CARII})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1861,8 +1977,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CATC<> "-1" OR row.CATC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CATC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CATC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1877,8 +1994,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CBFP<> "-1" OR row.CBFP <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CBFP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CBFP})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1893,8 +2011,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CBI<> "-1" OR row.CBI <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CBI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CBI})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1909,8 +2028,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CBSS<> "-1" OR row.CBSS <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CBSS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CBSS})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1925,8 +2045,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CCNR<> "-1" OR row.CCNR <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CCNR})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CCNR})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1941,8 +2062,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CCOM<> "-1" OR row.CCOM <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CCOM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CCOM})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1957,8 +2079,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CCPA<> "-1" OR row.CCPA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CCPA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CCPA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1973,8 +2096,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CComm<> "-1" OR row.CComm <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CComm})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CComm})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1989,8 +2113,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CDB<> "-1" OR row.CDB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CDB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CDB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2005,8 +2130,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CEAO<> "-1" OR row.CEAO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CEAO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CEAO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2021,8 +2147,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CEC<> "-1" OR row.CEC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CEC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2037,8 +2164,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CEEPN<> "-1" OR row.CEEPN <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CEEPN})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CEEPN})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2053,8 +2181,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CEFTA<> "-1" OR row.CEFTA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CEFTA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CEFTA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2069,8 +2198,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CEI<> "-1" OR row.CEI <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CEI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CEI})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2085,8 +2215,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CELC<> "-1" OR row.CELC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CELC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CELC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2101,8 +2232,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CEMAC<> "-1" OR row.CEMAC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CEMAC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CEMAC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2117,8 +2249,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CENTO<> "-1" OR row.CENTO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CENTO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CENTO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2133,8 +2266,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CEPGL<> "-1" OR row.CEPGL <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CEPGL})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CEPGL})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2149,8 +2283,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CERN<> "-1" OR row.CERN <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CERN})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CERN})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2165,8 +2300,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CFATF<> "-1" OR row.CFATF <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CFATF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CFATF})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2181,8 +2317,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CFC<> "-1" OR row.CFC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CFC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CFC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2197,8 +2334,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CHSTEA<> "-1" OR row.CHSTEA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CHSTEA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CHSTEA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2213,8 +2351,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CICA<> "-1" OR row.CICA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CICA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CICA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2229,8 +2368,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CIFC<> "-1" OR row.CIFC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CIFC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CIFC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2245,8 +2385,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CIMA<> "-1" OR row.CIMA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CIMA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CIMA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2261,8 +2402,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CIS<> "-1" OR row.CIS <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CIS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CIS})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2277,8 +2419,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CMAEC<> "-1" OR row.CMAEC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CMAEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CMAEC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2293,8 +2436,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CMAOC<> "-1" OR row.CMAOC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CMAOC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CMAOC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2309,8 +2453,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CMEA<> "-1" OR row.CMEA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CMEA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CMEA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2325,8 +2470,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CMHASG<> "-1" OR row.CMHASG <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CMHASG})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CMHASG})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2341,8 +2487,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.COE<> "-1" OR row.COE <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.COE})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.COE})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2357,8 +2504,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.COLOMBO<> "-1" OR row.COLOMBO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.COLOMBO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.COLOMBO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2373,8 +2521,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.COMESA<> "-1" OR row.COMESA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.COMESA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.COMESA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2389,8 +2538,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CONFEJES<> "-1" OR row.CONFEJES <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CONFEJES})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CONFEJES})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2405,8 +2555,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.COPTAC<> "-1" OR row.COPTAC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.COPTAC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.COPTAC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2421,8 +2572,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.COSAVE<> "-1" OR row.COSAVE <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.COSAVE})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.COSAVE})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2437,8 +2589,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.COrg<> "-1" OR row.COrg <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.COrg})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.COrg})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2453,8 +2606,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CP<> "-1" OR row.CP <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CP})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2469,8 +2623,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CPAB<> "-1" OR row.CPAB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CPAB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CPAB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2485,8 +2640,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CPSC<> "-1" OR row.CPSC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CPSC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CPSC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2501,8 +2657,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CPU<> "-1" OR row.CPU <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CPU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CPU})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2517,8 +2674,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CSLF<> "-1" OR row.CSLF <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CSLF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CSLF})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2533,8 +2691,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CTCAf<> "-1" OR row.CTCAf <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CTCAf})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CTCAf})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2549,8 +2708,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CTO<> "-1" OR row.CTO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CTO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CTO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2565,8 +2725,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CWGC<> "-1" OR row.CWGC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CWGC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CWGC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2581,8 +2742,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CXC<> "-1" OR row.CXC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CXC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CXC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2597,8 +2759,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.CfRN<> "-1" OR row.CfRN <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.CfRN})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.CfRN})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2613,8 +2776,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ComAB<> "-1" OR row.ComAB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ComAB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ComAB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2629,8 +2793,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ComSec<> "-1" OR row.ComSec <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ComSec})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ComSec})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2645,8 +2810,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.DBGLS<> "-1" OR row.DBGLS <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.DBGLS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.DBGLS})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2661,8 +2827,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.DLCOEA<> "-1" OR row.DLCOEA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.DLCOEA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.DLCOEA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2677,8 +2844,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.Danube<> "-1" OR row.Danube <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.Danube})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.Danube})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2693,8 +2861,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EACM<> "-1" OR row.EACM <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EACM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EACM})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2709,8 +2878,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EACS<> "-1" OR row.EACS <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EACS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EACS})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2725,8 +2895,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EACSO<> "-1" OR row.EACSO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EACSO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EACSO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2741,8 +2912,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EADB<> "-1" OR row.EADB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EADB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EADB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2757,8 +2929,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EAPC<> "-1" OR row.EAPC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EAPC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EAPC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2773,8 +2946,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EAPO<> "-1" OR row.EAPO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EAPO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EAPO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2789,8 +2963,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EBRD<> "-1" OR row.EBRD <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EBRD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EBRD})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2805,8 +2980,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ECB<> "-1" OR row.ECB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ECB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ECB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2821,8 +2997,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ECCA<> "-1" OR row.ECCA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ECCA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ECCA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2837,8 +3014,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ECCAS<> "-1" OR row.ECCAS <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ECCAS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ECCAS})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2853,8 +3031,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ECCB<> "-1" OR row.ECCB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ECCB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ECCB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2869,8 +3048,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ECCD<> "-1" OR row.ECCD <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ECCD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ECCD})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2885,8 +3065,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ECCM<> "-1" OR row.ECCM <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ECCM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ECCM})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2901,8 +3082,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ECCPIF<> "-1" OR row.ECCPIF <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ECCPIF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ECCPIF})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2917,8 +3099,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ECO<> "-1" OR row.ECO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ECO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ECO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2933,8 +3116,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ECOWAS<> "-1" OR row.ECOWAS <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ECOWAS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ECOWAS})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2949,8 +3133,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ECPTA<> "-1" OR row.ECPTA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ECPTA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ECPTA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2965,8 +3150,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ECSC<> "-1" OR row.ECSC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ECSC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ECSC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2981,8 +3167,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EEC<> "-1" OR row.EEC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EEC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2997,8 +3184,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EFCC<> "-1" OR row.EFCC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EFCC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EFCC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3013,8 +3201,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EFILWC<> "-1" OR row.EFILWC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EFILWC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EFILWC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3029,8 +3218,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EFTA<> "-1" OR row.EFTA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EFTA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EFTA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3045,8 +3235,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EIB<> "-1" OR row.EIB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EIB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EIB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3061,8 +3252,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EIPA<> "-1" OR row.EIPA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EIPA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EIPA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3077,8 +3269,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ELDO<> "-1" OR row.ELDO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ELDO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ELDO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3093,8 +3286,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EMB<> "-1" OR row.EMB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EMB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EMB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3109,8 +3303,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EMBC<> "-1" OR row.EMBC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EMBC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EMBC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3125,8 +3320,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EMBL<> "-1" OR row.EMBL <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EMBL})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EMBL})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3141,8 +3337,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EMI<> "-1" OR row.EMI <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EMI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EMI})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3157,8 +3354,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EMPPO<> "-1" OR row.EMPPO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EMPPO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EMPPO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3173,8 +3371,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EPA<> "-1" OR row.EPA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EPA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EPA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3189,8 +3388,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EPFSC<> "-1" OR row.EPFSC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EPFSC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EPFSC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3205,8 +3405,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EPO<> "-1" OR row.EPO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EPO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EPO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3221,8 +3422,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EPU<> "-1" OR row.EPU <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EPU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EPU})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3237,8 +3439,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ESA<> "-1" OR row.ESA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ESA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ESA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3253,8 +3456,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ESO<> "-1" OR row.ESO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ESO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ESO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3269,8 +3473,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ESRO<> "-1" OR row.ESRO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ESRO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ESRO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3285,8 +3490,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ETF<> "-1" OR row.ETF <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ETF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ETF})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3301,8 +3507,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EU<> "-1" OR row.EU <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EU})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3317,8 +3524,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EUFMD<> "-1" OR row.EUFMD <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EUFMD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EUFMD})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3333,8 +3541,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EURATOM<> "-1" OR row.EURATOM <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EURATOM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EURATOM})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3349,8 +3558,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EUROCONTROL<> "-1" OR row.EUROCONTROL <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EUROCONTROL})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EUROCONTROL})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3365,8 +3575,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EUROFIMA<> "-1" OR row.EUROFIMA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EUROFIMA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EUROFIMA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3381,8 +3592,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.EUROMET<> "-1" OR row.EUROMET <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.EUROMET})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.EUROMET})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3397,8 +3609,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.Entente<> "-1" OR row.Entente <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.Entente})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.Entente})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3413,8 +3626,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.FAO<> "-1" OR row.FAO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.FAO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.FAO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3429,8 +3643,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.FAPED<> "-1" OR row.FAPED <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.FAPED})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.FAPED})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3445,8 +3660,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.FDIPLAC<> "-1" OR row.FDIPLAC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.FDIPLAC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.FDIPLAC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3461,8 +3677,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.FEC<> "-1" OR row.FEC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.FEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.FEC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3477,8 +3694,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.G15<> "-1" OR row.G15 <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.G15})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.G15})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3493,8 +3711,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.G24<> "-1" OR row.G24 <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.G24})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.G24})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3509,8 +3728,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.G3<> "-1" OR row.G3 <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.G3})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.G3})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3525,8 +3745,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.GATT<> "-1" OR row.GATT <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.GATT})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.GATT})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3541,8 +3762,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.GBACT<> "-1" OR row.GBACT <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.GBACT})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.GBACT})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3557,8 +3779,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.GCC<> "-1" OR row.GCC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.GCC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.GCC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3573,8 +3796,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.GCRSNC<> "-1" OR row.GCRSNC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.GCRSNC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.GCRSNC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3589,8 +3813,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.GEF<> "-1" OR row.GEF <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.GEF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.GEF})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3605,8 +3830,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.GEO<> "-1" OR row.GEO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.GEO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.GEO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3621,8 +3847,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.GHSI<> "-1" OR row.GHSI <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.GHSI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.GHSI})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3637,8 +3864,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.GLACSEC<> "-1" OR row.GLACSEC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.GLACSEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.GLACSEC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3653,8 +3881,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.GOIC<> "-1" OR row.GOIC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.GOIC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.GOIC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3669,8 +3898,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.GRBDO<> "-1" OR row.GRBDO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.GRBDO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.GRBDO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3685,8 +3915,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.HCPIL<> "-1" OR row.HCPIL <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.HCPIL})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.HCPIL})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3701,8 +3932,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IABE<> "-1" OR row.IABE <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IABE})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IABE})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3717,8 +3949,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IABath<> "-1" OR row.IABath <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IABath})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IABath})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3733,8 +3966,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IACB<> "-1" OR row.IACB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IACB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IACB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3749,8 +3983,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IACI<> "-1" OR row.IACI <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IACI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IACI})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3765,8 +4000,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IACS<> "-1" OR row.IACS <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IACS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IACS})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3781,8 +4017,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IACSS<> "-1" OR row.IACSS <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IACSS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IACSS})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3797,8 +4034,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IACW<> "-1" OR row.IACW <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IACW})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IACW})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3813,8 +4051,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IADB<> "-1" OR row.IADB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IADB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IADB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3829,8 +4068,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IADefB<> "-1" OR row.IADefB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IADefB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IADefB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3845,8 +4085,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IAEA<> "-1" OR row.IAEA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IAEA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IAEA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3861,8 +4102,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IAFC<> "-1" OR row.IAFC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IAFC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IAFC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3877,8 +4119,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IAHC<> "-1" OR row.IAHC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IAHC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IAHC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3893,8 +4136,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IAIAS<> "-1" OR row.IAIAS <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IAIAS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IAIAS})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3909,8 +4153,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IAIC<> "-1" OR row.IAIC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IAIC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IAIC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3925,8 +4170,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IAIGC<> "-1" OR row.IAIGC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IAIGC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IAIGC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3941,8 +4187,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IAII<> "-1" OR row.IAII <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IAII})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IAII})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3957,8 +4204,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IALong<> "-1" OR row.IALong <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IALong})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IALong})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3973,8 +4221,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IAMLO<> "-1" OR row.IAMLO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IAMLO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IAMLO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3989,8 +4238,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IAPhy<> "-1" OR row.IAPhy <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IAPhy})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IAPhy})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4005,8 +4255,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IARA<> "-1" OR row.IARA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IARA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IARA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4021,8 +4272,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IARHC<> "-1" OR row.IARHC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IARHC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IARHC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4037,8 +4289,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IARadiO<> "-1" OR row.IARadiO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IARadiO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IARadiO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4053,8 +4306,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IARuhr<> "-1" OR row.IARuhr <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IARuhr})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IARuhr})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4069,8 +4323,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IAS<> "-1" OR row.IAS <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IAS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IAS})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4085,8 +4340,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IASAJ<> "-1" OR row.IASAJ <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IASAJ})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IASAJ})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4101,8 +4357,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IATB<> "-1" OR row.IATB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IATB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IATB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4117,8 +4374,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IATSJ<> "-1" OR row.IATSJ <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IATSJ})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IATSJ})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4133,8 +4391,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IATTC<> "-1" OR row.IATTC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IATTC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IATTC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4149,8 +4408,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IBA<> "-1" OR row.IBA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IBA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IBA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4165,8 +4425,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IBCS<> "-1" OR row.IBCS <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IBCS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IBCS})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4181,8 +4442,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IBE<> "-1" OR row.IBE <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IBE})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IBE})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4197,8 +4459,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IBEC<> "-1" OR row.IBEC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IBEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IBEC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4213,8 +4476,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IBI<> "-1" OR row.IBI <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IBI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IBI})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4229,8 +4493,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IBIER<> "-1" OR row.IBIER <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IBIER})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IBIER})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4245,8 +4510,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IBPMP<> "-1" OR row.IBPMP <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IBPMP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IBPMP})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4261,8 +4527,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IBRD<> "-1" OR row.IBRD <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IBRD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IBRD})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4277,8 +4544,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICAC<> "-1" OR row.ICAC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICAC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICAC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4293,8 +4561,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICAI<> "-1" OR row.ICAI <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICAI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICAI})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4309,8 +4578,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICAO<> "-1" OR row.ICAO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICAO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICAO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4325,8 +4595,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICAmO<> "-1" OR row.ICAmO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICAmO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICAmO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4341,8 +4612,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICC<> "-1" OR row.ICC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4357,8 +4629,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICCEC<> "-1" OR row.ICCEC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICCEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICCEC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4373,8 +4646,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICCILMB<> "-1" OR row.ICCILMB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICCILMB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICCILMB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4389,8 +4663,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICCO<> "-1" OR row.ICCO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICCO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICCO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4405,8 +4680,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICCROM<> "-1" OR row.ICCROM <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICCROM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICCROM})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4421,8 +4697,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICCS<> "-1" OR row.ICCS <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICCS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICCS})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4437,8 +4714,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICCSLT<> "-1" OR row.ICCSLT <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICCSLT})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICCSLT})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4453,8 +4731,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICDR<> "-1" OR row.ICDR <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICDR})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICDR})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4469,8 +4748,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICES<> "-1" OR row.ICES <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICES})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICES})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4485,8 +4765,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICFAM<> "-1" OR row.ICFAM <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICFAM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICFAM})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4501,8 +4782,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICHRB<> "-1" OR row.ICHRB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICHRB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICHRB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4517,8 +4799,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICMMP<> "-1" OR row.ICMMP <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICMMP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICMMP})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4533,8 +4816,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICNC<> "-1" OR row.ICNC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICNC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICNC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4549,8 +4833,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICNWAF<> "-1" OR row.ICNWAF <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICNWAF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICNWAF})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4565,8 +4850,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICPRP<> "-1" OR row.ICPRP <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICPRP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICPRP})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4581,8 +4867,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICPTU<> "-1" OR row.ICPTU <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICPTU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICPTU})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4597,8 +4884,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICRI<> "-1" OR row.ICRI <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICRI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICRI})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4613,8 +4901,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICRPBC<> "-1" OR row.ICRPBC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICRPBC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICRPBC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4629,8 +4918,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICSE<> "-1" OR row.ICSE <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICSE})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICSE})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4645,8 +4935,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICSEAF<> "-1" OR row.ICSEAF <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICSEAF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICSEAF})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4661,8 +4952,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICSG<> "-1" OR row.ICSG <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICSG})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICSG})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4677,8 +4969,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICTM<> "-1" OR row.ICTM <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICTM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICTM})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4693,8 +4986,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICWMD<> "-1" OR row.ICWMD <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICWMD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICWMD})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4709,8 +5003,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICfO<> "-1" OR row.ICfO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICfO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICfO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4725,8 +5020,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IChemO<> "-1" OR row.IChemO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IChemO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IChemO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4741,8 +5037,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ICivDO<> "-1" OR row.ICivDO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ICivDO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ICivDO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4757,8 +5054,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IComO<> "-1" OR row.IComO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IComO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IComO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4773,8 +5071,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IDC<> "-1" OR row.IDC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IDC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IDC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4789,8 +5088,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IEA<> "-1" OR row.IEA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IEA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IEA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4805,8 +5105,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IEC<> "-1" OR row.IEC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IEC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4821,8 +5122,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IES<> "-1" OR row.IES <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IES})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IES})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4837,8 +5139,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IEXB<> "-1" OR row.IEXB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IEXB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IEXB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4853,8 +5156,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IFAD<> "-1" OR row.IFAD <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IFAD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IFAD})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4869,8 +5173,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IFC<> "-1" OR row.IFC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IFC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IFC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4885,8 +5190,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IFCA<> "-1" OR row.IFCA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IFCA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IFCA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4901,8 +5207,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IGAD<> "-1" OR row.IGAD <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IGAD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IGAD})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4917,8 +5224,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IGC<> "-1" OR row.IGC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IGC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IGC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4933,8 +5241,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IGCC<> "-1" OR row.IGCC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IGCC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IGCC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4949,8 +5258,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IHO<> "-1" OR row.IHO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IHO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IHO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4965,8 +5275,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IIA<> "-1" OR row.IIA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IIA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IIA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4981,8 +5292,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IICom<> "-1" OR row.IICom <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IICom})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IICom})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4997,8 +5309,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IIE<> "-1" OR row.IIE <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IIE})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IIE})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5013,8 +5326,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IIF<> "-1" OR row.IIF <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IIF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IIF})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5029,8 +5343,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IIWEE<> "-1" OR row.IIWEE <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IIWEE})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IIWEE})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5045,8 +5360,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IJO<> "-1" OR row.IJO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IJO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IJO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5061,8 +5377,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ILO<> "-1" OR row.ILO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ILO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ILO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5077,8 +5394,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ILZSG<> "-1" OR row.ILZSG <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ILZSG})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ILZSG})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5093,8 +5411,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IMBSlav<> "-1" OR row.IMBSlav <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IMBSlav})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IMBSlav})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5109,8 +5428,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IMC<> "-1" OR row.IMC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IMC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IMC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5125,8 +5445,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IMF<> "-1" OR row.IMF <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IMF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IMF})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5141,8 +5462,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IMI<> "-1" OR row.IMI <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IMI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IMI})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5157,8 +5479,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IMO<> "-1" OR row.IMO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IMO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IMO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5173,8 +5496,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IMSO<> "-1" OR row.IMSO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IMSO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IMSO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5189,8 +5513,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.INCAP<> "-1" OR row.INCAP <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.INCAP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.INCAP})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5205,8 +5530,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.INFOFISH<> "-1" OR row.INFOFISH <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.INFOFISH})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.INFOFISH})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5221,8 +5547,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.INFSMK<> "-1" OR row.INFSMK <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.INFSMK})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.INFSMK})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5237,8 +5564,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.INRO<> "-1" OR row.INRO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.INRO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.INRO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5253,8 +5581,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.INSG<> "-1" OR row.INSG <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.INSG})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.INSG})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5269,8 +5598,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.INTELSAT<> "-1" OR row.INTELSAT <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.INTELSAT})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.INTELSAT})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5285,8 +5615,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.INTERPOL<> "-1" OR row.INTERPOL <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.INTERPOL})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.INTERPOL})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5301,8 +5632,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IOATHRE<> "-1" OR row.IOATHRE <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IOATHRE})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IOATHRE})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5317,8 +5649,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IOCom<> "-1" OR row.IOCom <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IOCom})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IOCom})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5333,8 +5666,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IOEz<> "-1" OR row.IOEz <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IOEz})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IOEz})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5349,8 +5683,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IOLM<> "-1" OR row.IOLM <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IOLM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IOLM})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5365,8 +5700,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IOMig<> "-1" OR row.IOMig <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IOMig})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IOMig})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5381,8 +5717,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IOOC<> "-1" OR row.IOOC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IOOC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IOOC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5397,8 +5734,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IOPCF<> "-1" OR row.IOPCF <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IOPCF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IOPCF})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5413,8 +5751,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IOPH<> "-1" OR row.IOPH <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IOPH})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IOPH})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5429,8 +5768,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IOcC<> "-1" OR row.IOcC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IOcC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IOcC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5445,8 +5785,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IPC<> "-1" OR row.IPC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IPC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IPC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5461,8 +5802,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IPGRI<> "-1" OR row.IPGRI <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IPGRI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IPGRI})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5477,8 +5819,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IPI<> "-1" OR row.IPI <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IPI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IPI})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5493,8 +5836,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IPedI<> "-1" OR row.IPedI <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IPedI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IPedI})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5509,8 +5853,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IPentC<> "-1" OR row.IPentC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IPentC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IPentC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5525,8 +5870,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IPhyL<> "-1" OR row.IPhyL <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IPhyL})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IPhyL})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5541,8 +5887,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IPrizeC<> "-1" OR row.IPrizeC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IPrizeC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IPrizeC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5557,8 +5904,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IRC<> "-1" OR row.IRC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IRC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IRC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5573,8 +5921,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IRLCS<> "-1" OR row.IRLCS <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IRLCS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IRLCS})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5589,8 +5938,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IRO<> "-1" OR row.IRO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IRO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IRO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5605,8 +5955,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IRSG<> "-1" OR row.IRSG <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IRSG})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IRSG})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5621,8 +5972,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IRU<> "-1" OR row.IRU <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IRU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IRU})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5637,8 +5989,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ISA<> "-1" OR row.ISA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ISA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ISA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5653,8 +6006,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ISB<> "-1" OR row.ISB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ISB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ISB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5669,8 +6023,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ISDB<> "-1" OR row.ISDB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ISDB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ISDB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5685,8 +6040,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ISHREST<> "-1" OR row.ISHREST <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ISHREST})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ISHREST})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5701,8 +6057,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ISRBC<> "-1" OR row.ISRBC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ISRBC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ISRBC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5717,8 +6074,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ISUPT<> "-1" OR row.ISUPT <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ISUPT})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ISUPT})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5733,8 +6091,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ISuC<> "-1" OR row.ISuC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ISuC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ISuC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5749,8 +6108,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ITC<> "-1" OR row.ITC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ITC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ITC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5765,8 +6125,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ITCC<> "-1" OR row.ITCC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ITCC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ITCC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5781,8 +6142,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ITCLE<> "-1" OR row.ITCLE <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ITCLE})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ITCLE})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5797,8 +6159,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ITPA<> "-1" OR row.ITPA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ITPA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ITPA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5813,8 +6176,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ITRO<> "-1" OR row.ITRO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ITRO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ITRO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5829,8 +6193,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ITTO<> "-1" OR row.ITTO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ITTO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ITTO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5845,8 +6210,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ITU<> "-1" OR row.ITU <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ITU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ITU})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5861,8 +6227,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.ITVRC<> "-1" OR row.ITVRC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.ITVRC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.ITVRC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5877,8 +6244,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IUIC<> "-1" OR row.IUIC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IUIC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IUIC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5893,8 +6261,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IUPCT<> "-1" OR row.IUPCT <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IUPCT})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IUPCT})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5909,8 +6278,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IUPIP<> "-1" OR row.IUPIP <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IUPIP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IUPIP})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5925,8 +6295,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IUPLAW<> "-1" OR row.IUPLAW <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IUPLAW})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IUPLAW})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5941,8 +6312,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IUPNVP<> "-1" OR row.IUPNVP <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IUPNVP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IUPNVP})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5957,8 +6329,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IUPR<> "-1" OR row.IUPR <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IUPR})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IUPR})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5973,8 +6346,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IVWO<> "-1" OR row.IVWO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IVWO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IVWO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5989,8 +6363,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IWSG<> "-1" OR row.IWSG <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IWSG})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IWSG})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6005,8 +6380,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.IWhale<> "-1" OR row.IWhale <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.IWhale})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.IWhale})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6021,8 +6397,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.Iocean<> "-1" OR row.Iocean <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.Iocean})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.Iocean})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6037,8 +6414,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.JALAAO<> "-1" OR row.JALAAO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.JALAAO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.JALAAO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6053,8 +6431,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.JINR<> "-1" OR row.JINR <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.JINR})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.JINR})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6069,8 +6448,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.JNOLCRH<> "-1" OR row.JNOLCRH <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.JNOLCRH})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.JNOLCRH})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6085,8 +6465,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.LACAC<> "-1" OR row.LACAC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.LACAC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.LACAC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6101,8 +6482,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.LACP<> "-1" OR row.LACP <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.LACP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.LACP})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6117,8 +6499,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.LAEO<> "-1" OR row.LAEO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.LAEO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.LAEO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6133,8 +6516,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.LAFDO<> "-1" OR row.LAFDO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.LAFDO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.LAFDO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6149,8 +6533,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.LAFTA<> "-1" OR row.LAFTA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.LAFTA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.LAFTA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6165,8 +6550,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.LAIA<> "-1" OR row.LAIA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.LAIA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.LAIA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6181,8 +6567,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.LAIEC<> "-1" OR row.LAIEC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.LAIEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.LAIEC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6197,8 +6584,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.LATIN<> "-1" OR row.LATIN <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.LATIN})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.LATIN})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6213,8 +6601,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.LCBC<> "-1" OR row.LCBC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.LCBC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.LCBC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6229,8 +6618,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.LGIDA<> "-1" OR row.LGIDA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.LGIDA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.LGIDA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6245,8 +6635,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.LOAS<> "-1" OR row.LOAS <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.LOAS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.LOAS})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6261,8 +6652,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.LoN<> "-1" OR row.LoN <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.LoN})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.LoN})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6277,8 +6669,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.MARRI<> "-1" OR row.MARRI <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.MARRI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.MARRI})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6293,8 +6686,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.MCPTTC<> "-1" OR row.MCPTTC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.MCPTTC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.MCPTTC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6309,8 +6703,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.MCWCASM<> "-1" OR row.MCWCASM <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.MCWCASM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.MCWCASM})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6325,8 +6720,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.MEMTTA<> "-1" OR row.MEMTTA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.MEMTTA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.MEMTTA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6341,8 +6737,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.MFO<> "-1" OR row.MFO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.MFO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.MFO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6357,8 +6754,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.MIGA<> "-1" OR row.MIGA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.MIGA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.MIGA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6373,8 +6771,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.MOPAN<> "-1" OR row.MOPAN <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.MOPAN})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.MOPAN})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6389,8 +6788,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.MRU<> "-1" OR row.MRU <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.MRU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.MRU})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6405,8 +6805,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.MWN<> "-1" OR row.MWN <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.MWN})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.MWN})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6421,8 +6822,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.Mercosur<> "-1" OR row.Mercosur <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.Mercosur})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.Mercosur})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6437,8 +6839,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.Montreal<> "-1" OR row.Montreal <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.Montreal})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.Montreal})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6453,8 +6856,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.NACAP<> "-1" OR row.NACAP <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.NACAP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.NACAP})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6469,8 +6873,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.NAFO<> "-1" OR row.NAFO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.NAFO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.NAFO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6485,8 +6890,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.NAFTA<> "-1" OR row.NAFTA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.NAFTA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.NAFTA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6501,8 +6907,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.NAM<> "-1" OR row.NAM <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.NAM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.NAM})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6517,8 +6924,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.NAPPO<> "-1" OR row.NAPPO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.NAPPO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.NAPPO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6533,8 +6941,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.NASCO<> "-1" OR row.NASCO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.NASCO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.NASCO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6549,8 +6958,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.NATO<> "-1" OR row.NATO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.NATO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.NATO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6565,8 +6975,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.NCM<> "-1" OR row.NCM <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.NCM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.NCM})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6581,8 +6992,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.NCRR<> "-1" OR row.NCRR <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.NCRR})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.NCRR})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6597,8 +7009,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.NCTR<> "-1" OR row.NCTR <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.NCTR})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.NCTR})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6613,8 +7026,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.NDF<> "-1" OR row.NDF <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.NDF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.NDF})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6629,8 +7043,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.NEAFC<> "-1" OR row.NEAFC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.NEAFC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.NEAFC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6645,8 +7060,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.NERC<> "-1" OR row.NERC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.NERC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.NERC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6661,8 +7077,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.NIB<> "-1" OR row.NIB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.NIB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.NIB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6677,8 +7094,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.NPAFC<> "-1" OR row.NPAFC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.NPAFC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.NPAFC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6693,8 +7111,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.NPFSC<> "-1" OR row.NPFSC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.NPFSC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.NPFSC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6709,8 +7128,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.NRC<> "-1" OR row.NRC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.NRC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.NRC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6725,8 +7145,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.NTSC<> "-1" OR row.NTSC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.NTSC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.NTSC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6741,8 +7162,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.NWHF<> "-1" OR row.NWHF <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.NWHF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.NWHF})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6757,8 +7179,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.NordC<> "-1" OR row.NordC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.NordC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.NordC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6773,8 +7196,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.OAPEC<> "-1" OR row.OAPEC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.OAPEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.OAPEC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6789,8 +7213,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.OAS<> "-1" OR row.OAS <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.OAS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.OAS})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6805,8 +7230,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.OAU<> "-1" OR row.OAU <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.OAU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.OAU})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6821,8 +7247,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.OCAM<> "-1" OR row.OCAM <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.OCAM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.OCAM})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6837,8 +7264,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.OCAS<> "-1" OR row.OCAS <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.OCAS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.OCAS})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6853,8 +7281,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.OCCEDCA<> "-1" OR row.OCCEDCA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.OCCEDCA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.OCCEDCA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6869,8 +7298,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.OCR<> "-1" OR row.OCR <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.OCR})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.OCR})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6885,8 +7315,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.OECD<> "-1" OR row.OECD <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.OECD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.OECD})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6901,8 +7332,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.OECS<> "-1" OR row.OECS <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.OECS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.OECS})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6917,8 +7349,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.OEEC<> "-1" OR row.OEEC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.OEEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.OEEC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6933,8 +7366,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.OESAS<> "-1" OR row.OESAS <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.OESAS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.OESAS})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6949,8 +7383,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.OIC<> "-1" OR row.OIC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.OIC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.OIC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6965,8 +7400,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.OIV<> "-1" OR row.OIV <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.OIV})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.OIV})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6981,8 +7417,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.OMDKR<> "-1" OR row.OMDKR <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.OMDKR})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.OMDKR})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6997,8 +7434,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.OPANAL<> "-1" OR row.OPANAL <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.OPANAL})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.OPANAL})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7013,8 +7451,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.OPEC<> "-1" OR row.OPEC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.OPEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.OPEC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7029,8 +7468,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.OSCE<> "-1" OR row.OSCE <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.OSCE})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.OSCE})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7045,8 +7485,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.OSLO<> "-1" OR row.OSLO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.OSLO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.OSLO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7061,8 +7502,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.OSPAR<> "-1" OR row.OSPAR <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.OSPAR})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.OSPAR})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7077,8 +7519,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.OTIF<> "-1" OR row.OTIF <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.OTIF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.OTIF})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7093,8 +7536,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.PAHC<> "-1" OR row.PAHC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.PAHC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.PAHC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7109,8 +7553,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.PAHO<> "-1" OR row.PAHO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.PAHO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.PAHO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7125,8 +7570,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.PAIGH<> "-1" OR row.PAIGH <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.PAIGH})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.PAIGH})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7141,8 +7587,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.PAP<> "-1" OR row.PAP <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.PAP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.PAP})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7157,8 +7604,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.PC<> "-1" OR row.PC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.PC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.PC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7173,8 +7621,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.PCA<> "-1" OR row.PCA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.PCA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.PCA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7189,8 +7638,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.PCB<> "-1" OR row.PCB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.PCB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.PCB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7205,8 +7655,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.PCSP<> "-1" OR row.PCSP <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.PCSP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.PCSP})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7221,8 +7672,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.PED<> "-1" OR row.PED <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.PED})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.PED})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7237,8 +7689,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.PIARC<> "-1" OR row.PIARC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.PIARC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.PIARC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7253,8 +7706,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.PIBAC<> "-1" OR row.PIBAC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.PIBAC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.PIBAC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7269,8 +7723,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.PICDCS<> "-1" OR row.PICDCS <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.PICDCS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.PICDCS})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7285,8 +7740,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.PICES<> "-1" OR row.PICES <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.PICES})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.PICES})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7301,8 +7757,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.PICS<> "-1" OR row.PICS <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.PICS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.PICS})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7317,8 +7774,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.PIF<> "-1" OR row.PIF <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.PIF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.PIF})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7333,8 +7791,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.PIPD<> "-1" OR row.PIPD <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.PIPD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.PIPD})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7349,8 +7808,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.PMAESA<> "-1" OR row.PMAESA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.PMAESA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.PMAESA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7365,8 +7825,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.PSI<> "-1" OR row.PSI <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.PSI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.PSI})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7381,8 +7842,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.PSNARCO<> "-1" OR row.PSNARCO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.PSNARCO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.PSNARCO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7397,8 +7859,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.PTASEA<> "-1" OR row.PTASEA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.PTASEA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.PTASEA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7413,8 +7876,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.PUASP<> "-1" OR row.PUASP <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.PUASP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.PUASP})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7429,8 +7893,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.RASCOM<> "-1" OR row.RASCOM <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.RASCOM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.RASCOM})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7445,8 +7910,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.RCAELA<> "-1" OR row.RCAELA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.RCAELA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.RCAELA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7461,8 +7927,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.RCC<> "-1" OR row.RCC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.RCC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.RCC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7477,8 +7944,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.RECSA<> "-1" OR row.RECSA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.RECSA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.RECSA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7493,8 +7961,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.RIMMO<> "-1" OR row.RIMMO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.RIMMO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.RIMMO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7509,8 +7978,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.RIOPPAH<> "-1" OR row.RIOPPAH <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.RIOPPAH})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.RIOPPAH})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7525,8 +7995,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.RIOgroup<> "-1" OR row.RIOgroup <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.RIOgroup})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.RIOgroup})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7541,8 +8012,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.RadioU<> "-1" OR row.RadioU <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.RadioU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.RadioU})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7557,8 +8029,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.RepCom<> "-1" OR row.RepCom <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.RepCom})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.RepCom})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7573,8 +8046,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.SAAFA<> "-1" OR row.SAAFA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.SAAFA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.SAAFA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7589,8 +8063,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.SAARC<> "-1" OR row.SAARC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.SAARC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.SAARC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7605,8 +8080,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.SACEP<> "-1" OR row.SACEP <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.SACEP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.SACEP})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7621,8 +8097,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.SACU<> "-1" OR row.SACU <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.SACU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.SACU})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7637,8 +8114,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.SADC<> "-1" OR row.SADC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.SADC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.SADC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7653,8 +8131,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.SADCC<> "-1" OR row.SADCC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.SADCC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.SADCC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7669,8 +8148,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.SAMI<> "-1" OR row.SAMI <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.SAMI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.SAMI})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7685,8 +8165,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.SARTC<> "-1" OR row.SARTC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.SARTC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.SARTC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7701,8 +8182,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.SCA<> "-1" OR row.SCA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.SCA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.SCA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7717,8 +8199,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.SCAf<> "-1" OR row.SCAf <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.SCAf})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.SCAf})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7733,8 +8216,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.SCH<> "-1" OR row.SCH <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.SCH})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.SCH})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7749,8 +8233,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.SCHENGEN<> "-1" OR row.SCHENGEN <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.SCHENGEN})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.SCHENGEN})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7765,8 +8250,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.SEAMEO<> "-1" OR row.SEAMEO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.SEAMEO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.SEAMEO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7781,8 +8267,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.SEATO<> "-1" OR row.SEATO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.SEATO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.SEATO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7797,8 +8284,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.SEGIB<> "-1" OR row.SEGIB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.SEGIB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.SEGIB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7813,8 +8301,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.SELA<> "-1" OR row.SELA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.SELA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.SELA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7829,8 +8318,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.SICA<> "-1" OR row.SICA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.SICA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.SICA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7845,8 +8335,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.SIECA<> "-1" OR row.SIECA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.SIECA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.SIECA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7861,8 +8352,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.SITTDEC<> "-1" OR row.SITTDEC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.SITTDEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.SITTDEC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7877,8 +8369,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.SPC<> "-1" OR row.SPC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.SPC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.SPC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7893,8 +8386,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.SRDO<> "-1" OR row.SRDO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.SRDO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.SRDO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7909,8 +8403,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.SWAPU<> "-1" OR row.SWAPU <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.SWAPU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.SWAPU})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7925,8 +8420,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.SWPD<> "-1" OR row.SWPD <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.SWPD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.SWPD})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7941,8 +8437,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.SugU<> "-1" OR row.SugU <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.SugU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.SugU})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7957,8 +8454,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.TARHEC<> "-1" OR row.TARHEC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.TARHEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.TARHEC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7973,8 +8471,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.TCRMG<> "-1" OR row.TCRMG <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.TCRMG})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.TCRMG})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7989,8 +8488,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.TIC<> "-1" OR row.TIC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.TIC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.TIC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8005,8 +8505,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.Turksoy<> "-1" OR row.Turksoy <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.Turksoy})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.Turksoy})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8021,8 +8522,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.UASC<> "-1" OR row.UASC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.UASC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.UASC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8037,8 +8539,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.UBEC<> "-1" OR row.UBEC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.UBEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.UBEC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8053,8 +8556,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.UDEAC<> "-1" OR row.UDEAC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.UDEAC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.UDEAC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8069,8 +8573,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.UEMOA<> "-1" OR row.UEMOA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.UEMOA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.UEMOA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8085,8 +8590,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.UIUCV<> "-1" OR row.UIUCV <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.UIUCV})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.UIUCV})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8101,8 +8607,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.UKDWD<> "-1" OR row.UKDWD <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.UKDWD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.UKDWD})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8117,8 +8624,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.UMAC<> "-1" OR row.UMAC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.UMAC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.UMAC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8133,8 +8641,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.UMOA<> "-1" OR row.UMOA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.UMOA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.UMOA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8149,8 +8658,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.UN<> "-1" OR row.UN <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.UN})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.UN})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8165,8 +8675,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.UNDROIT<> "-1" OR row.UNDROIT <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.UNDROIT})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.UNDROIT})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8181,8 +8692,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.UNESCO<> "-1" OR row.UNESCO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.UNESCO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.UNESCO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8197,8 +8709,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.UNIDO<> "-1" OR row.UNIDO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.UNIDO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.UNIDO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8213,8 +8726,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.UPU<> "-1" OR row.UPU <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.UPU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.UPU})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8229,8 +8743,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.USP<> "-1" OR row.USP <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.USP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.USP})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8245,8 +8760,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.VALDIVIA<> "-1" OR row.VALDIVIA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.VALDIVIA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.VALDIVIA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8261,8 +8777,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.VASAB<> "-1" OR row.VASAB <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.VASAB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.VASAB})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8277,8 +8794,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.WAEC<> "-1" OR row.WAEC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.WAEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.WAEC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8293,8 +8811,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.WAHC<> "-1" OR row.WAHC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.WAHC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.WAHC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8309,8 +8828,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.WAHO<> "-1" OR row.WAHO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.WAHO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.WAHO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8325,8 +8845,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.WARDA<> "-1" OR row.WARDA <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.WARDA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.WARDA})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8341,8 +8862,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.WCDC<> "-1" OR row.WCDC <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.WCDC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.WCDC})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8357,8 +8879,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.WCO<> "-1" OR row.WCO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.WCO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.WCO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8373,8 +8896,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.WEU<> "-1" OR row.WEU <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.WEU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.WEU})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8389,8 +8913,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.WHO<> "-1" OR row.WHO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.WHO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.WHO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8405,8 +8930,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.WIPO<> "-1" OR row.WIPO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.WIPO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.WIPO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8421,8 +8947,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.WMO<> "-1" OR row.WMO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.WMO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.WMO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8437,8 +8964,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.WNF<> "-1" OR row.WNF <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.WNF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.WNF})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8453,8 +8981,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.WPact<> "-1" OR row.WPact <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.WPact})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.WPact})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8469,8 +8998,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.WTO<> "-1" OR row.WTO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.WTO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.WTO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8485,8 +9015,9 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.WTOURO<> "-1" OR row.WTOURO <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.WTOURO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.WTOURO})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8501,6 +9032,7 @@ WITH *,
     WHEN "-9" THEN "Missing Data"
     END AS membership
 FOREACH (datum IN CASE WHEN row.Wassen<> "-1" OR row.Wassen <> "-9" THEN [1] ELSE [] END |
-  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{name:"IGO Membership", status:membership, membershipCode:row.Wassen})-[:DURING]->(p)
-  CREATE (s)-[:MEMBER]->(f)-[:MEMBER_OF]->(i)
+  CREATE (d)-[:CONTRIBUTES]->(f:Fact:IGOMembershipFact{
+    name:"IGO Membership", status:membership, year:row.year, membershipCode:row.Wassen})-[:DURING]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );

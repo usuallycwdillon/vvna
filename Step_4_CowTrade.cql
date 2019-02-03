@@ -6,7 +6,7 @@ CREATE (d:Source{
   version:toFloat(4.0),
   published:date({year:2017, month:2, day:20}),
   validFrom:date({year:1870, month:1, day:1}),
-  falidUntil:date({year:2014, month:12, day:31}),
+  validUntil:date({year:2014, month:12, day:31}),
   citation:["Barbieri, Katherine and Omar M. G. Omar Keshk. 2016. Correlates of War Project Trade Data Set Codebook, Version 4.0. Online: http://correlatesofwar.org", "Barbieri, Katherine, Omar M. G. Keshk, and Brian Pollins. 2009. 'TRADING DATA: Evaluating our Assumptions and Coding Rules.' Conflict Management and Peace Science. 26(5): 471-491."],
   host:["Katherine Barbieri (University of South Carolina)", "Omar Keshk (Ohio State University)"],
   poc:"Douglas Gibler (dmgibler@bama.ua.edu)",
@@ -67,7 +67,7 @@ CREATE (d)-[:PROVIDES]->(:Dataset{
 
 USING PERIODIC COMMIT 1000
 LOAD CSV WITH HEADERS FROM "file:///National_COW_4.0.csv" AS row
-  MATCH (y:Year{began:date({year:toInteger(row.year)})}), (s:State{cowcode:row.ccode}),(f:Dataset{filename:"National_COW_4.0.csv"})
+  MATCH (y:Year{began:date({year:toInteger(row.year)})}), (s:State{cowcode:row.ccode}), (d:Dataset{filename:"National_COW_4.0.csv"})
   WITH *,
     CASE row.source1
       WHEN "-9" THEN "Missing data"
@@ -83,10 +83,10 @@ LOAD CSV WITH HEADERS FROM "file:///National_COW_4.0.csv" AS row
       WHEN "3" THEN "Missing values replaced with reported World Values"
       WHEN "4" THEN "Zero values replaced with missing values"
       END AS esource
-  CREATE (d)-[ic:CONTRIBUTES]->(if:Fact:ImportsFact{name:"Total Imports"})-[:DURING]->(y)
-  CREATE (s)-[:IMPORTS]->(if)
-  CREATE (d)-[ec:CONTRIBUTES]->(ef:Fact:ExportsFact{name:"Total Exports"})-[:DURING]->(y)
-  CREATE (s)-[:EXPORTS]->(ef)
+  MERGE (d)-[ic:CONTRIBUTES]->(if:Fact:ImportsFact{name:"Total Imports"})-[:DURING{year:toInteger(row.year)}]->(y)
+  MERGE (s)-[:IMPORTS]->(if)
+  MERGE (d)-[ec:CONTRIBUTES]->(ef:Fact:ExportsFact{name:"Total Exports"})-[:DURING{year:toInteger(row.year)}]->(y)
+  MERGE (s)-[:EXPORTS]->(ef)
   SET ic.source = isource
   SET ec.source = esource
   WITH if, ef, ic, ec, row
@@ -107,10 +107,10 @@ USING PERIODIC COMMIT 500
 LOAD CSV WITH HEADERS FROM "file:///Dyadic_COW_4.0.csv" AS row
   MATCH (y:Year{name:row.year}),(s1:State{cowcode:row.ccode1}),
         (s2:State{cowcode:row.ccode2}),(d:Dataset{filename:"Dyadic_COW_4.0.csv"})
-  CREATE (d)-[c1:CONTRIBUTES]->(f1:Fact:ImportFromFact{name:"Import", currency:"Millions in 2017 USD"})-[:IMPORTED_FROM]->(s2)
-  MERGE (s1)-[:IMPORTED]->(f1)-[:DURING]->(y)
-  CREATE (d)-[c2:CONTRIBUTES]->(f2:Fact:ImportFromFact{name:"Import", currency:"Millions in 2017 USD"})-[:IMPORTED_FROM]->(s1)
-  MERGE (s2)-[:IMPORTED]->(f2)-[:DURING]->(y)
+  MERGE (d)-[c1:CONTRIBUTES]->(f1:Fact:ImportFromFact{name:"Import", currency:"Millions in 2017 USD"})-[:IMPORTED_FROM]->(s2)
+  MERGE (s1)-[:IMPORTED]->(f1)-[:DURING{year:toInteger(row.year)}]->(y)
+  MERGE (d)-[c2:CONTRIBUTES]->(f2:Fact:ImportFromFact{name:"Import", currency:"Millions in 2017 USD"})-[:IMPORTED_FROM]->(s1)
+  MERGE (s2)-[:IMPORTED]->(f2)-[:DURING{year:toInteger(row.year)}]->(y)
   WITH *,
     CASE row.source1
       WHEN "-9" THEN "Missing data"

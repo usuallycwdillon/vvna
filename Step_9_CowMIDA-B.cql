@@ -6,12 +6,12 @@ CREATE (d:Source{
   version:toFloat(4.1),
   published:date({year:2015, month:1, day:9}),
   validFrom:date({year:1816, month:1, day:1}),
-  falidUntil:date({year:2016, month:12, day:31}),
+  validUntil:date({year:2016, month:12, day:31}),
   citation:"Palmer, Glenn, Vito D'Orazio, Michael Kenwick, and Matthew Lane.  2015.  'The MID4 Data Set: Procedures, Coding Rules, and Description.'  Conflict Management and Peace Science.",
   url:"http://correlatesofwar.org/data-sets/MIDs",
   host:"Glenn Palmer (Penn State)",
   poc:"Glenn Palmer (gpalmer@psu.edu)",
-  overview:"This data set contains the list of states in the international system as updated and distributed by the Correlates of War Project. These data sets identify states, their standard Correlates of War 'country code' or state number (used throughout the Correlates of War project data sets), state abbreviations, and dates of membership as states and major powers in the international system. Version 2016 extends the temporal domain of the collection through December 2016. \nThe Correlates of War project includes a state in the international system from 1816-2016 for the following criteria. Prior to 1920, the entity must have had a population greater than 500,000 and have had diplomatic missions at or above the rank of charge d’affaires with Britain and France. After 1920, the entity must be a member of the League of Nations or the United Nations, or have a population greater than 500,000 and receive diplomatic missions from two major powers.",
+  overview:"This data set contains the list of states in the international system as updated and distributed by the Correlates of War Project. These data sets identify states, their standard Correlates of War 'country code' or state number (used throughout the Correlates of War project data sets), state abbreviations, and dates of membership as states and major powers in the international system. Version 2016 extends the temporal domain of the collection through December 2016. \nThe Correlates of War project includes a state in the international system from 1816-2016 for the following criteria. Prior to 1920, the entity must have had a pax greater than 500,000 and have had diplomatic missions at or above the rank of charge d’affaires with Britain and France. After 1920, the entity must be a member of the League of Nations or the United Nations, or have a pax greater than 500,000 and receive diplomatic missions from two major powers.",
   purpose:"This data set records the fluctuating composition of the state system since 1816. It also identifies countries corresponding to the standard Correlates of War country codes."
 })
 // MID-level data and documents
@@ -80,7 +80,7 @@ CREATE (d)-[:PROVIDES]->(:Dataset{
 });
 
 // NOTE: Remove the "W" from the end of link1/link2/link3 fields in the data. It's irrelevant to the dataset in this
-// format and is too complicated to parse/manipulate on the fly.
+// format and is overly complicated to parse/manipulate on the fly.
 // Step 1: link dataset and create facts about disputes...
 MATCH (d:Dataset{filename:"MIDA_4.2.csv"})
 LOAD CSV WITH HEADERS FROM "file:///MIDA_4.2.csv" AS row
@@ -146,7 +146,7 @@ WITH *,
     WHEN "11" THEN "Fortify border"
     WHEN "12" THEN "Border violation"
     WHEN "13" THEN "Blockade"
-    WHEN "14" THEN "Occupation of territory"
+    WHEN "14" THEN "Inclusion of territory"
     WHEN "15" THEN "Seizure"
     WHEN "16" THEN "Attack"
     WHEN "17" THEN "Clash"
@@ -196,7 +196,7 @@ FOREACH (var IN CASE WHEN row.link3<>'0' THEN [1] ELSE [] END | CREATE (d)-[c:CO
 MATCH (d:Dataset{filename:"MIDB_4.2.csv"})
 LOAD CSV WITH HEADERS FROM "file:///MIDB_4.2.csv" AS row
 MATCH (s:State{cowcode:row.ccode}), (i:Dispute{numberV3:row.dispnum3})
-CREATE (d)-[:CONTRIBUTES{asOf:d.updated, version:row.version}]->(f:Fact:DisputeFact{
+CREATE (d)-[:CONTRIBUTES{asOf:d.updated, version:row.version}]->(f:Fact:DisputeParticipationFact{
   name:"Dispute Participation",
   from:date({year:toInteger(row.styear), month:toInteger(row.stmon)}),
   until:date({year:toInteger(row.endyear), month:toInteger(row.endmon)})
@@ -228,7 +228,7 @@ WITH *,
     WHEN "11" THEN "Fortify border"
     WHEN "12" THEN "Border violation"
     WHEN "13" THEN "Blockade"
-    WHEN "14" THEN "Occupation of territory"
+    WHEN "14" THEN "Inclusion of territory"
     WHEN "15" THEN "Seizure"
     WHEN "16" THEN "Attack"
     WHEN "17" THEN "Clash"
@@ -275,3 +275,13 @@ FOREACH (var IN CASE WHEN row.revstate="1" THEN [1] ELSE [] END | SET f.revision
 FOREACH (var IN CASE WHEN row.orig="1" THEN [1] ELSE [] END | SET f.originatedDistpute = toBoolean(True) )
 FOREACH (var IN CASE WHEN row.revtype1<>"-9" AND row.revtype1<>"0" THEN [1] ELSE [] END | SET f.revisionTypeOne = rev1 )
 FOREACH (var IN CASE WHEN row.revtype2<>"-9" AND row.revtype2<>"0" THEN [1] ELSE [] END | SET f.revisionTypeTwo = rev2 );
+
+RETURN "Completed the Militarized Interstate Disputes, A and B.";
+
+MATCH (:Source{name:"Militarized Interstate Disputes"})-[:PROVIDES]->(d:Dataset)-[:CONTRIBUTES]->(f:Fact), (w:Week)
+  WHERE w.began <= f.from <= w.ended
+MERGE (f)-[:FROM_WEEK]->(w);
+
+MATCH (:Source{name:"Militarized Interstate Disputes"})-[:PROVIDES]->(d:Dataset)-[:CONTRIBUTES]->(f:Fact), (w:Week)
+  WHERE w.began <= f.until <= w.ended
+MERGE (f)-[:UNTIL_WEEK]->(w);

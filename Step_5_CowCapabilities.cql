@@ -11,8 +11,8 @@ CREATE (d:Source{
   url:"http://correlatesofwar.org/data-sets/national-material-capabilities",
   host:["J. Michael Greig (University of North Texas)", "Andrew J. Enterline (University of North Texas)"],
   poc:["J. Michael Greig (greig@unt.edu)", "Andrew J. Enterline (ajenter@unt.edu)"],
-  overview:"The National Material Capabilities data set contains annual values for total population, urban population, iron and steel production, energy consumption, military personnel, and military expenditure of all state members, currently from 1816-2012. The widely-used Composite Index of National Capability (CINC) index is based on these six variables and included in the data set.",
-  purpose:"Power is considered by many to be a central concept in explaining conflict, and six indicators - military expenditure, military personnel, energy consumption, iron and steel production, urban population, and total population - are included in this data set. It serves as the basis for the most widely used indicator of national capability, CINC (Composite Indicator of National Capability) and covers the period 1816-2012."
+  overview:"The National Material Capabilities data set contains annual values for total pax, urban pax, iron and steel production, energy consumption, military personnel, and military expenditure of all state members, currently from 1816-2012. The widely-used Composite Index of National Capability (CINC) index is based on these six variables and included in the data set.",
+  purpose:"Power is considered by many to be a central concept in explaining conflict, and six indicators - military expenditure, military personnel, energy consumption, iron and steel production, urban pax, and total pax - are included in this data set. It serves as the basis for the most widely used indicator of national capability, CINC (Composite Indicator of National Capability) and covers the period 1816-2012."
 })
 CREATE (d)-[:PROVIDES]->(:File{
   name:"NMC Codebook",
@@ -56,9 +56,9 @@ CREATE (state)-[h:MILEX{
   name:"Military Expenditures",
   value:myMilex,
   denomination:denom,
-  dataSource:myMilexSource,
+  source:myMilexSource,
   notes:myMilexNote
-})-[:DURING]->(y)
+})-[:DURING{year:toInteger(row.year)}]->(y)
 CREATE (d)-[:CONTRIBUTES]->(f);
 RETURN "Successfully imported the 7th (fourth COW) file, NMC_5_0-wsupplementary.csv, part 1";
 
@@ -72,9 +72,9 @@ CREATE (state)-[:MILPER{definition:"Thousands of military personnel."}]->(f:Fact
   name:"Military PAX",
   value:mymilper,
   denomination:"thousand PAX",
-  dataSource:mymilpersource,
+  source:mymilpersource,
   notes:mymilpernote
-})-[:DURING]->(y)
+})-[:DURING{year:toInteger(row.year)}]->(y)
 CREATE (d)-[:CONTRIBUTES]->(f);
 RETURN "Successfully imported the 7th (fourth COW) file, NMC_5_0-wsupplementary.csv, part 2";
 
@@ -90,11 +90,11 @@ CREATE (state)-[:IRON_STEEL_PRODUCTION{definition:"Iron and Steel Production"}]-
   name:"Iron and Steel Production",
   value:myirst,
   denomination:"thousands of tons",
-  dataSource:myirstSource,
+  source:myirstSource,
   notes:myirstNote,
   quality:myirstQC,
   anomaly:myirstAC
-})-[:DURING]->(y)
+})-[:DURING{year:toInteger(row.year)}]->(y)
 CREATE (d)-[:CONTRIBUTES]->(f);
 RETURN "Successfully imported the 7th (fourth COW) file, NMC_5_0-wsupplementary.csv, part 3";
 
@@ -106,15 +106,15 @@ WITH row,
      CASE WHEN row.pecqualitycode='' THEN "Not provided" ELSE row.pecqualitycode END AS mypecQC,
      CASE WHEN row.pecanomalycode='' THEN "Not provided" ELSE row.pecanomalycode END AS mypecAC
 MATCH (state:State{cowcode:row.ccode}), (d:Dataset{filename:"NMC_5_0-wsupplementary.csv"}), (y:Year{name:row.year})
-CREATE (state)-[:PETROL_CONSUMPTION{definition:"Primary Energy Consumption"}]->(f:Fact:EnergyConsumptionFact{
+CREATE (state)-[:ENERGY_CONSUMPTION{definition:"Primary Energy Consumption"}]->(f:Fact:EnergyConsumptionFact{
   name:"Energy Consumption",
   value:mypec,
   denomination:"thousands of coal-ton equivalents",
-  dataSource:mypecSource,
+  source:mypecSource,
   notes:mypecNote,
   quality:mypecQC,
   anomaly:mypecAC
-})-[:DURING]->(y)
+})-[:DURING{year:toInteger(row.year)}]->(y)
 CREATE (d)-[:CONTRIBUTES]->(f);
 RETURN "Successfully imported the 7th (fourth COW) file, NMC_5_0-wsupplementary.csv, part 4";
 
@@ -130,11 +130,11 @@ CREATE (state)-[:POPULATION {definition:"Total Population"}]->(f:Fact:Population
   name:"Total Population",
   value:mytpop,
   denomination:"thousands of persons",
-  dataSource:mytpopSource,
+  source:mytpopSource,
   notes:mytpopNote,
   quality:mytpopQC,
   anomaly:mytpopAC
-})-[:DURING]->(y)
+})-[:DURING{year:toInteger(row.year)}]->(y)
 CREATE (d)-[:CONTRIBUTES]->(f);
 RETURN "Successfully imported the 7th (fourth COW) file, NMC_5_0-wsupplementary.csv, part 5";
 
@@ -147,17 +147,17 @@ WITH row,
      CASE WHEN row.upopanomalycode='' THEN "Not provided" ELSE row.upopanomalycode END AS myupopAC,
      CASE WHEN row.upopgrowth='' THEN "Not provided" ELSE toFloat(row.upopsource) END AS myupopgrowth,
      CASE WHEN row.upopgrowthsource='' THEN "Not provided" ELSE row.upopgrowthsource END AS myupopgrowthSource,
-     CASE WHEN toInteger(row.year) < 2012 THEN "Population in cities >= 100K population" ELSE "Population in cities >= 300K population" END AS def
+     CASE WHEN toInteger(row.year) < 2012 THEN "Population in cities >= 100K pax" ELSE "Population in cities >= 300K pax" END AS def
 MATCH (state:State{cowcode:row.ccode}), (d:Dataset{filename:"NMC_5_0-wsupplementary.csv"}), (y:Year{name:row.year})
 CREATE (state)-[:URBAN_POPULATION{definition:def}]->(f:Fact:UrbanPopulationFact{
   name:"Urban Population",
   value:myupop,
-  denomination:"population in thousands",
-  dataSource:myupopSource,
+  denomination:"thousands of persons",
+  source:myupopSource,
   notes:myupopNote,
   quality:myupopQC,
   anomaly:myupopAC
-})-[:DURING]->(y)
+})-[:DURING{year:toInteger(row.year)}]->(y)
 CREATE (d)-[:CONTRIBUTES]->(f);
 RETURN "Successfully imported the 7th (fourth COW) file, NMC_5_0-wsupplementary.csv, part 6";
 
@@ -165,7 +165,8 @@ LOAD CSV WITH HEADERS FROM "file:///NMC_5_0-wsupplementary.csv" AS row
 MATCH (state:State{cowcode:row.ccode}), (d:Dataset{filename:"NMC_5_0-wsupplementary.csv"}), (y:Year{name:row.year})
 CREATE (state)-[:CINC_SCORE{definition:"Composite Index of National Capability (CINC) score"}]->(f:Fact:CINCFact{
   name:"CINC Score",
-  value:toFloat(row.cinc)
-})-[:DURING]->(y)
+  value:toFloat(row.cinc),
+  source:"Calculation by original authors"
+})-[:DURING{year:toInteger(row.year)}]->(y)
 CREATE (d)-[:CONTRIBUTES]->(f);
 RETURN "Successfully imported the 7th (fourth COW) file, NMC_5_0-wsupplementary.csv, part 7 of 7";
