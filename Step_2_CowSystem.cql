@@ -1,4 +1,4 @@
-// Reviewed, updated 14 SEP 2018; includes named facts
+// Reviewed, updated 6 Feb 2019; includes :Polity:State labels
 // ####################################################################################################################
 // The states2016.csv data is actually a more appropriate file to describe the state system (membership)
 // than the system2016.csv because it contains duration data that imply the system during that time period.
@@ -75,7 +75,7 @@ CREATE (so)-[:DEFINES{
   until:date({year:2016, month:12, day:31})
 });
 
-// (PC)-[:CONTRIBUTES{asOf:date()}]->(:Fact{from, until})<-[:MEMBER]-(state:State)
+// (PC)-[:CONTRIBUTES{asOf:date()}]->(:Fact{from, until})<-[:MEMBER]-(state:Polity:State)
 //                                                      \-[:MEMBER_OF]-(system:System)
 // Finally, load the data file and graph the relationship of the states to it and the system
 CREATE CONSTRAINT ON (st:State) ASSERT st.cowcode IS UNIQUE;
@@ -89,18 +89,18 @@ MERGE (d)-[:CONTRIBUTES{asOf:d.published}]->(f:Fact:MembershipFact{
   from:date({year:toInteger(row.styear), month:toInteger(row.stmonth), day:toInteger(row.stday)}),
   until:date({year:toInteger(row.endyear), month:toInteger(row.endmonth), day:toInteger(row.endday)})
 })-[:MEMBER_OF]->(y)
-MERGE (state:State{
+MERGE (state:Polity:State{
   cowcode:row.ccode,
   abb:row.stateabb,
   name:row.statenme})
 CREATE (state)-[:MEMBER]->(f);
 // Relate Levy's Great Powers to the COW states they became, where appropriate.
 
-MATCH (gp:GreatPower), (s:State)
+MATCH (gp:GreatPower), (s:Polity:State)
   WHERE gp.cowRelation = s.cowcode
 WITH gp, s
 MERGE (gp)-[:BECAME]->(s)
-SET gp:State;
+SET gp:Polity:State;
 // End of states2016.csv
 
 RETURN "Successfully imported the 4th file and the first of the COW datasets, states2016.csv";
@@ -129,7 +129,7 @@ CREATE (maj)-[:CONTRIBUTES]->(f:Fact:MembershipFact{
   until:date({year:toInteger(row.endyear), month:toInteger(row.endmonth), day:toInteger(row.endday)})
 })-[:MEMBER_OF]->(sys)
 WITH f, row
-MATCH (state:State{cowcode:row.ccode})
+MATCH (state:Polity:State{cowcode:row.ccode})
 MERGE (state)-[:MEMBER{
   from:date({year:toInteger(row.styear), month:toInteger(row.stmonth), day:toInteger(row.stday)}),
   until:date({year:toInteger(row.endyear), month:toInteger(row.endmonth), day:toInteger(row.endday)})

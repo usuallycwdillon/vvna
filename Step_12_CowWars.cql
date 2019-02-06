@@ -6,7 +6,7 @@ CREATE (d:Source{
   version:toFloat(4.0),
   published:date({year:2010, month:3}),
   validFrom:date({year:1816, month:1, day:1}),
-  validUntil:date({year:2016, month:12, day:31}),
+  falidUntil:date({year:2016, month:12, day:31}),
   citation:'Sarkees, Meredith Reid and Frank Wayman (2010). Resort to War: 1816 - 2007. Washington DC: CQ Press.',
   url:'http://correlatesofwar.org/data-sets/COW-war',
   host:["Meredith Sarkees (Global Women's Leadership in International Security)", 'Frank Wayman (University of Michigan-Dearborn)'],
@@ -130,10 +130,10 @@ CREATE (d)-[:DEFINES]->(:Region{name:"Oceana"});
 //                \->(:Fact:WarFact)<--[:IS_ONE]-------------------/
 //                                 \-[:ONE_OF]->(:List{name:<war type>})
 // Inter-state Wars
-// WarNum	WarName	            WarType	ccode 	StateName	  Side	StartMonth1	StartDay1	StartYear1	EndMonth1	EndDay1	EndYear1	StartMonth2	StartDay2	StartYear2	EndMonth2	EndDay2	EndYear2	TransFrom	WhereFought	Initiator
-// 1	    Franco-Spanish War	1	      230	    Spain	      2	    4	          7	        1823	      11	      13	    1823	    -8	        -8	      -8	        -8	      -8	    -8	      503	      2	          2
-// Outcome	TransTo	BatDeath	Version
-// 2	      -8	    600	      4
+// WarNum WarName             WarType ccode   StateName   Side  StartMonth1 StartDay1 StartYear1  EndMonth1 EndDay1 EndYear1  StartMonth2 StartDay2 StartYear2  EndMonth2 EndDay2 EndYear2  TransFrom WhereFought Initiator
+// 1      Franco-Spanish War  1       230     Spain       2     4           7         1823        11        13      1823      -8          -8        -8          -8        -8      -8        503       2           2
+// Outcome  TransTo BatDeath  Version
+// 2        -8      600       4
 MATCH (d:Dataset{filename:'Inter-StateWarData_v4.0.csv'}), (inters:List{name:'Inter-State Wars'})
 LOAD CSV WITH HEADERS FROM 'file:///Inter-StateWarData_v4.0.csv' AS row
 MERGE (d)-[:CONTRIBUTES]->(f:Fact:WarFact{name:'Inter-State War'})-[:ONE_OF]->(inters)
@@ -142,7 +142,7 @@ MERGE (d)-[:CONTRIBUTES]->(wf:Fact:WarmakingFact{
   predicate:'PARTICIPATED_IN',
   object:row.WarName
 })-[pi:PARTICIPATED_IN]->(w:War{cowcode:row.WarNum, name:row.WarName, warType:row.WarType})-[:IS_ONE]->(f)
-WITH row, d, inters, f, wf, pi
+WITH *
 MATCH (s:State{cowcode:toString(row.ccode)})
 MATCH (whr:Region{name:'Western Hemisphere'})
 MATCH (eur:Region{name:'Europe'})
@@ -150,11 +150,10 @@ MATCH (afr:Region{name:"Africa"})
 MATCH (mer:Region{name:"Middle East"})
 MATCH (asr:Region{name:"Asia"})
 MATCH (ocr:Region{name:"Oceana"})
-// 29NOV2018 Changed Create to Merge because of duplicate relations. TODO: Verify that Merge works instead of Create
-MERGE (s)-[p:PARTICIPATED{
-  side:row.Side,
-  from:date({year:toInteger(row.StartYear1)}),
-  until:date({year:toInteger(row.EndYear1)}),
+CREATE (s)-[p:PARTICIPATED{
+  side:row.side,
+  fromDate:date({year:row.startYear1}),
+  untilDate:date({year:row.endYear1}),
   initiated:false
 }]->(wf)
 WITH *,
@@ -220,19 +219,19 @@ FOREACH (val IN CASE WHEN row.WhereFought = '19' THEN [1] ELSE [] END |
   MERGE (wf)-[:OCCURED_IN]->(ocr)
 )
 FOREACH (val IN CASE WHEN row.Outcome >     0 THEN [1] ELSE [] END | SET pi.outcome = outcome )
-FOREACH (mon IN CASE WHEN toInteger(row.StartMonth1) > 0 THEN [1] ELSE [] END | SET p.from = date({year:toInteger(row.StartYear1), month:toInteger(row.StartMonth1)}) )
-FOREACH (day IN CASE WHEN toInteger(row.StartDay1) >   0 THEN [1] ELSE [] END | SET p.from = date({year:toInteger(row.StartYear1), month:toInteger(row.StartMonth1), day:toInteger(row.StartDay1)}) )
-FOREACH (mon IN CASE WHEN toInteger(row.EndMonth1) >   0 THEN [1] ELSE [] END | SET p.until = date({year:toInteger(row.EndYear1), month:toInteger(row.EndMonth1)}) )
-FOREACH (day IN CASE WHEN toInteger(row.EndDay1) >     0 THEN [1] ELSE [] END | SET p.until = date({year:toInteger(row.EndYear1), month:toInteger(row.EndMonth1), day:toInteger(row.EndDay1)}) )
-FOREACH (yer IN CASE WHEN toInteger(row.StartYear2) >  0 THEN [1] ELSE [] END |
+FOREACH (mon IN CASE WHEN row.StartMonth1 > 0 THEN [1] ELSE [] END | SET p.fromDate = date({year:row.StartYear1, month:row.StartMonth1}) )
+FOREACH (day IN CASE WHEN row.StartDay1 >   0 THEN [1] ELSE [] END | SET p.fromDate = date({year:row.StartYear1, month:row.StartMonth1, day:row.StartDay1}) )
+FOREACH (mon IN CASE WHEN row.EndMonth1 >   0 THEN [1] ELSE [] END | SET p.untilDate = date({year:row.EndYear1, month:row.EndMonth1}) )
+FOREACH (day IN CASE WHEN row.EndDay1 >     0 THEN [1] ELSE [] END | SET p.untilDate = date({year:row.EndYear1, month:row.EndMonth1, day:row.EndDay1}) )
+FOREACH (yer IN CASE WHEN row.StartYear2 >  0 THEN [1] ELSE [] END |
   CREATE (s)-[c:CONTINUED]->(wf)
-  FOREACH (mon IN CASE WHEN toInteger(row.StartMonth2) > 0 THEN [1] ELSE [] END | SET c.from = date({year:toInteger(row.StartYear2), month:toInteger(row.StartMonth2)}) )
-  FOREACH (day IN CASE WHEN toInteger(row.StartDay2) >   0 THEN [1] ELSE [] END | SET c.from = date({year:toInteger(row.StartYear2), month:toInteger(row.StartMonth2), day:toInteger(row.StartDay2)}) )
-  FOREACH (mon IN CASE WHEN toInteger(row.EndMonth2) >   0 THEN [1] ELSE [] END | SET c.until = date({year:toInteger(row.EndYear2), month:toInteger(row.EndMonth2)}) )
-  FOREACH (day IN CASE WHEN toInteger(row.EndDay2) >     0 THEN [1] ELSE [] END | SET c.until = date({year:toInteger(row.EndYear2), month:toInteger(row.EndMonth2), day:toInteger(row.EndDay2)}) )
+  FOREACH (mon IN CASE WHEN row.StartMonth2 > 0 THEN [1] ELSE [] END | SET c.fromDate = date({year:row.StartYear2, month:row.StartMonth2}) )
+  FOREACH (day IN CASE WHEN row.StartDay2 >   0 THEN [1] ELSE [] END | SET c.fromDate = date({year:row.StartYear2, month:row.StartMonth2, day:row.StartDay2}) )
+  FOREACH (mon IN CASE WHEN row.EndMonth2 >   0 THEN [1] ELSE [] END | SET c.untilDate = date({year:row.EndYear2, month:row.EndMonth2}) )
+  FOREACH (day IN CASE WHEN row.EndDay2 >     0 THEN [1] ELSE [] END | SET c.untilDate = date({year:row.EndYear2, month:row.EndMonth2, day:row.EndDay2}) )
 )
 FOREACH (val IN CASE WHEN row.Initiator <   2 THEN [1] ELSE [] END | SET p.initiated = true )
-FOREACH (val IN CASE WHEN row.BatDeaths >   0 THEN [1] ELSE [] END | SET wf.magnitude = row.BatDeaths );
+FOREACH (val IN CASE WHEN row.BatDeaths >   0 THEN [1] ELSE [] END | SET wf.deaths = row.BatDeaths );
 
 MATCH (d:Dataset{filename:'Inter-StateWarData_v4.0.csv'})
 LOAD CSV WITH HEADERS FROM 'file:///Inter-StateWarData_v4.0.csv' AS row
@@ -240,24 +239,14 @@ MERGE (d)-[:CONTRIBUTES]->(wf:Fact:WarmakingFact{
   subject:row.StateName,
   predicate:'PARTICIPATED_IN',
   object:row.WarName
-})-[:PARTICIPATED_IN]->(nw:War{cowcode:row.WarNum})
+})-[:PARTICIPATED_IN]->(nw:War{cowode:row.WarNum})
 WITH *
-MATCH (ow:War{cowcode:row.TransFrom})
+MATCH (ow:War{cowode:row.TransFrom})
 FOREACH (val IN CASE WHEN row.TransFrom > 0 THEN [1] ELSE [] END |
   MERGE (d)-[:CONTRIBUTES]->(f:WarmakingFact)
   MERGE (ow)-[:TRANSFORMS]->(f)-[:TRANSFORMS_TO]->(nw)
 );
 // End of Inter-State Wars
-
-// This timeline creation query needs to move down if/when the other war data is prepared.
-MATCH (:Source{name:"War Data v4.0"})-[:PROVIDES]->(d:Dataset)-[:CONTRIBUTES]->(f:Fact), (w:Week)
-  WHERE w.began <= f.from <= w.ended
-MERGE (f)-[:FROM_WEEK]->(w);
-
-MATCH (:Source{name:"War Data v4.0"})-[:PROVIDES]->(d:Dataset)-[:CONTRIBUTES]->(f:Fact), (w:Week)
-  WHERE w.began <= f.until <= w.ended
-MERGE (f)-[:UNTIL_WEEK]->(w);
-
 
 // TODO: Revisit this Intra-State date later; too much work to parse this with too little payoff; Gleditsch's data is clean.
 //                                          /--[:PARTICIPATED_IN]--------------
@@ -267,10 +256,10 @@ MERGE (f)-[:UNTIL_WEEK]->(w);
 //                \->(:Fact:WarFact)<--[:IS_ONE]-------------------/
 //                                 \-[:ONE_OF]->(:List{name:<war type>})
 // Intra-state Wars
-// WarNum	WarName	          WarType	CcodeA	SideA	  CcodeB	SideB	                              Intnl	StartMonth1	StartDay1	StartYear1	EndMonth1	EndDay1	EndYear1	StartMonth2	StartDay2	StartYear2	EndMonth2	EndDay2	EndYear2
-// 500	  First Caucasus	  5	      365	    Russia	-8	    Georgians, Dhagestania, Chechens	  0	    6	          10	      1818	      -9	      -9	    1822	    -8	        -8	      -8	        -8	      -8	    -8
-// TransFrom	WhereFought	Initiator	Outcome	TransTo	SideADeaths	SideBDeaths	Version
-// -8	        2	          Chechens	1	      -8	    5000	      6000	      4.1
+// WarNum WarName           WarType CcodeA  SideA   CcodeB  SideB                               Intnl StartMonth1 StartDay1 StartYear1  EndMonth1 EndDay1 EndYear1  StartMonth2 StartDay2 StartYear2  EndMonth2 EndDay2 EndYear2
+// 500    First Caucasus    5       365     Russia  -8      Georgians, Dhagestania, Chechens    0     6           10        1818        -9        -9      1822      -8          -8        -8          -8        -8      -8
+// TransFrom  WhereFought Initiator Outcome TransTo SideADeaths SideBDeaths Version
+// -8         2           Chechens  1       -8      5000        6000        4.1
 //MATCH (d:Dataset{filename:'Intra-StateWarData_v4.1.csv'})
 //LOAD CSV WITH HEADERS FROM 'file:///Intra-StateWarData_v4.1.csv' AS row
 //MATCH (l:List{warType:row.WarType})
@@ -318,10 +307,10 @@ MERGE (f)-[:UNTIL_WEEK]->(w);
 //  }]->(wf)
 
 // Extra-state Wars
-// WarNum	WarName	                       WarType ccode1	 SideA	      ccode2	SideB	 StartMonth1	StartDay1	StartYear1	EndMonth1	EndDay1	EndYear1	StartMonth2	StartDay2	StartYear2	EndMonth2	EndDay2 	EndYear2	Initiator	Interven
-// 300	  Allied Bombardment of Algiers	 3	     210	   Netherlands	-8	    -8	   8	          26	      1816	      8	        30	    1816	    -8	        -8	      -8	        -8	      -8	      -8	       1	      1
-// TransFrom	Outcome	TransTo	WhereFought	BatDeath	NonStateDeaths	Version
-// -8	        1	      -8	    6	          13	      -8              4
+// WarNum WarName                        WarType ccode1  SideA        ccode2  SideB  StartMonth1  StartDay1 StartYear1  EndMonth1 EndDay1 EndYear1  StartMonth2 StartDay2 StartYear2  EndMonth2 EndDay2   EndYear2  Initiator Interven
+// 300    Allied Bombardment of Algiers  3       210     Netherlands  -8      -8     8            26        1816        8         30      1816      -8          -8        -8          -8        -8        -8         1        1
+// TransFrom  Outcome TransTo WhereFought BatDeath  NonStateDeaths  Version
+// -8         1       -8      6           13        -8              4
 //MATCH (d:Dataset{filename:'Extra-StateWarData_v4.0.csv'})
 //LOAD CSV WITH HEADERS FROM 'Extra-StateWarData_v4.0.csv' AS row
 //CREATE (d)-[c:CONTRIBUTES{version:row.version}]->(f:Fact:WarFact{
@@ -329,10 +318,10 @@ MERGE (f)-[:UNTIL_WEEK]->(w);
 //
 //
 //// Non-state Wars
-//// WarNum	WarName	                WarType	WhereFought	SideA1	                  SideA2	SideB1	  SideB2	    SideB3	  SideB4	    SideB5	    StartYear	StartMonth	StartDay	EndYear	EndMonth	EndDay	Initiator	TransFrom	TransTo
-//// 1500	  First Maori Tribal War	8	      9	          Te Rauparaha's Ngati Toa	-8	    Taranaki	Ngai Tahu	  Waikato	  Ngati Ira	  Rangitikei	1818	    -9	        -9	      1824	  -9	      -9	    A	        -8	      -8
-//// Outcome	SideADeaths	SideBDeaths	TotalCombatDeaths	Version
-//// 1	      1500	      6000	      7500	            4
+//// WarNum WarName                 WarType WhereFought SideA1                    SideA2  SideB1    SideB2      SideB3    SideB4      SideB5      StartYear StartMonth  StartDay  EndYear EndMonth  EndDay  Initiator TransFrom TransTo
+//// 1500   First Maori Tribal War  8       9           Te Rauparaha's Ngati Toa  -8      Taranaki  Ngai Tahu   Waikato   Ngati Ira   Rangitikei  1818      -9          -9        1824    -9        -9      A         -8        -8
+//// Outcome  SideADeaths SideBDeaths TotalCombatDeaths Version
+//// 1        1500        6000        7500              4
 //MATCH (d:Dataset{filename:'Non-StateWarData_v4.0.csv'})
 //LOAD CSV WITH HEADERS FROM 'file:///Non-StateWarData_v4.0.csv' AS row
 //CREATE (d)-[c:CONTRIBUTES{version:row.version}]->(f:Fact:WarFact{

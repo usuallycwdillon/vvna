@@ -1,3 +1,8 @@
+//Most importantly and before I forget...
+
+//`username: neo4j`
+//`password: george`
+
 // This Cypher Query Language (CQL) script will import several key peace science data sets into a Neo4j graph database
 // for grounding and/or validating agent-based simulation models of world politics and International Relations.
 //
@@ -7,23 +12,22 @@
 //  See the README.md for project notes and a few instructions about using this file and the imported data.
 //
 //  Data gets created/imported in this order, with resources metadata (the provenance chain) preceding each import:
-//  1. Time tree -- an in-graph representation of weeks and months in years in a timeline, beginning 1815
-//  2. Levy Great Powers, Great Power Wars
-//  3. import states2016.csv 
+//  1. (DONE) Time tree -- an in-graph representation of weeks and months in years in a timeline, beginning 1815
+//  2. (DONE) Levy Great Powers, Great Power Wars
+//  3. (DONE) import states2016.csv 
 //  2. (DONE) import major2016
 //  4. (DONE) import NMC_5_0-wsupplementary.csv /
 //  5. (DONE) import Gleditsch extended war data
 //  6. (DONE) import Diplomatic_Exchange_2006v1.csv /
-// *** Done *** up to line 1055
-//  7. import COW_Trade_4.0 and Trade Supplements
-//  8. import cow_alliances
-//  9. import Intergovernmental_Organizations(v2.3)
-// 10. import MIDA_4.csv /
-//     import MIDB_4.csv / 
-// 11. import MIDLOC_1.1.csv  
-// 12. import Inter-StateWarData_v4.0.csv
-// 13. import Intra-StateWarData_v4.1.csv
-// 14. import Extra-StateWarData_v4.0.csv /
+//  7. (DONE) import COW_Trade_4.0 and Trade Supplements
+//  8. (DONE) import cow_alliances
+//  9. (DONE) import Intergovernmental_Organizations(v2.3)
+// 10. (DONE) import MIDA_4.csv /
+//     (DONE) import MIDB_4.csv / 
+// 11. (DONE) import MIDLOC_1.1.csv  
+// 12. (DONE) import Inter-StateWarData_v4.0.csv
+// 13. (DONE) import Intra-StateWarData_v4.1.csv
+// 14. (DONE) import Extra-StateWarData_v4.0.csv /
 // 15. import MID Narratives 200
 // 16. revise tasks 1-15 so that data is parsed correctly (regex?) from original sources without modifications.
 // end of tasks
@@ -283,7 +287,7 @@ CREATE (d:Source{
   url:"http://correlatesofwar.org/data-sets/state-system-membership",
   host:["Volker Krause (Eastern Michigan University)", "Phil Schafer (University of Michigan)", "Karen Ruth Adams (University of Montana)"],
   poc:"Volker Krause (vkrause@emich.edu)",
-  overview:"This data set contains the list of states in the international system as updated and distributed by the Correlates of War Project. These data sets identify states, their standard Correlates of War 'country code' or state number (used throughout the Correlates of War project data sets), state abbreviations, and dates of membership as states and major powers in the international system. Version 2016 extends the temporal domain of the collection through December 2016. \nThe Correlates of War project includes a state in the international system from 1816-2016 for the following criteria. Prior to 1920, the entity must have had a population greater than 500,000 and have had diplomatic missions at or above the rank of charge d’affaires with Britain and France. After 1920, the entity must be a member of the League of Nations or the United Nations, or have a population greater than 500,000 and receive diplomatic missions from two major powers.",
+  overview:"This data set contains the list of states in the international system as updated and distributed by the Correlates of War Project. These data sets identify states, their standard Correlates of War 'country code' or state number (used throughout the Correlates of War project data sets), state abbreviations, and dates of membership as states and major powers in the international system. Version 2016 extends the temporal domain of the collection through December 2016. \nThe Correlates of War project includes a state in the international system from 1816-2016 for the following criteria. Prior to 1920, the entity must have had a pax greater than 500,000 and have had diplomatic missions at or above the rank of charge d’affaires with Britain and France. After 1920, the entity must be a member of the League of Nations or the United Nations, or have a pax greater than 500,000 and receive diplomatic missions from two major powers.",
   purpose:"This data set records the fluctuating composition of the state system since 1816. It also identifies countries corresponding to the standard Correlates of War country codes."
   })
 CREATE (d)-[:PROVIDES]->(:File{
@@ -657,8 +661,8 @@ CREATE (d:Source{
   url:"http://correlatesofwar.org/data-sets/national-material-capabilities",
   host:["J. Michael Greig (University of North Texas)", "Andrew J. Enterline (University of North Texas)"],
   poc:["J. Michael Greig (greig@unt.edu)", "Andrew J. Enterline (ajenter@unt.edu)"],
-  overview:"The National Material Capabilities data set contains annual values for total population, urban population, iron and steel production, energy consumption, military personnel, and military expenditure of all state members, currently from 1816-2012. The widely-used Composite Index of National Capability (CINC) index is based on these six variables and included in the data set.",
-  purpose:"Power is considered by many to be a central concept in explaining conflict, and six indicators - military expenditure, military personnel, energy consumption, iron and steel production, urban population, and total population - are included in this data set. It serves as the basis for the most widely used indicator of national capability, CINC (Composite Indicator of National Capability) and covers the period 1816-2012."
+  overview:"The National Material Capabilities data set contains annual values for total pax, urban pax, iron and steel production, energy consumption, military personnel, and military expenditure of all state members, currently from 1816-2012. The widely-used Composite Index of National Capability (CINC) index is based on these six variables and included in the data set.",
+  purpose:"Power is considered by many to be a central concept in explaining conflict, and six indicators - military expenditure, military personnel, energy consumption, iron and steel production, urban pax, and total pax - are included in this data set. It serves as the basis for the most widely used indicator of national capability, CINC (Composite Indicator of National Capability) and covers the period 1816-2012."
   })
 CREATE (d)-[:PROVIDES]->(:File{
   name:"NMC Codebook",
@@ -793,12 +797,12 @@ CASE WHEN row.upopqualitycode='' THEN "Not provided" ELSE row.upopqualitycode EN
 CASE WHEN row.upopanomalycode='' THEN "Not provided" ELSE row.upopanomalycode END AS myupopAC,
 CASE WHEN row.upopgrowth='' THEN "Not provided" ELSE toFloat(row.upopsource) END AS myupopgrowth,
 CASE WHEN row.upopgrowthsource='' THEN "Not provided" ELSE row.upopgrowthsource END AS myupopgrowthSource,
-CASE WHEN toInteger(row.year) < 2012 THEN "Population in cities >= 100K population" ELSE "Population in cities >= 300K population" END AS def
+CASE WHEN toInteger(row.year) < 2012 THEN "Population in cities >= 100K pax" ELSE "Population in cities >= 300K pax" END AS def
 MATCH (state:State{cowcode:row.ccode}), (d:Dataset{filename:"NMC_5_0-wsupplementary.csv"}), (y:Year{name:row.year})
 CREATE (state)-[:URBAN_POPULATION{definition:def}]->(f:Fact{
   name:"Urban Population",
   value:myupop,
-  denomination:"population in thousands",
+  denomination:"pax in thousands",
   dataSource:myupopSource,
   notes:myupopNote,
   quality:myupopQC,
@@ -1358,7 +1362,7 @@ CREATE (d:Source{
 //  falidUntil:date({year:2016, month:12, day:31}),
   citation:" Zeev Maoz and Errol A. Henderson. 2013. 'The World Religion Dataset, 1945-2010: Logic, Estimates, and Trends.' International Interactions, 39: 265-291.",
   url:"http://correlatesofwar.org/data-sets/world-religion-data",
-  overview:"The World Religion Project (WRP) aims to provide detailed information about religious adherence worldwide from 1945 to 2010. It contains data about the number of adherents by religion in each of the states in the international system. These numbers are given for every half-decade period (1945, 1950,..., 2010). The data record percentages of the state's population that practice a given religion. Some of the religions (as detailed in the Codebook) are divided into religious families. To the extent data are available, the breakdown of adherents within a given religion into religious families is also specified in the Codebook. \nThe project was developed in three stages. The first stage consisted of the formation of a religions tree. A religion tree is a systematic classification of major religions and of religious families within those major religions. The second stage consisted of the identification of major data sources of religious adherence and the collection of data from these sources according to the religion tree classification. The third stage consisted of cleaning the data, reconciling discrepancies of information from different sources, and imputing data for the missing cases.",
+  overview:"The World Religion Project (WRP) aims to provide detailed information about religious adherence worldwide from 1945 to 2010. It contains data about the number of adherents by religion in each of the states in the international system. These numbers are given for every half-decade period (1945, 1950,..., 2010). The data record percentages of the state's pax that practice a given religion. Some of the religions (as detailed in the Codebook) are divided into religious families. To the extent data are available, the breakdown of adherents within a given religion into religious families is also specified in the Codebook. \nThe project was developed in three stages. The first stage consisted of the formation of a religions tree. A religion tree is a systematic classification of major religions and of religious families within those major religions. The second stage consisted of the identification of major data sources of religious adherence and the collection of data from these sources according to the religion tree classification. The third stage consisted of cleaning the data, reconciling discrepancies of information from different sources, and imputing data for the missing cases.",
   purpose:"This data set aims to provide detailed information about religious adherence worldwide since 1945. This data set is hosted by Zeev Maoz, University of California-Davis, and Errol A. Henderson, Pennsylvania State University."
   })
 CREATE (d)-[:PROVIDES]->(:Dataset{
@@ -1444,7 +1448,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"chrstprot"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.chrstprot),percentage:toFloat(row.chrstprotpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.chrstprot),percentage:toFloat(row.chrstprotpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1456,7 +1460,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"chrstcat"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.chrstcat),percentage:toFloat(row.chrstcatpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.chrstcat),percentage:toFloat(row.chrstcatpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1468,7 +1472,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"chrstorth"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.chrstorth),percentage:toFloat(row.chrstorthpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.chrstorth),percentage:toFloat(row.chrstorthpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1480,7 +1484,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"chrstang"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.chrstang),percentage:toFloat(row.chrstangpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.chrstang),percentage:toFloat(row.chrstangpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1492,7 +1496,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"chrstothr"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.chrstothr),percentage:toFloat(row.chrstothrpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.chrstothr),percentage:toFloat(row.chrstothrpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1504,7 +1508,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"chrstgen"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.chrstgen),percentage:toFloat(row.chrstgenpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.chrstgen),percentage:toFloat(row.chrstgenpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1516,7 +1520,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"judorth"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.judorth),percentage:toFloat(row.judorthpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.judorth),percentage:toFloat(row.judorthpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1528,7 +1532,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"judcons"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.jdcons),percentage:toFloat(row.judconspct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.jdcons),percentage:toFloat(row.judconspct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1540,7 +1544,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"judref"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.judref),percentage:toFloat(row.judrefpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.judref),percentage:toFloat(row.judrefpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1552,7 +1556,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"judothr"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.judothr),percentage:toFloat(row.judothrpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.judothr),percentage:toFloat(row.judothrpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1564,7 +1568,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"judgen"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.judgen),percentage:toFloat(row.judgenpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.judgen),percentage:toFloat(row.judgenpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1576,7 +1580,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"islmsun"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.islmsun),percentage:toFloat(row.islmsunpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.islmsun),percentage:toFloat(row.islmsunpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1588,7 +1592,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"islmshi"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.islmshi),percentage:toFloat(row.islmshipct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.islmshi),percentage:toFloat(row.islmshipct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1600,7 +1604,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"islmibd"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.islmibd),percentage:toFloat(row.islmibdpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.islmibd),percentage:toFloat(row.islmibdpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1612,7 +1616,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"islmnat"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.islmnat),percentage:toFloat(row.islmnatpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.islmnat),percentage:toFloat(row.islmnatpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1624,7 +1628,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"islmalw"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.islmalw),percentage:toFloat(row.islmalwpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.islmalw),percentage:toFloat(row.islmalwpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1636,7 +1640,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"islmahm"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.islmahm),percentage:toFloat(row.islmahmpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.islmahm),percentage:toFloat(row.islmahmpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1648,7 +1652,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"islmothr"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.islmothr),percentage:toFloat(row.islmothrpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.islmothr),percentage:toFloat(row.islmothrpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1660,7 +1664,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"islmgen"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.islmgen),percentage:toFloat(row.islmgenpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.islmgen),percentage:toFloat(row.islmgenpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1672,7 +1676,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"budmah"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.budmah),percentage:toFloat(row.budmahpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.budmah),percentage:toFloat(row.budmahpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1684,7 +1688,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"budthr"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.budthr),percentage:toFloat(row.budthrpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.budthr),percentage:toFloat(row.budthrpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1696,7 +1700,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"budothr"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.budothr),percentage:toFloat(row.budothrpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.budothr),percentage:toFloat(row.budothrpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1708,7 +1712,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"budgen"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.budgen),percentage:toFloat(row.budgenpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.budgen),percentage:toFloat(row.budgenpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1720,7 +1724,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"zorogen"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.zorogen),percentage:toFloat(row.zorogenpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.zorogen),percentage:toFloat(row.zorogenpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1732,7 +1736,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"hindgen"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.hindgen),percentage:toFloat(row.hindgenpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.hindgen),percentage:toFloat(row.hindgenpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1744,7 +1748,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"sikhgen"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.sikhgen),percentage:toFloat(row.sikhgenpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.sikhgen),percentage:toFloat(row.sikhgenpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1756,7 +1760,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"shntgen"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.shntgen),percentage:toFloat(row.shntgenpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.shntgen),percentage:toFloat(row.shntgenpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1768,7 +1772,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"bahgen"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.bahgen),percentage:toFloat(row.bahgenpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.bahgen),percentage:toFloat(row.bahgenpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1780,7 +1784,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"taogen"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.taogen),percentage:toFloat(row.taogenpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.taogen),percentage:toFloat(row.taogenpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1792,7 +1796,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"jaingen"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.jaingen),percentage:toFloat(row.jaingenpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.jaingen),percentage:toFloat(row.jaingenpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1804,7 +1808,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"confgen"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.confgen),percentage:toFloat(row.confgenpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.confgen),percentage:toFloat(row.confgenpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1816,7 +1820,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"syncgen"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.syncgen),percentage:toFloat(row.syncgenpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.syncgen),percentage:toFloat(row.syncgenpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1828,7 +1832,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"anmgen"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.anmgen),percentage:toFloat(row.anmgenpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.anmgen),percentage:toFloat(row.anmgenpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1840,7 +1844,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"nonrelig"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.nonrelig),percentage:toFloat(row.nonreligpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.nonrelig),percentage:toFloat(row.nonreligpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1852,7 +1856,7 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"othrgen"})
 WITH *
-MERGE (d)-[:CONTRIBUTES]->(f:Fact{population:toInteger(row.othrgen),percentage:toFloat(row.othrgenpct)})-[:DURING]->(y)
+MERGE (d)-[:CONTRIBUTES]->(f:Fact{pax:toInteger(row.othrgen),percentage:toFloat(row.othrgenpct)})-[:DURING]->(y)
 MERGE (s)-[:RELIGION_POP]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode, 
   f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab), 
@@ -1889,7 +1893,7 @@ CREATE (d:Source{
   url:"http://correlatesofwar.org/data-sets/MIDs",
   host:"Glenn Palmer (Penn State)",
   poc:"Glenn Palmer (gpalmer@psu.edu)",
-  overview:"This data set contains the list of states in the international system as updated and distributed by the Correlates of War Project. These data sets identify states, their standard Correlates of War 'country code' or state number (used throughout the Correlates of War project data sets), state abbreviations, and dates of membership as states and major powers in the international system. Version 2016 extends the temporal domain of the collection through December 2016. \nThe Correlates of War project includes a state in the international system from 1816-2016 for the following criteria. Prior to 1920, the entity must have had a population greater than 500,000 and have had diplomatic missions at or above the rank of charge d’affaires with Britain and France. After 1920, the entity must be a member of the League of Nations or the United Nations, or have a population greater than 500,000 and receive diplomatic missions from two major powers.",
+  overview:"This data set contains the list of states in the international system as updated and distributed by the Correlates of War Project. These data sets identify states, their standard Correlates of War 'country code' or state number (used throughout the Correlates of War project data sets), state abbreviations, and dates of membership as states and major powers in the international system. Version 2016 extends the temporal domain of the collection through December 2016. \nThe Correlates of War project includes a state in the international system from 1816-2016 for the following criteria. Prior to 1920, the entity must have had a pax greater than 500,000 and have had diplomatic missions at or above the rank of charge d’affaires with Britain and France. After 1920, the entity must be a member of the League of Nations or the United Nations, or have a pax greater than 500,000 and receive diplomatic missions from two major powers.",
   purpose:"This data set records the fluctuating composition of the state system since 1816. It also identifies countries corresponding to the standard Correlates of War country codes."
   })
 // MID-level data and documents
@@ -2024,7 +2028,7 @@ CASE row.hiact
   WHEN "11" THEN "Fortify border"
   WHEN "12" THEN "Border violation"
   WHEN "13" THEN "Blockade"
-  WHEN "14" THEN "Occupation of territory"
+  WHEN "14" THEN "Inclusion of territory"
   WHEN "15" THEN "Seizure"
   WHEN "16" THEN "Attack"
   WHEN "17" THEN "Clash"
@@ -2106,7 +2110,7 @@ CASE row.hiact
   WHEN "11" THEN "Fortify border"
   WHEN "12" THEN "Border violation"
   WHEN "13" THEN "Blockade"
-  WHEN "14" THEN "Occupation of territory"
+  WHEN "14" THEN "Inclusion of territory"
   WHEN "15" THEN "Seizure"
   WHEN "16" THEN "Attack"
   WHEN "17" THEN "Clash"

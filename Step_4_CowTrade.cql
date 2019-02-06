@@ -6,7 +6,7 @@ CREATE (d:Source{
   version:toFloat(4.0),
   published:date({year:2017, month:2, day:20}),
   validFrom:date({year:1870, month:1, day:1}),
-  validUntil:date({year:2014, month:12, day:31}),
+  falidUntil:date({year:2014, month:12, day:31}),
   citation:["Barbieri, Katherine and Omar M. G. Omar Keshk. 2016. Correlates of War Project Trade Data Set Codebook, Version 4.0. Online: http://correlatesofwar.org", "Barbieri, Katherine, Omar M. G. Keshk, and Brian Pollins. 2009. 'TRADING DATA: Evaluating our Assumptions and Coding Rules.' Conflict Management and Peace Science. 26(5): 471-491."],
   host:["Katherine Barbieri (University of South Carolina)", "Omar Keshk (Ohio State University)"],
   poc:"Douglas Gibler (dmgibler@bama.ua.edu)",

@@ -1,6 +1,20 @@
 To use this script, you can invoke Neo4j's cypher-shell from the command line at the root of your Neo4j instance:
 `cat allTheCows.cql | bin/cypher-shell -u neo4j -p <password> --format plain`
-...of course, replacing <password> with your actual Neo4j password.
+
+For example, I am using the Neo4j Desktop application to manage graph databases, so I open the `Terminal` tab in the 
+database management view and the root of the Neo4j instance appears as: 
+
+`cw@cresearch:~/.config/Neo4j Desktop/Application/neo4jDatabases/database-eaebf811-5dc3-445d-9133-3689ae02b7de/installation-3.4.9>`. 
+
+The Cypher scripts to import the data reside with the GEORGE application at: 
+
+`<path-to-george>/src/main/resources/cypherScripts`.
+
+From the Neo4j terminal, I type: 
+
+`cat ~/Code/george/src/main/resources/cypherScripts/Step_1_LevyGPW.cql | bin/cypher-shell -u neo4j -p george --format plain`.
+
+...of course, replacing <password> with the actual Neo4j password.
 
 This Cypher Query Language (CQL) script will import several key peace science data sets into a Neo4j graph database
 for grounding and/or validating agent-based simulation models of world politics and International Relations.
@@ -8,6 +22,9 @@ for grounding and/or validating agent-based simulation models of world politics 
 @author {Clarence Dillon, cdillon2@gmu.edu}
 Department of Computational and Data Sciences, George Mason University College of Science
 
+// Most importantly and before I forget...
+//`username: neo4j`
+//`password: george`
 
 Project Notes: A great deal of the difficulty in developing grounded and validated agent-based simulations is munging
 the numerous (but seemingly never numerous enough) datasets in such a way that records are object-oriented (instead
@@ -76,11 +93,14 @@ Data gets created/imported in this order, with resources metadata (the provenanc
 9. (DONE) import `MIDA_4.csv and import MIDB_4.csv` 
 10. (TODO) import COW Territorial Change  
 11. (DONE) import `MIDLOC_1.1.csv`
-12. (TODO) import Inter-, Intra-, Extra-State Wars  
-13. (TODO) import COW Territorial Contiguities
+12. (TODO)import War Data: 
+    12. (DONE) Inter-State Wars, 
+    12. (TODO) Intra-State Wars, 
+    12. (TODO) Extra-State Wars  
+13. (TODO) Import COW Territorial Contiguities
 14. (DONE) Intergovernmental_Organizations(v2.3)
-15. (TODO) import MID Narratives
-16. (TODO) revise all above scripts so that data is parsed directly from original sources data without modifications.
+15. (TODO) Import MID Narratives
+16. (TODO) Revise all above scripts so that data is parsed directly from original sources data without modifications where possible.
 17. TBD
 18. TBD
 19. TBD
@@ -166,3 +186,29 @@ FOREACH (yr IN years |
 
 For now, I'm using a less crafty method: I wrote all the timeline data into a spreadsheet anc create the timeline by 
 importing that data. It's pedestrian, but solves the immediate problem.
+
+
+### Backup and Restore
+
+The database is always to be found under `data/databases/worldOrderData.db`. Backup and restore goes something like this:
+
+...to backup...
+1. Shut down the database if it's running.
+1. Compress the worldOrderData.db folder.
+
+```bash
+cd <GEORGE root directory>/src/main/resoruces/data/databases
+tar -czf worldOrderData.db.tar.gz worldOrderData.db
+
+```
+...to restore the data...
+
+1. Shut down the database if it's running.
+1. Remove the unwanted database copy (back it up or make a copy if you think you'll want it later)
+1. Uncompress the worldOrderData.tar.gz into the databases folder.
+
+```bash
+cd <GEORGE root directory>/src/main/resoruces/data/databases
+rm -rf worldOrderData.db
+tar -zxf worldOrderData.db.tar.gz 
+```

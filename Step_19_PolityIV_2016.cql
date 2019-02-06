@@ -167,7 +167,7 @@ MERGE (d)-[:CONTRIBUTES{asOf:d.published}]->(f:Fact:DiscretePolityFact{
   from:date({year:toInteger(row.byear), month:toInteger(row.bmonth), day:toInteger(row.bday)}),
   presentCondition:FALSE
 })
-MERGE (state:State{cowcode:row.ccode}) ON CREATE SET state.name = row.country, state.abb = row.scode
+MERGE (state:Polity:State{cowcode:row.ccode}) ON CREATE SET state.name = row.country, state.abb = row.scode
 CREATE (state)<-[r:DESCRIBES_POLITY_OF{
   from:date({year:toInteger(row.byear), month:toInteger(row.bmonth), day:toInteger(row.bday)}),
   presentCondition:FALSE

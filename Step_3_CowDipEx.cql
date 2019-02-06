@@ -49,7 +49,8 @@ LOAD CSV WITH HEADERS FROM "file:///Diplomatic_Exchange_2006v1.csv" AS row
          WHEN "1" THEN "chargé d'affaires"
          WHEN "2" THEN "ambassador"
          ELSE "other" END AS dr2
-  MATCH (s1:State{cowcode:row.ccode1}),(s2:State{cowcode:row.ccode2}), (d:Dataset{name:"Diplomatic Exchange Data"}),(y:Year{name:row.year})
+  MATCH (s1:State{cowcode:row.ccode1}), (s2:State{cowcode:row.ccode2}), (d:Dataset{name:"Diplomatic Exchange Data"}),
+    (y:Year{name:row.year})
   CREATE (d)-[:CONTRIBUTES]->(f1:Fact:DipExFact{
     name:"Diplomatic Exchange",
     version:toFloat(row.version),
