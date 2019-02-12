@@ -96,6 +96,7 @@ CREATE (d)-[c:CONTRIBUTES{asOf:d.updated, version:row.version}]->(f:Fact:Dispute
   ongoingAfter2010:toBoolean(False)
 })-[a:ABOUT]->(i:Dispute{numberV3:row.dispnum3})
 FOREACH (v in CASE WHEN row.dispnum4<>"-9" THEN [1] ELSE [] END | SET i.numberV4 = row.dispnum4);
+RETURN "Completed the Militarized Interstate Disputes, A. File 20 of 24, part 1 of 3.";
 
 // Step 2: expand the facts with more data
 MATCH (d:Dataset{filename:"MIDA_4.2.csv"})
@@ -176,6 +177,7 @@ FOREACH (var IN CASE WHEN row.endday<>"-9" THEN [1] ELSE [] END | SET f.until = 
 FOREACH (var IN CASE WHEN row.recip='1' THEN [1] ELSE [] END | SET f.reciprocalDispute = toBoolean(True) )
 FOREACH (var IN CASE WHEN row.ongo2010='1' THEN [1] ELSE [] END | SET f.ongoingAfter2010 = toBoolean(True) )
 FOREACH (var IN CASE WHEN row.fatalpre<>"-9" THEN [1] ELSE [] END | SET f.preciseFatalities = row.fatalpre );
+RETURN "Completed the Militarized Interstate Disputes, A. File 20 of , part 2 of 3.";
 
 // Finally, link disputes by the link1/link2/link3 values
 MATCH (d:Dataset{filename:"MIDA_4.2.csv"})
@@ -191,6 +193,7 @@ FOREACH (var IN CASE WHEN row.link2<>'0' THEN [1] ELSE [] END | CREATE (d)-[c:CO
 FOREACH (var IN CASE WHEN row.link3<>'0' THEN [1] ELSE [] END | CREATE (d)-[c:CONTRIBUTES{
   asOf:d.updated, version:row.version}]->(f3:Fact{linkTo:row.link3})
   CREATE (i)-[:LINKED]->(f3)-[:LINKED_TO]->(i3) );
+RETURN "Completed the Militarized Interstate Disputes, A. File 20 of  part 3 of 3.";
 
 // MIDB, link states to MIDs
 MATCH (d:Dataset{filename:"MIDB_4.2.csv"})
@@ -276,7 +279,7 @@ FOREACH (var IN CASE WHEN row.orig="1" THEN [1] ELSE [] END | SET f.originatedDi
 FOREACH (var IN CASE WHEN row.revtype1<>"-9" AND row.revtype1<>"0" THEN [1] ELSE [] END | SET f.revisionTypeOne = rev1 )
 FOREACH (var IN CASE WHEN row.revtype2<>"-9" AND row.revtype2<>"0" THEN [1] ELSE [] END | SET f.revisionTypeTwo = rev2 );
 
-RETURN "Completed the Militarized Interstate Disputes, A and B.";
+RETURN "Completed the Militarized Interstate Disputes, B. File 21 of 24";
 
 MATCH (:Source{name:"Militarized Interstate Disputes"})-[:PROVIDES]->(d:Dataset)-[:CONTRIBUTES]->(f:Fact), (w:Week)
   WHERE w.began <= f.from <= w.ended

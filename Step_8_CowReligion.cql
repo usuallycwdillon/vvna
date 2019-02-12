@@ -5,8 +5,8 @@ CREATE (d:Source{
   name:"WRP",
   version:toFloat(1.1),
   published:date({year:2013, month:7, day:1}),
-//  validFrom:date({year:1816, month:1, day:1}),
-//  falidUntil:date({year:2016, month:12, day:31}),
+  validFrom:date({year:1816, month:1, day:1}),
+  validUntil:date({year:2016, month:12, day:31}),
   citation:" Zeev Maoz and Errol A. Henderson. 2013. 'The World Religion Dataset, 1945-2010: Logic, Estimates, and Trends.' International Interactions, 39: 265-291.",
   url:"http://correlatesofwar.org/data-sets/world-religion-data",
   overview:"The World Religion Project (WRP) aims to provide detailed information about religious adherence worldwide from 1945 to 2010. It contains data about the number of adherents by religion in each of the states in the international system. These numbers are given for every half-decade period (1945, 1950,..., 2010). The data record percentages of the state's pax that practice a given religion. Some of the religions (as detailed in the Codebook) are divided into religious families. To the extent data are available, the breakdown of adherents within a given religion into religious families is also specified in the Codebook. \nThe project was developed in three stages. The first stage consisted of the formation of a religions tree. A religion tree is a systematic classification of major religions and of religious families within those major religions. The second stage consisted of the identification of major data sources of religious adherence and the collection of data from these sources according to the religion tree classification. The third stage consisted of cleaning the data, reconciling discrepancies of information from different sources, and imputing data for the missing cases.",
@@ -102,6 +102,7 @@ f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
 f.dualReligions = toBoolean(FALSE)
 FOREACH (var IN CASE WHEN row.dualrelig<>"1" THEN [1] ELSE [] END | SET f.dualReligions = toBoolean(TRUE));
+RETURN "Done with ";
 
 MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
@@ -115,6 +116,7 @@ f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year), f.year = toInteger(row.year),
 f.dualReligions = toBoolean(FALSE)
 FOREACH (var IN CASE WHEN row.dualrelig<>"1" THEN [1] ELSE [] END | SET f.dualReligions = toBoolean(TRUE));
+RETURN "Done with ";
 
 MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
@@ -532,4 +534,6 @@ f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
 f.dualReligions = toBoolean(FALSE)
 FOREACH (var IN CASE WHEN row.dualrelig="1" THEN [1] ELSE [] END | SET f.dualReligions = toBoolean(TRUE));
-// Done with religion
+
+RETURN "Import of WRP_national.csv was successful. 19 of 24 total files.";
+// I'm done with religion

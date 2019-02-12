@@ -80,6 +80,7 @@ FOREACH (specific IN CASE WHEN trim(row.mem_end_month) <> "" THEN [1] ELSE [] EN
                                                                                                         month:toInteger(row.mem_end_month)}))
 FOREACH (specific IN CASE WHEN trim(row.mem_end_day) <> "" THEN [1] ELSE [] END | SET f.until = date({year:toInteger(row.mem_end_year),
                                                                                                       month:toInteger(row.mem_end_month), day:toInteger(row.mem_end_day)}));
+RETURN "Import of alliance_v4.1_by_member.csv was successful. 16 of  total files and part 1 of 2.";
 
 LOAD CSV WITH HEADERS FROM "file:///alliance_v4.1_by_member.csv" AS row
 MATCH (a:Alliance{cowcode:row.version4id})
@@ -87,7 +88,7 @@ FOREACH (datum IN CASE WHEN row.defense="1" THEN [1] ELSE [] END | SET a:Defense
 FOREACH (datum IN CASE WHEN row.neutrality="1" THEN [1] ELSE [] END | SET a:NeutralityAgreement )
 FOREACH (datum IN CASE WHEN row.nonaggression="1" THEN [1] ELSE [] END | SET a:NonaggressionAgreement )
 FOREACH (datum IN CASE WHEN row.entente="1" THEN [1] ELSE [] END | SET a:Entente );
-RETURN "Successfully loaded the 18th file, alliance_v4.1_by_member";
+RETURN "Import of alliance_v4.1_by_member.csv was successful. 16 of 24 total files and part 2 of 2.";
 
 MATCH (:Source{name:"Formal Alliances"})-[:PROVIDES]->(d:Dataset)-[:CONTRIBUTES]->(f:Fact), (w:Week)
   WHERE w.began <= f.from <= w.ended
@@ -106,7 +107,7 @@ CREATE (d:Source{
   version:toFloat(2.3),
   published:date({year:2010, month:6, day:30}),
   validFrom:date({year:1815, month:1, day:1}),
-  falidUntil:date({year:2005, month:12, day:31}),
+  validUntil:date({year:2005, month:12, day:31}),
   citation:"Pevehouse, Jon C., Timothy Nordstrom, and Kevin Warnke. 2004. 'The COW-2 International Organizations Dataset Version 2.0,' Conflict Management and Peace Science 21:101-119.",
   host:["Timothy Nordstrom (University of Mississippi)", "Jon Pevehouse (University of Wisconsin)","Megan Shannon (University of Colorado-Boulder)"],
   poc:["Timothy Nordstrom (tnordstr@olemiss.edu)", "Jon Pevehouse (pevehous@polisci.wisc.edu)","Megan Shannon (megan.l.shannon@colorado.edu)"],
@@ -180,23 +181,26 @@ CREATE (d)-[:CONTRIBUTES{asOf:d.published}]->(f:Fact:IGOFact{
   name:"IGO Formation",
   from:date({year:toInteger(row.formed)})
 })-[:FORMED_WITHIN]->(y)
-CREATE (i:IGO{cowcode:row.id, updated:"F"})-[fo:FORMED{from:date({year:toInteger(row.formed)})}]->(f)
+MERGE (i:IGO{cowcode:row.id, updated:"F"})-[fo:FORMED{from:date({year:toInteger(row.formed)})}]->(f)
 FOREACH (var IN CASE WHEN row.notes <> "" THEN [1] ELSE [] END | SET i.notes = row.notes )
 FOREACH (var IN CASE WHEN row.inactive <> "" THEN [1] ELSE [] END | SET f.active = toBoolean(FALSE) )
 FOREACH (var IN CASE WHEN row.missingdata <> "" THEN [1] ELSE [] END | SET i.missingData = row.missingdata )
 FOREACH (var IN CASE WHEN row.terminated<> "" THEN [1] ELSE [] END | SET fo.until = date({year:toInteger(row.terminated)}),
-  f.until = date({year:toInteger(row.terminated)}) )
+  f.until = date({year:toInteger(row.terminated)}) );
+RETURN "Import of igo_descriptions_cwd.csv (derived from the documentation) was successful. 17 of 24 total files.";
 
 // ioname+,orgname-,year-,dead+,deaddate+,integrated,replaced,igocode,ionum,longorgname+,sdate+,version,Sources,Sources2
 LOAD CSV WITH HEADERS FROM "file:///igounit_v2.3.csv" AS row
-MERGE (i:IGO{cowcode:row.ionum})-[fo:FORMED]-(f:IGOFact)
+MERGE (i:IGO{cowcode:row.ionum})-[:FORMED]-(f:IGOFact)
   ON CREATE
   SET i.name = row.ioname, i.longname = row.longorgname, i.began = date({year:toInteger(row.sdate)}), i.updated = "T"
-FOREACH (var IN CASE WHEN row.igocode <> "" THEN [1] ELSE [] END | SET i.oldCOW = row.igocode )
-FOREACH (var IN CASE WHEN row.deaddate<> "" THEN [1] ELSE [] END | SET i.ended = date({year:toInteger(row.deaddate)}))
+  FOREACH (var IN CASE WHEN row.igocode <> "" THEN [1] ELSE [] END | SET i.oldCOW = row.igocode )
+  FOREACH (var IN CASE WHEN row.deaddate<> "" THEN [1] ELSE [] END | SET i.ended = date({year:toInteger(row.deaddate)}))
 WITH row, i
-MERGE (i:IGO{cowcode:row.ionum, updated:"F"})
-  ON MATCH
-  SET i.name = row.ioname, i.longname = row.longorgname, i.began = date({year:toInteger(row.sdate)}), i.updated = "T"
-FOREACH (var IN CASE WHEN row.igocode <> "" THEN [1] ELSE [] END | SET i.oldCOW = row.igocode )
-FOREACH (var IN CASE WHEN row.deaddate<> "" THEN [1] ELSE [] END | SET i.ended = date({year:toInteger(row.deaddate)}))
+MATCH (j:IGO{cowcode:row.ionum, updated:"F"})
+SET j.name = row.ioname, j.longname = row.longorgname, j.began = date({year:toInteger(row.sdate)}), j.updated = "T"
+FOREACH (var IN CASE WHEN row.igocode <> "" THEN [1] ELSE [] END | SET j.oldCOW = row.igocode )
+FOREACH (var IN CASE WHEN row.deaddate<> "" THEN [1] ELSE [] END | SET j.ended = date({year:toInteger(row.deaddate)}))
+;
+
+RETURN "Import of igounit_v2.3.csv was successful. 18 of 24 total files.";

@@ -6,7 +6,7 @@ CREATE (d:Source{
   version:toFloat(5.0),
   published:date({year:2017, month:2, day:1}),
   validFrom:date({year:1816, month:1, day:1}),
-  falidUntil:date({year:2012, month:12, day:31}),
+  validUntil:date({year:2012, month:12, day:31}),
   citation:["Singer, J. David, Stuart Bremer, and John Stuckey. (1972). 'Capability Distribution, Uncertainty, and Major Power War, 1820-1965.' in Bruce Russett (ed) Peace, War, and Numbers, Beverly Hills: Sage, 19-48.","Singer, J. David. 1987. 'Reconstructing the Correlates of War Dataset on Material Capabilities of States, 1816-1985' International Interactions, 14: 115-32."],
   url:"http://correlatesofwar.org/data-sets/national-material-capabilities",
   host:["J. Michael Greig (University of North Texas)", "Andrew J. Enterline (University of North Texas)"],
@@ -60,7 +60,7 @@ CREATE (state)-[h:MILEX{
   notes:myMilexNote
 })-[:DURING{year:toInteger(row.year)}]->(y)
 CREATE (d)-[:CONTRIBUTES]->(f);
-RETURN "Successfully imported the 7th (fourth COW) file, NMC_5_0-wsupplementary.csv, part 1";
+RETURN "Successfully imported the 9th file, NMC_5_0-wsupplementary.csv, NMC part 1 of 7";
 
 LOAD CSV WITH HEADERS FROM "file:///NMC_5_0-wsupplementary.csv" AS row
 WITH row,
@@ -76,7 +76,7 @@ CREATE (state)-[:MILPER{definition:"Thousands of military personnel."}]->(f:Fact
   notes:mymilpernote
 })-[:DURING{year:toInteger(row.year)}]->(y)
 CREATE (d)-[:CONTRIBUTES]->(f);
-RETURN "Successfully imported the 7th (fourth COW) file, NMC_5_0-wsupplementary.csv, part 2";
+RETURN "Successfully imported the 9th file, NMC_5_0-wsupplementary.csv, NMC part 2 of 7";
 
 LOAD CSV WITH HEADERS FROM "file:///NMC_5_0-wsupplementary.csv" AS row
 WITH row,
@@ -96,7 +96,7 @@ CREATE (state)-[:IRON_STEEL_PRODUCTION{definition:"Iron and Steel Production"}]-
   anomaly:myirstAC
 })-[:DURING{year:toInteger(row.year)}]->(y)
 CREATE (d)-[:CONTRIBUTES]->(f);
-RETURN "Successfully imported the 7th (fourth COW) file, NMC_5_0-wsupplementary.csv, part 3";
+RETURN "Successfully imported the 9th file, NMC_5_0-wsupplementary.csv, NMC part 3 of 7";
 
 LOAD CSV WITH HEADERS FROM "file:///NMC_5_0-wsupplementary.csv" AS row
 WITH row,
@@ -116,7 +116,7 @@ CREATE (state)-[:ENERGY_CONSUMPTION{definition:"Primary Energy Consumption"}]->(
   anomaly:mypecAC
 })-[:DURING{year:toInteger(row.year)}]->(y)
 CREATE (d)-[:CONTRIBUTES]->(f);
-RETURN "Successfully imported the 7th (fourth COW) file, NMC_5_0-wsupplementary.csv, part 4";
+RETURN "Successfully imported the 9th file, NMC_5_0-wsupplementary.csv, NMC part 4 of 7";
 
 LOAD CSV WITH HEADERS FROM "file:///NMC_5_0-wsupplementary.csv" AS row
 WITH row,
@@ -136,7 +136,7 @@ CREATE (state)-[:POPULATION {definition:"Total Population"}]->(f:Fact:Population
   anomaly:mytpopAC
 })-[:DURING{year:toInteger(row.year)}]->(y)
 CREATE (d)-[:CONTRIBUTES]->(f);
-RETURN "Successfully imported the 7th (fourth COW) file, NMC_5_0-wsupplementary.csv, part 5";
+RETURN "Successfully imported the 9th file, NMC_5_0-wsupplementary.csv, NMC part 5 of 7";
 
 LOAD CSV WITH HEADERS FROM "file:///NMC_5_0-wsupplementary.csv" AS row
 WITH row,
@@ -159,7 +159,7 @@ CREATE (state)-[:URBAN_POPULATION{definition:def}]->(f:Fact:UrbanPopulationFact{
   anomaly:myupopAC
 })-[:DURING{year:toInteger(row.year)}]->(y)
 CREATE (d)-[:CONTRIBUTES]->(f);
-RETURN "Successfully imported the 7th (fourth COW) file, NMC_5_0-wsupplementary.csv, part 6";
+RETURN "Successfully imported the 9th file, NMC_5_0-wsupplementary.csv, NMC part 6 of 7";
 
 LOAD CSV WITH HEADERS FROM "file:///NMC_5_0-wsupplementary.csv" AS row
 MATCH (state:State{cowcode:row.ccode}), (d:Dataset{filename:"NMC_5_0-wsupplementary.csv"}), (y:Year{name:row.year})
@@ -169,4 +169,4 @@ CREATE (state)-[:CINC_SCORE{definition:"Composite Index of National Capability (
   source:"Calculation by original authors"
 })-[:DURING{year:toInteger(row.year)}]->(y)
 CREATE (d)-[:CONTRIBUTES]->(f);
-RETURN "Successfully imported the 7th (fourth COW) file, NMC_5_0-wsupplementary.csv, part 7 of 7";
+RETURN "Successfully imported the 9th file, NMC_5_0-wsupplementary.csv, NMC part 7 of 7";

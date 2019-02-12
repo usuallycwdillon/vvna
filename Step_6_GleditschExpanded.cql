@@ -145,7 +145,6 @@ CREATE (so)-[:DEFINES {
   until:date({year:2002, month:12, day:31})
 });
 
-// UNTESTED: Edit 13 Dec to create fact and then merge patterns onto it; so that the fact is unique to each state member
 MATCH (source:Dataset{filename:"iisystem_modified.csv"}), (sys:System{name:"Expanded State System"})
 LOAD CSV WITH HEADERS FROM "file:///iisystem_modified.csv" AS row
 CREATE (f:Fact:MembershipFact{
@@ -159,7 +158,7 @@ MERGE (state:Polity:State{cowcode:row.ccode})
 FOREACH (specific IN CASE WHEN row.statename <> state.name THEN [1] ELSE [] END | SET state.altName = row.statename)
 FOREACH (specific IN CASE WHEN row.abb <> state.abb THEN [1] ELSE [] END | SET state.altAbb = row.abb)
 CREATE (state)-[:MEMBER]->(f);
-RETURN "Successfully imported the 8th file, Gleditsch's Expanded State System";
+RETURN "Import of iisystem_modified.csv was successful. File 1 of 6 files from Gleditsch's expanded system data, 10 of 24 total files.";
 
 // Microstates
 MATCH (so:Source{project:"Gleditsch Expanded Data", name:"Revised List of Independent States", version:5.0})
@@ -172,8 +171,7 @@ CREATE (so)-[:DEFINES {
   until:date({year:2002, month:12, day:31})
 });
 
-MATCH (source:Dataset{filename:"microstatesystem_modified.csv"})
-MATCH (sys:System{name:"Microstate System"})
+MATCH (source:Dataset{filename:"microstatesystem_modified.csv"}), (sys:System{name:"Microstate System"})
 LOAD CSV WITH HEADERS FROM "file:///microstatesystem_modified.csv" AS row
 CREATE (f:Fact:MembershipFact{
   name:"System Membership",
@@ -187,31 +185,30 @@ MERGE (state)-[:MEMBER]->(f)
 FOREACH (specific IN CASE WHEN row.statename <> state.name THEN [1] ELSE [] END | SET state.altName = row.statename)
 FOREACH (specific IN CASE WHEN row.abb <> state.abb THEN [1] ELSE [] END | SET state.altAbb = row.abb)
 CREATE (state)-[:MEMBER]->(f);
-RETURN "Successfully imported the 9th file, Gleditsch's Microstate System";
+RETURN "Import of microstatesystem_modified.csv was successful. File 2 of 6 files from Gleditsch's expanded system data, 11 of 24 total files.";
+// Done with the expanded system
 
 // Gleditsch Expanded War Data
 MATCH (d:Source{project:"Gleditsch Expanded Data", name:"Expanded War Data"})
-MATCH (f:Dataset{filename:"exp_cw_modified.csv"})
-LOAD CSV WITH HEADERS FROM "file:///exp_cw_modified.csv" AS row
 CREATE (d)-[:DEFINES]->(ew:List{name:"Expanded Wars"})
-CREATE (d)-[:DEFINES]->(ecw:List{name:"Expanded Civil Wars"})
-CREATE (f)-[:CONTRIBUTES]->(ewf:Fact:WarFact{
+CREATE (d)-[:DEFINES]->(ecw:List{name:"Expanded Civil Wars"});
+
+MATCH (f:Dataset{filename:"exp_cw_modified.csv"}), (ew:List{name:"Expanded Wars"}), (ecw:List{name:"Expanded Civil Wars"})
+LOAD CSV WITH HEADERS FROM "file:///exp_cw_modified.csv" AS row
+WITH row, f, ew, ecw
+MERGE (f)-[:CONTRIBUTES]->(ewf:Fact:WarFact{
   name:"Expanded War",
   from:date({year:toInteger(row.syear), month:toInteger(row.smon), day:toInteger(row.sday)}),
-  until:date({year:toInteger(row.eyear), month:toInteger(row.emon), day:toInteger(row.eday)})
+  until:date({year:toInteger(row.eyear), month:toInteger(row.emon), day:toInteger(row.eday)}),
+  subject:row.warname,
+  predicate:'IS_ONE',
+  object:ew.name
 })-[:ONE_OF]->(ew)
-CREATE (f)-[:CONTRIBUTES]->(ecwf:Fact:WarFact{
-  name:"Expanded Civil War",
-  from:date({year:toInteger(row.syear), month:toInteger(row.smon), day:toInteger(row.sday)}),
-  until:date({year:toInteger(row.eyear), month:toInteger(row.emon), day:toInteger(row.eday)})
-})-[:ONE_OF]->(ecw)
+CREATE (ewf)-[:ONE_OF]->(ecw)
 CREATE (war:War{
   gwid:row.warid,
   name:row.warname,
-  cowcode:split(row.newcow, ";"),
-  cow94:row.cow94,
-  cow00:row.cow00,
-  oldwarId:row.oldwid
+  cowcode:split(row.newcow, ";")
 })-[:IS_ONE{
   from:date({year:toInteger(row.syear), month:toInteger(row.smon), day:toInteger(row.sday)}),
   until:date({year:toInteger(row.eyear), month:toInteger(row.emon), day:toInteger(row.eday)})
@@ -219,8 +216,11 @@ CREATE (war:War{
 CREATE (war)-[:IS_ONE{
   from:date({year:toInteger(row.syear), month:toInteger(row.smon), day:toInteger(row.sday)}),
   until:date({year:toInteger(row.eyear), month:toInteger(row.emon), day:toInteger(row.eday)})
-  }]->(ecwf);
-RETURN "Successfully loaded the 10th file, Gleditsch's expanded civil and Intra-state wars";
+  }]->(ecwf)
+FOREACH (val in CASE WHEN row.cow94 <> "" THEN [1] ELSE [] END | SET war.cow94 = row.cow94)
+FOREACH (val in CASE WHEN row.cow00 <> "" THEN [1] ELSE [] END | SET war.cow00 = row.cow00)
+FOREACH (val in CASE WHEN row.oldwid <> "" THEN [1] ELSE [] END | SET war.oldwarId = row.oldwid) ;
+RETURN "Import of exp_cw_modified.csv was successful. File 3 of 6 files from Gleditsch's expanded system data, 12 of 24 total files.";
 
 // Import Civil and Intra-state War participation
 //warid,statenum,syr,smon,sday,eyr,emon,eday,deaths,intnl,outcome,continuation
@@ -228,12 +228,15 @@ MATCH (g:Dataset{filename:"exp_cwpart_modified.csv"})
 LOAD CSV WITH HEADERS FROM "file:///exp_cwpart_modified.csv" AS row
 MATCH (state:Polity:State{cowcode:row.statenum}),(war:War{gwid:row.warid})
 FOREACH (cont in CASE WHEN row.continuation = 'F' THEN [1] ELSE [] END |
-  CREATE (g)-[:CONTRIBUTES]->(f:Fact:WarmakingFact{
+  CREATE (g)-[:CONTRIBUTES]->(f:Fact:WarParticipationFact{
     from:date({year:toInteger(row.syr), month:toInteger(row.smon), day:toInteger(row.sday)}),
     until:date({year:toInteger(row.eyr), month:toInteger(row.emon), day:toInteger(row.eday)}),
     magnitude:toFloat(row.deaths),
     continuation:toBoolean(row.continuation),
-    name:"Expanded Civil War Paricipation"})-[:PARTICIPATED_IN]->(war)
+    name:"Expanded Civil War Paricipation",
+    subject:state.name,
+    predicate:'PARTICIPATED',
+    object:war.name})-[:PARTICIPATED_IN]->(war)
   CREATE (state)-[:PARTICIPATED{
     from:date({year:toInteger(row.syr), month:toInteger(row.smon), day:toInteger(row.sday)}),
     until:date({year:toInteger(row.eyr), month:toInteger(row.emon), day:toInteger(row.eday)})
@@ -243,12 +246,15 @@ MATCH (g:Dataset{filename:"exp_cwpart_modified.csv"})
 LOAD CSV WITH HEADERS FROM "file:///exp_cwpart_modified.csv" AS row
 MATCH (state:Polity:State{cowcode:row.statenum}),(war:War{gwid:row.warid})
 FOREACH (cont in CASE WHEN row.continuation = 'T' THEN [1] ELSE [] END |
-  CREATE (g)-[:CONTRIBUTES]->(f:Fact:WarmakingFact{
+  CREATE (g)-[:CONTRIBUTES]->(f:Fact:WarParticipationFact{
     from:date({year:toInteger(row.syr), month:toInteger(row.smon), day:toInteger(row.sday)}),
     until:date({year:toInteger(row.eyr), month:toInteger(row.emon), day:toInteger(row.eday)}),
     magnitude:toFloat(row.deaths),
     continuation:toBoolean(row.continuation),
-    name:"Expanded Civil War Paricipation"})-[:CONTINUED_IN]->(war)
+    name:"Expanded Civil War Paricipation",
+    subject:state.name,
+    predicate:'CONTINUED',
+    object:war.name})-[:CONTINUED_IN]->(war)
   CREATE (state)-[:CONTINUED]->(f) ) ;
 
 // Import participation in civil and intra-state wars
@@ -273,25 +279,33 @@ WITH *,
     END AS intl
 MERGE (f)-[:RESULTED]->(r:Result{outcome:verdict, internationalized:intl})-[:RESULT_FOR]->(state)
 MERGE (r)-[:RESULT_OF]->(war);
-RETURN "Successfully loaded the 11th file, Gleditsch's expanded civil and Intra-state war participation data.";
+RETURN "Import of exp_cwpart.csv was successful. File 4 of 6 files from Gleditsch's expanded system data, 13 of 24 total files.";
 
 // Import Interstate Wars
 MATCH (d:Source{project:"Gleditsch Expanded Data", name:"Expanded War Data"})
-MATCH (f:Dataset{filename:"exp_iw_modified.csv"})
-LOAD CSV WITH HEADERS FROM "file:///exp_iw_modified.csv" AS row
 CREATE (d)-[:COVERS]->(ew:List{name:"Expanded Wars"})
-CREATE (d)-[:COVERS]->(eiw:List{name:"Expanded Interstate Wars"})
-CREATE (f)-[:CONTRIBUTES]->(ewf:Fact:WarFact{
+CREATE (d)-[:COVERS]->(eiw:List{name:"Expanded Interstate Wars"});
+
+MATCH (f:Dataset{filename:"exp_iw_modified.csv"}), (ew:List{name:"Expanded Wars"}), (eiw:List{name:"Expanded Interstate Wars"})
+LOAD CSV WITH HEADERS FROM "file:///exp_iw_modified.csv" AS row
+WITH row, f, ew, eiw
+MERGE (f)-[:CONTRIBUTES]->(ewf:Fact:WarFact{
   name:"Expanded Interstate War",
-  from:date({year:toInteger(row.syear), month:toInteger(row.smon), day:toInteger(row.sday)}),
-  until:date({year:toInteger(row.eyear), month:toInteger(row.emon), day:toInteger(row.eday)})
+  from:date({year:toInteger(row.syr), month:toInteger(row.smon), day:toInteger(row.sday)}),
+  until:date({year:toInteger(row.eyear), month:toInteger(row.emon), day:toInteger(row.eday)}),
+  subject:row.warname,
+  predicate:'IS_ONE',
+  object:ew.name
 })-[:ONE_OF]->(ew)
-CREATE (f)-[:CONTRIBUTES]->(eiwf:Fact:WarFact{
+MERGE (f)-[:CONTRIBUTES]->(eiwf:Fact:WarFact{
   name:"Expanded Interstate War",
-  from:date({year:toInteger(row.syear), month:toInteger(row.smon), day:toInteger(row.sday)}),
-  until:date({year:toInteger(row.eyear), month:toInteger(row.emon), day:toInteger(row.eday)})
+  from:date({year:toInteger(row.syr), month:toInteger(row.smon), day:toInteger(row.sday)}),
+  until:date({year:toInteger(row.eyear), month:toInteger(row.emon), day:toInteger(row.eday)}),
+  subject:row.warname,
+  predicate:'IS_ONE',
+  object:eiw.name
 })-[:ONE_OF]->(eiw)
-CREATE (war:War{
+MERGE (war:War{
   gwid:row.warid,
   name:row.warname,
   cowcode:split(row.newcow,  ";"),
@@ -299,49 +313,56 @@ CREATE (war:War{
   cow00:row.cow00,
   oldwarId:row.oldwid
 })-[:IS_ONE{
-  from:date({year:toInteger(row.syear), month:toInteger(row.smon), day:toInteger(row.sday)}),
+  from:date({year:toInteger(row.syr), month:toInteger(row.smon), day:toInteger(row.sday)}),
   until:date({year:toInteger(row.eyear), month:toInteger(row.emon), day:toInteger(row.eday)})
 }]->(ewf)
-CREATE (war)-[:IS_ONE{
-  from:date({year:toInteger(row.syear), month:toInteger(row.smon), day:toInteger(row.sday)}),
-  until:date({year:toInteger(row.eyear), month:toInteger(row.emon), day:toInteger(row.eday)})
+MERGE (war)-[:IS_ONE{
+  from:date({year:toInteger(row.syr), month:toInteger(row.smon), day:toInteger(row.sday)}),
+  until:date({year:toInteger(row.eyr), month:toInteger(row.emon), day:toInteger(row.eday)})
   }]->(eiwf);
-RETURN "Successfully loaded the 16th file, Gleditsch's expanded interstate wars";
+RETURN "Import of exp_iw_modified.csv was successful. File 5 of 6 files from Gleditsch's expanded system data, 14 of 24 total files.";
 
 //warid,statenum,syr,smon,sday,eyr,emon,eday,side,deaths,outcome,initiate,newcow,cow94,cow00,oldwid,continuation
 MATCH (g:Dataset{filename:"exp_iwpart_modified.csv"})
 LOAD CSV WITH HEADERS FROM "file:///exp_iwpart_modified.csv" AS row
 MATCH (state:Polity:State{cowcode:row.statenum}),(war:War{gwid:row.warid})
 FOREACH (cont in CASE WHEN row.continuation = 'F' THEN [1] ELSE [] END |
-  CREATE (g)-[:CONTRIBUTES]->(f:Fact:WarmakingFact{
+  MERGE (g)-[:CONTRIBUTES]->(f:Fact:WarParticipationFact{
     from:date({year:toInteger(row.syr), month:toInteger(row.smon), day:toInteger(row.sday)}),
     until:date({year:toInteger(row.eyr), month:toInteger(row.emon), day:toInteger(row.eday)}),
-    magnitude:toFloat(row.deaths),
-    continuation:toBoolean(row.continuation),
-    name:"Expanded Interstate War Paricipation"})-[:PARTICIPATED_IN]->(war)
-  CREATE (state)-[:PARTICIPATED{
+    name:"Expanded Interstate War Paricipation",
+    subject:state.name,
+    predicate:'PARTICIPATED',
+    object:war.name})-[:PARTICIPATED_IN]->(war)
+  SET f.continuation = toBoolean(row.continuation)
+  MERGE (state)-[:PARTICIPATED{
     from:date({year:toInteger(row.syr), month:toInteger(row.smon), day:toInteger(row.sday)}),
     until:date({year:toInteger(row.eyr), month:toInteger(row.emon), day:toInteger(row.eday)})
-  }]->(f) );
+  }]->(f)
+    FOREACH (mag in CASE WHEN row.deaths <> "" THEN [1] ELSE [] END | SET f.magnitude = toFloat(row.deaths)) )
+;
 
 //warid,statenum,syr,smon,sday,eyr,emon,eday,side,deaths,outcome,initiate,newcow,cow94,cow00,oldwid,continuation
 MATCH (g:Dataset{filename:"exp_iwpart_modified.csv"})
 LOAD CSV WITH HEADERS FROM "file:///exp_iwpart_modified.csv" AS row
 MATCH (state:Polity:State{cowcode:row.statenum}),(war:War{gwid:row.warid})
 FOREACH (cont in CASE WHEN row.continuation = 'T' THEN [1] ELSE [] END |
-  CREATE (g)-[:CONTRIBUTES]->(f:Fact:WarmakingFact{
+  CREATE (g)-[:CONTRIBUTES]->(f:Fact:WarParticipationFact{
     from:date({year:toInteger(row.syr), month:toInteger(row.smon), day:toInteger(row.sday)}),
     until:date({year:toInteger(row.eyr), month:toInteger(row.emon), day:toInteger(row.eday)}),
     magnitude:toFloat(row.deaths),
     continuation:toBoolean(row.continuation),
-    name:"Expanded Interstate War Paricipation"})-[:CONTINUED_IN]->(war)
+    name:"Expanded Interstate War Paricipation",
+    subject:state.name,
+    predicate:'CONTINUED',
+    object:war.name})-[:CONTINUED_IN]->(war)
   CREATE (state)-[:CONTINUED{
     from:date({year:toInteger(row.syr), month:toInteger(row.smon), day:toInteger(row.sday)}),
     until:date({year:toInteger(row.eyr), month:toInteger(row.emon), day:toInteger(row.eday)})
     }]->(f) );
 
 LOAD CSV WITH HEADERS FROM "file:///exp_iwpart_modified.csv" AS row
-MATCH (state:Polity:State{cowcode:row.statenum})-[:PARTICIPATED]->(f:Fact:WarmakingFact)-[:PARTICIPATED_IN]->(war:War{gwid:row.warid})
+MATCH (state:Polity:State{cowcode:row.statenum})-[:PARTICIPATED]->(f:Fact:WarParticipationFact)-[:PARTICIPATED_IN]->(war:War{gwid:row.warid})
 FOREACH (
 i in CASE WHEN row.initiate = "1" THEN [1] ELSE [] END | MERGE (state)-[:INITIATED]->(f)-[:INITIATOR_OF]->(war)
 )
@@ -359,7 +380,7 @@ WITH *,
     END AS verdict
 CREATE (f)-[:RESULTED]->(r:Result{outcome:verdict})-[:RESULT_FOR]->(state)
 CREATE (r)-[:RESULT_OF]->(war);
-RETURN "Successfully loaded the 12th file, Gleditsch's expanded interstate war paricipation, part 2 of 2";
+RETURN "Import of exp_iwpart.csv was successful. File 6 of 6 files from Gleditsch's expanded system data, 15 of 24 total files.";
 // End Interstate War participation
 
 MATCH (:Source{project:"Gleditsch Expanded Data"})-[:PROVIDES]->(d:Dataset)-[:CONTRIBUTES]->(f:Fact), (w:Week)

@@ -6,7 +6,7 @@ CREATE (d:Source{
   version:toFloat(4.0),
   published:date({year:2017, month:2, day:20}),
   validFrom:date({year:1870, month:1, day:1}),
-  falidUntil:date({year:2014, month:12, day:31}),
+  validUntil:date({year:2014, month:12, day:31}),
   citation:["Barbieri, Katherine and Omar M. G. Omar Keshk. 2016. Correlates of War Project Trade Data Set Codebook, Version 4.0. Online: http://correlatesofwar.org", "Barbieri, Katherine, Omar M. G. Keshk, and Brian Pollins. 2009. 'TRADING DATA: Evaluating our Assumptions and Coding Rules.' Conflict Management and Peace Science. 26(5): 471-491."],
   host:["Katherine Barbieri (University of South Carolina)", "Omar Keshk (Ohio State University)"],
   poc:"Douglas Gibler (dmgibler@bama.ua.edu)",
@@ -97,7 +97,7 @@ LOAD CSV WITH HEADERS FROM "file:///National_COW_4.0.csv" AS row
   FOREACH (val IN CASE WHEN row.alt_exports<>"-9" THEN [1] ELSE [] END | SET ef.altExports = row.alt_exports )
   FOREACH (val IN CASE WHEN row.version<>"" THEN [1] ELSE [] END | SET ec.version = row.version);
 
-RETURN "Successfully imported National Trade data";
+RETURN "Successfully imported the National_COW_4.0.csv file. It's 1 of 2 trade files and 7 of 24 total.";
 
 // Dyadic Trade data
 // This file is also quite large and caches a lot of data (all the states, twice). It produces
@@ -107,10 +107,21 @@ USING PERIODIC COMMIT 500
 LOAD CSV WITH HEADERS FROM "file:///Dyadic_COW_4.0.csv" AS row
   MATCH (y:Year{name:row.year}),(s1:State{cowcode:row.ccode1}),
         (s2:State{cowcode:row.ccode2}),(d:Dataset{filename:"Dyadic_COW_4.0.csv"})
-  MERGE (d)-[c1:CONTRIBUTES]->(f1:Fact:ImportFromFact{name:"Import", currency:"Millions in 2017 USD"})-[:IMPORTED_FROM]->(s2)
-  MERGE (s1)-[:IMPORTED]->(f1)-[:DURING{year:toInteger(row.year)}]->(y)
-  MERGE (d)-[c2:CONTRIBUTES]->(f2:Fact:ImportFromFact{name:"Import", currency:"Millions in 2017 USD"})-[:IMPORTED_FROM]->(s1)
-  MERGE (s2)-[:IMPORTED]->(f2)-[:DURING{year:toInteger(row.year)}]->(y)
+  CREATE (d)-[c1:CONTRIBUTES]->(f1:Fact:ImportFromFact{
+    name:"Import", 
+    currency:"Millions in 2017 USD",
+    subject:s1.name,
+    predicate:'IMPORTED_FROM',
+    object:s2.name
+    })-[:IMPORTED_FROM]->(s2)
+  CREATE (s1)-[:IMPORTED]->(f1)-[:DURING{year:toInteger(row.year)}]->(y)
+  CREATE (d)-[c2:CONTRIBUTES]->(f2:Fact:ImportFromFact{
+    name:"Import", 
+    currency:"Millions in 2017 USD",
+    subject:s2.name,
+    predicate:'IMPORTED_FROM',
+    object:s1.name})-[:IMPORTED_FROM]->(s1)
+  CREATE (s2)-[:IMPORTED]->(f2)-[:DURING{year:toInteger(row.year)}]->(y)
   WITH *,
     CASE row.source1
       WHEN "-9" THEN "Missing data"
@@ -162,6 +173,8 @@ LOAD CSV WITH HEADERS FROM "file:///Dyadic_COW_4.0.csv" AS row
     SET f2.tradeDip = row.tradedip )
   FOREACH (val IN CASE WHEN row.version<>"-9" THEN [1] ELSE [] END |
     SET c1.version = row.version
-    SET c2.version = row.version );
+    SET c2.version = row.version )
+RETURN "Imported about 500 more dyadic trade facts...";
+RETURN "Import of Dyadic_COW_4.0.csv was successful. Files 2 of 2 COW Trade files, 8 of 24 total files.";
 // Complete Trade
 RETURN "Trade is complete";

@@ -1,12 +1,12 @@
-//// TODO: COW War Data
-//// COW War Data
+//// TODO: COW War Data for Non-state, Extra-state and Intra-state wars.
+
 CREATE (d:Source{
   project:'Correlates of War',
   name:'War Data v4.0',
   version:toFloat(4.0),
   published:date({year:2010, month:3}),
   validFrom:date({year:1816, month:1, day:1}),
-  falidUntil:date({year:2016, month:12, day:31}),
+  validUntil:date({year:2016, month:12, day:31}),
   citation:'Sarkees, Meredith Reid and Frank Wayman (2010). Resort to War: 1816 - 2007. Washington DC: CQ Press.',
   url:'http://correlatesofwar.org/data-sets/COW-war',
   host:["Meredith Sarkees (Global Women's Leadership in International Security)", 'Frank Wayman (University of Michigan-Dearborn)'],
@@ -136,12 +136,20 @@ CREATE (d)-[:DEFINES]->(:Region{name:"Oceana"});
 // 2        -8      600       4
 MATCH (d:Dataset{filename:'Inter-StateWarData_v4.0.csv'}), (inters:List{name:'Inter-State Wars'})
 LOAD CSV WITH HEADERS FROM 'file:///Inter-StateWarData_v4.0.csv' AS row
-MERGE (d)-[:CONTRIBUTES]->(f:Fact:WarFact{name:'Inter-State War'})-[:ONE_OF]->(inters)
-MERGE (d)-[:CONTRIBUTES]->(wf:Fact:WarmakingFact{
+MERGE (d)-[:CONTRIBUTES]->(f:Fact:WarFact{
+  name:'Inter-State War',
+  subject:row.WarName,
+  predicate:'IS_ONE',
+  object:inters.name
+  })-[:ONE_OF]->(inters)
+MERGE (w:War{cowcode:row.WarNum, name:row.WarName, warType:row.WarType})-[:IS_ONE]->(f)
+MERGE (d)-[:CONTRIBUTES]->(wf:Fact:WarParticipationFact{
   subject:row.StateName,
-  predicate:'PARTICIPATED_IN',
-  object:row.WarName
-})-[pi:PARTICIPATED_IN]->(w:War{cowcode:row.WarNum, name:row.WarName, warType:row.WarType})-[:IS_ONE]->(f)
+  predicate:'PARTICIPATED',
+  object:row.WarName,
+  from:date({year:toInteger(row.StartYear1), month:toInteger(row.StartMonth1), day:toInteger(row.StartDay1)}),
+  until:date({year:toInteger(row.EndYear1), month:toInteger(row.EndMonth1), day:toInteger(row.EndDay1)})
+})-[pi:PARTICIPATED_IN]->(w)
 WITH *
 MATCH (s:State{cowcode:toString(row.ccode)})
 MATCH (whr:Region{name:'Western Hemisphere'})
@@ -152,23 +160,23 @@ MATCH (asr:Region{name:"Asia"})
 MATCH (ocr:Region{name:"Oceana"})
 CREATE (s)-[p:PARTICIPATED{
   side:row.side,
-  fromDate:date({year:row.startYear1}),
-  untilDate:date({year:row.endYear1}),
+  from:date({year:toInteger(row.StartYear1), month:toInteger(row.StartMonth1), day:toInteger(row.StartDay1)}),
+  until:date({year:toInteger(row.EndYear1), month:toInteger(row.EndMonth1), day:toInteger(row.EndDay1)}),
   initiated:false
 }]->(wf)
 WITH *,
   CASE row.Outcome
-    WHEN 1 THEN 'Winner'
-    WHEN 2 THEN 'Loser'
-    WHEN 3 THEN 'Compromise/Tie'
-    WHEN 4 THEN 'The war transformed into another type of war'
-    WHEN 5 THEN 'The war is ongoing of 12/31/2007'
-    WHEN 6 THEN 'Stalemate'
-    WHEN 7 THEN 'Conflict continues at below war level'
-    WHEN 8 THEN 'changed sides'
+    WHEN '1' THEN 'Winner'
+    WHEN '2' THEN 'Loser'
+    WHEN '3' THEN 'Compromise/Tie'
+    WHEN '4' THEN 'The war transformed into another type of war'
+    WHEN '5' THEN 'The war is ongoing of 12/31/2007'
+    WHEN '6' THEN 'Stalemate'
+    WHEN '7' THEN 'Conflict continues at below war level'
+    WHEN '8' THEN 'changed sides'
     ELSE 'Unknown'
   END AS outcome
-FOREACH (val IN CASE WHEN row.WhereFought = "1" THEN [1] ELSE [] END | MERGE (wf)-[:OCCURED_IN]->(whr))
+FOREACH (val IN CASE WHEN row.WhereFought = '1' THEN [1] ELSE [] END | MERGE (wf)-[:OCCURED_IN]->(whr))
 FOREACH (val IN CASE WHEN row.WhereFought = '2' THEN [1] ELSE [] END | MERGE (wf)-[:OCCURED_IN]->(eur))
 FOREACH (val IN CASE WHEN row.WhereFought = '4' THEN [1] ELSE [] END | MERGE (wf)-[:OCCURED_IN]->(afr))
 FOREACH (val IN CASE WHEN row.WhereFought = '6' THEN [1] ELSE [] END | MERGE (wf)-[:OCCURED_IN]->(mer))
@@ -218,35 +226,30 @@ FOREACH (val IN CASE WHEN row.WhereFought = '19' THEN [1] ELSE [] END |
   MERGE (wf)-[:OCCURED_IN]->(mer)
   MERGE (wf)-[:OCCURED_IN]->(ocr)
 )
-FOREACH (val IN CASE WHEN row.Outcome >     0 THEN [1] ELSE [] END | SET pi.outcome = outcome )
-FOREACH (mon IN CASE WHEN row.StartMonth1 > 0 THEN [1] ELSE [] END | SET p.fromDate = date({year:row.StartYear1, month:row.StartMonth1}) )
-FOREACH (day IN CASE WHEN row.StartDay1 >   0 THEN [1] ELSE [] END | SET p.fromDate = date({year:row.StartYear1, month:row.StartMonth1, day:row.StartDay1}) )
-FOREACH (mon IN CASE WHEN row.EndMonth1 >   0 THEN [1] ELSE [] END | SET p.untilDate = date({year:row.EndYear1, month:row.EndMonth1}) )
-FOREACH (day IN CASE WHEN row.EndDay1 >     0 THEN [1] ELSE [] END | SET p.untilDate = date({year:row.EndYear1, month:row.EndMonth1, day:row.EndDay1}) )
-FOREACH (yer IN CASE WHEN row.StartYear2 >  0 THEN [1] ELSE [] END |
+FOREACH (val IN CASE WHEN toInteger(row.Outcome) >     0 THEN [1] ELSE [] END | SET pi.outcome = outcome )
+FOREACH (yer IN CASE WHEN toInteger(row.StartYear2) >  0 THEN [1] ELSE [] END |
   CREATE (s)-[c:CONTINUED]->(wf)
-  FOREACH (mon IN CASE WHEN row.StartMonth2 > 0 THEN [1] ELSE [] END | SET c.fromDate = date({year:row.StartYear2, month:row.StartMonth2}) )
-  FOREACH (day IN CASE WHEN row.StartDay2 >   0 THEN [1] ELSE [] END | SET c.fromDate = date({year:row.StartYear2, month:row.StartMonth2, day:row.StartDay2}) )
-  FOREACH (mon IN CASE WHEN row.EndMonth2 >   0 THEN [1] ELSE [] END | SET c.untilDate = date({year:row.EndYear2, month:row.EndMonth2}) )
-  FOREACH (day IN CASE WHEN row.EndDay2 >     0 THEN [1] ELSE [] END | SET c.untilDate = date({year:row.EndYear2, month:row.EndMonth2, day:row.EndDay2}) )
+  FOREACH (mon IN CASE WHEN toInteger(row.StartMonth2) > 0 THEN [1] ELSE [] END | SET c.from = date(
+    {year:toInteger(row.StartYear2), month:toInteger(row.StartMonth2)}) )
+  FOREACH (day IN CASE WHEN toInteger(row.StartDay2) >   0 THEN [1] ELSE [] END | SET c.from = date(
+    {year:toInteger(row.StartYear2), month:toInteger(row.StartMonth2), day:toInteger(row.StartDay2)}) )
+  FOREACH (mon IN CASE WHEN toInteger(row.EndMonth2) >   0 THEN [1] ELSE [] END | SET c.until = date(
+    {year:toInteger(row.EndYear2), month:toInteger(row.EndMonth2)}) )
+  FOREACH (day IN CASE WHEN toInteger(row.EndDay2) >     0 THEN [1] ELSE [] END | SET c.until = date(
+    {year:toInteger(row.EndYear2), month:toInteger(row.EndMonth2), day:toInteger(row.EndDay2)}) )
 )
-FOREACH (val IN CASE WHEN row.Initiator <   2 THEN [1] ELSE [] END | SET p.initiated = true )
-FOREACH (val IN CASE WHEN row.BatDeaths >   0 THEN [1] ELSE [] END | SET wf.deaths = row.BatDeaths );
+FOREACH (val IN CASE WHEN toInteger(row.Initiator) <   2 THEN [1] ELSE [] END | SET p.initiated = true )
+FOREACH (val IN CASE WHEN toInteger(row.BatDeath) >   -1 THEN [1] ELSE [] END | SET wf.magnitude = toInteger(row.BatDeath));
+RETURN "Completed the Inter-StateWarData_v4.0.csv File 22 of 24";
 
-MATCH (d:Dataset{filename:'Inter-StateWarData_v4.0.csv'})
-LOAD CSV WITH HEADERS FROM 'file:///Inter-StateWarData_v4.0.csv' AS row
-MERGE (d)-[:CONTRIBUTES]->(wf:Fact:WarmakingFact{
-  subject:row.StateName,
-  predicate:'PARTICIPATED_IN',
-  object:row.WarName
-})-[:PARTICIPATED_IN]->(nw:War{cowode:row.WarNum})
-WITH *
-MATCH (ow:War{cowode:row.TransFrom})
-FOREACH (val IN CASE WHEN row.TransFrom > 0 THEN [1] ELSE [] END |
-  MERGE (d)-[:CONTRIBUTES]->(f:WarmakingFact)
-  MERGE (ow)-[:TRANSFORMS]->(f)-[:TRANSFORMS_TO]->(nw)
-);
-// End of Inter-State Wars
+MATCH (:Source)-[:PROVIDES]->(d:Dataset{filename:'Inter-StateWarData_v4.0.csv'})-[:CONTRIBUTES]->(f:Fact), (w:Week)
+  WHERE w.began <= f.from <= w.ended
+MERGE (f)-[:FROM_WEEK]->(w);
+
+MATCH (:Source)-[:PROVIDES]->(d:Dataset{filename:'Inter-StateWarData_v4.0.csv'})-[:CONTRIBUTES]->(f:Fact), (w:Week)
+  WHERE w.began <= f.until <= w.ended
+MERGE (f)-[:UNTIL_WEEK]->(w);
+// End of Inter-State Wars until it's time to relate them to non-state, intra-state and extra-state wars
 
 // TODO: Revisit this Intra-State date later; too much work to parse this with too little payoff; Gleditsch's data is clean.
 //                                          /--[:PARTICIPATED_IN]--------------
@@ -265,7 +268,7 @@ FOREACH (val IN CASE WHEN row.TransFrom > 0 THEN [1] ELSE [] END |
 //MATCH (l:List{warType:row.WarType})
 //MERGE (d)-[:CONTRIBUTES]->(f:Fact:WarFact{name:l.name})-[:ONE_OF]->(l)
 //FOREACH (val IN CASE WHEN row.SideA > 0 THEN [1] ELSE [] END |
-//  MERGE (d)-[c:CONTRIBUTES{version:toFloat(row.version)}]->(awf:Fact:WarmakingFact{
+//  MERGE (d)-[c:CONTRIBUTES{version:toFloat(row.version)}]->(awf:Fact:WarParticipationFact{
 //    subject:row.SideA,
 //    predicate:'PARTICIPATED_IN',
 //    object:row.WarName
@@ -275,7 +278,7 @@ FOREACH (val IN CASE WHEN row.TransFrom > 0 THEN [1] ELSE [] END |
 //MERGE (w)-[:IS_ONE]->(f)
 //// TODO: split SideA on ',' into list and unwind into nodes
 //FOREACH (val IN CASE WHEN row.SideA > 0 AND row.CcodeA < 0 THEN [1] ELSE [] END |
-//  MERGE (d)-[c:CONTRIBUTES{version:toFloat(row.version)}]->(awfg:Fact:WarmakingFact{
+//  MERGE (d)-[c:CONTRIBUTES{version:toFloat(row.version)}]->(awfg:Fact:WarParticipationFact{
 //    subject:row.SideA,
 //    predicate:'PARTICIPATED_IN',
 //    object:row.WarName
@@ -283,7 +286,7 @@ FOREACH (val IN CASE WHEN row.TransFrom > 0 THEN [1] ELSE [] END |
 //  MERGE (g:NonState{cowcode:toString(row.CcodeA)})-[:PARTICIPATED]->(awfg)
 //)
 //FOREACH (val IN CASE WHEN row.SideB > 0 THEN [1] ELSE [] END |
-//  MERGE (d)-[c:CONTRIBUTES{version:toFloat(row.version)}]->(bwf:Fact:WarmakingFact{
+//  MERGE (d)-[c:CONTRIBUTES{version:toFloat(row.version)}]->(bwf:Fact:WarParticipationFact{
 //    subject:row.SideB,
 //    predicate:'PARTICIPATED_IN',
 //    object:row.WarName
@@ -292,7 +295,7 @@ FOREACH (val IN CASE WHEN row.TransFrom > 0 THEN [1] ELSE [] END |
 //)
 //// TODO: split SideB on ',' into list and unwind into nodes
 //FOREACH (val IN CASE WHEN row.SideB > 0 AND row.CcodeB < 0 THEN [1] ELSE [] END |
-//  MERGE (d)-[c:CONTRIBUTES{version:toFloat(row.version)}]->(bwfg:Fact:WarmakingFact{
+//  MERGE (d)-[c:CONTRIBUTES{version:toFloat(row.version)}]->(bwfg:Fact:WarParticipationFact{
 //    subject:row.SideB,
 //    predicate:'PARTICIPATED_IN',
 //    object:row.WarName
@@ -302,8 +305,8 @@ FOREACH (val IN CASE WHEN row.TransFrom > 0 THEN [1] ELSE [] END |
 //FOREACH (r IN CASE WHEN row.CcodeA > 0 THEN [1] ELSE [] END |
 //  MERGE (s:State{cowcode:row.CcodeA})-[p:PARTICIPATED{
 //    side:'A',
-//    fromDate:date({year:row.StartYear1}),
-//    untilDate:date({year:row.EndYear1})
+//    from:date({year:row.StartYear1}),
+//    until:date({year:row.EndYear1})
 //  }]->(wf)
 
 // Extra-state Wars
@@ -328,3 +331,17 @@ FOREACH (val IN CASE WHEN row.TransFrom > 0 THEN [1] ELSE [] END |
 //name:"Non-State War",
 
 
+// Collect relationship when one war transforms into another
+// MATCH (d:Dataset{filename:'Inter-StateWarData_v4.0.csv'})
+// LOAD CSV WITH HEADERS FROM 'file:///Inter-StateWarData_v4.0.csv' AS row
+// MATCH (d)-[:CONTRIBUTES]->(wf:Fact:WarFact{
+//   subject:row.StateName,
+//   predicate:'PARTICIPATED_IN',
+//   object:row.WarName
+// })-[:PARTICIPATED_IN]->(nw:War{cowode:row.WarNum})
+// WITH *
+// MATCH (ow:War{cowode:row.TransFrom}), (nw:War{cowode:row.WarNum})
+// FOREACH (val IN CASE WHEN row.TransFrom > 0 THEN [1] ELSE [] END |
+//   MERGE (d)-[:CONTRIBUTES]->(f:WarParticipationFact)
+//   MERGE (ow)-[:TRANSFORMS]->(f)-[:TRANSFORMS_TO]->(nw)
+// );

@@ -87,7 +87,10 @@ MERGE (d)-[:CONTRIBUTES{asOf:d.published}]->(f:Fact:MembershipFact{
   name:"System Membership",
   source:"COW State System",
   from:date({year:toInteger(row.styear), month:toInteger(row.stmonth), day:toInteger(row.stday)}),
-  until:date({year:toInteger(row.endyear), month:toInteger(row.endmonth), day:toInteger(row.endday)})
+  until:date({year:toInteger(row.endyear), month:toInteger(row.endmonth), day:toInteger(row.endday)}),
+  subject:row.statenme,
+  predicate:"MEMBER",
+  object:y.name
 })-[:MEMBER_OF]->(y)
 MERGE (state:Polity:State{
   cowcode:row.ccode,
@@ -103,7 +106,7 @@ MERGE (gp)-[:BECAME]->(s)
 SET gp:Polity:State;
 // End of states2016.csv
 
-RETURN "Successfully imported the 4th file and the first of the COW datasets, states2016.csv";
+RETURN "Import of states2016.csv was successful. Files 1 of 2 COW System files, 4 of 24 total files.";
 
 // Some states are major powers in the COW state system
 MATCH (so:Source{project:"Correlates of War", name:"State System Membership", version:2016})
@@ -144,5 +147,5 @@ MATCH (:Source{name:"State System Membership"})-[:PROVIDES]->(d:Dataset)-[:CONTR
   WHERE w.began <= f.until <= w.ended
 MERGE (f)-[:UNTIL_WEEK]->(w);
 
-RETURN "Successfully imported the 5th (second COW) file, majors2016.csv";
+RETURN "Import of majors2016.csv was successful. Files 2 of 2 COW System files, 5 of 24 total files.";
 // End COW state system membership source

@@ -33,9 +33,6 @@ CREATE (d)-[:PROVIDES]->(:File{
 });
 
 
-// TODO: Update counts after modifying DURATION relations
-// The Diplomatic Exchange dataset added 621640 labels, created 621640 nodes, set 3108200 properties,
-// created 2486560 relationships. It can take a long time. On my machine, it completed after 145788 ms.
 USING PERIODIC COMMIT 1000
 LOAD CSV WITH HEADERS FROM "file:///Diplomatic_Exchange_2006v1.csv" AS row
   WITH row,
@@ -69,4 +66,4 @@ LOAD CSV WITH HEADERS FROM "file:///Diplomatic_Exchange_2006v1.csv" AS row
   CREATE (s2)-[r2:REPRESENTED]->(f2)-[:DURING{year:toInteger(row.year)}]->(y);
 // End of the Dip Ex data
 
-RETURN "Successfully loaded the 6th (third COW) file, Diplomatic_Exchange_2006v1";
+RETURN "Import of Diplomatic_Exchange_2006v1.csv was successful. Files 1 of 1 COW Diplomatic Exchange files, 6 of 24 total files.";

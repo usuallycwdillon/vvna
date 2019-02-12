@@ -202,6 +202,6 @@ FOREACH (val IN CASE WHEN workaround = FALSE THEN [1] ELSE [] END |
       r.until = date({year:toInteger(row.eyear), month:toInteger(row.emonth), day:toInteger(row.eday)})
 );
 
-
+RETURN "Imported all of p4v2016d.csv, file 24 of 24";
 
 
