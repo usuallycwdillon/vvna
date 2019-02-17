@@ -45,7 +45,9 @@ CREATE (d)-[:DEFINES]->(:List{name:"Alliances", type:"Neutrality"})
 CREATE (d)-[:DEFINES]->(:List{name:"Alliances", type:"Non-Aggression"})
 CREATE (d)-[:DEFINES]->(:List{name:"Alliances", type:"Entente"});
 
-MATCH (d:Dataset{filename:"alliance_v4.1_by_member.csv"})
+MATCH (d:Dataset{filename:"alliance_v4.1_by_member.csv"}), (dal:List{name:"Alliances", type:"Defense"}),
+      (nal:List{name:"Alliances", type:"Neutrality"}), (aal:List{name:"Alliances", type:"Non-Aggression"}),
+      (eal:List{name:"Alliances", type:"Entente"})
 LOAD CSV WITH HEADERS FROM "file:///alliance_v4.1_by_member.csv" AS row
 MERGE (s:State{cowcode:row.ccode})
 WITH *,
@@ -61,34 +63,38 @@ MERGE (a:Alliance{
   cowcode:row.version4id,
   ssType:row.ss_type,
   version:row.version,
-  began:date({year:toInteger(row.all_st_year), month:toInteger(row.all_st_month), day:toInteger(row.all_st_day) } )
+  from:date({year:toInteger(row.all_st_year), month:toInteger(row.all_st_month), day:toInteger(row.all_st_day)})
 })
-CREATE (d)-[:CONTRIBUTES]->(f:Fact:AllianceFact{
+MERGE (d)-[:CONTRIBUTES]->(f:Fact:AllianceFact{
+  from:date({year:toInteger(row.all_st_year), month:toInteger(row.all_st_month), day:toInteger(row.all_st_day)}),
+  priorTo1816:prior,
+  beyond2012:beyond,
+  ssType:row.ss_type
+})<-[:IS_ONE]-(a)
+CREATE (d)-[:CONTRIBUTES]->(pf:Fact:AllianceParticipationFact{
   from:date({year:toInteger(row.mem_st_year), month:toInteger(row.mem_st_month), day:toInteger(row.mem_st_day)}),
   priorTo1816:prior,
   beyond2012:beyond
-})-[e:ENTERED_INTO]->(a)
-CREATE (s)-[:ENTERED]->(a)
-WITH f, a, row
-FOREACH (specific IN CASE WHEN trim(row.all_end_year) <> "" THEN [1] ELSE [] END | SET a.ended = date({year:toInteger(row.all_end_year)}))
-FOREACH (specific IN CASE WHEN trim(row.all_end_month) <> "" THEN [1] ELSE [] END | SET a.ended = date({year:toInteger(row.all_end_year),
+})-[ei:ENTERED_INTO]->(a)
+CREATE (s)-[e:ENTERED]->(pf)
+WITH f, pf, a, e, dal, aal, nal, eal, row
+FOREACH (specific IN CASE WHEN trim(row.all_end_year) <> "" THEN [1] ELSE [] END | SET a.until = date({year:toInteger(row.all_end_year)}))
+FOREACH (specific IN CASE WHEN trim(row.all_end_month) <> "" THEN [1] ELSE [] END | SET a.until = date({year:toInteger(row.all_end_year),
                                                                                                         month:toInteger(row.all_end_month)}))
-FOREACH (specific IN CASE WHEN trim(row.all_end_day) <> "" THEN [1] ELSE [] END | SET a.ended = date({year:toInteger(row.all_end_year),
+FOREACH (specific IN CASE WHEN trim(row.all_end_day) <> "" THEN [1] ELSE [] END | SET a.until = date({year:toInteger(row.all_end_year),
                                                                                                       month:toInteger(row.all_end_month), day:toInteger(row.all_end_day)}))
-FOREACH (specific IN CASE WHEN trim(row.mem_end_year) <> "" THEN [1] ELSE [] END | SET f.until = date({year:toInteger(row.mem_end_year)}))
-FOREACH (specific IN CASE WHEN trim(row.mem_end_month) <> "" THEN [1] ELSE [] END | SET f.until = date({year:toInteger(row.mem_end_year),
+FOREACH (specific IN CASE WHEN trim(row.mem_end_year) <> "" THEN [1] ELSE [] END | SET pf.until = date({year:toInteger(row.mem_end_year)}))
+FOREACH (specific IN CASE WHEN trim(row.mem_end_month) <> "" THEN [1] ELSE [] END | SET pf.until = date({year:toInteger(row.mem_end_year),
                                                                                                         month:toInteger(row.mem_end_month)}))
-FOREACH (specific IN CASE WHEN trim(row.mem_end_day) <> "" THEN [1] ELSE [] END | SET f.until = date({year:toInteger(row.mem_end_year),
-                                                                                                      month:toInteger(row.mem_end_month), day:toInteger(row.mem_end_day)}));
-RETURN "Import of alliance_v4.1_by_member.csv was successful. 16 of  total files and part 1 of 2.";
+FOREACH (specific IN CASE WHEN trim(row.mem_end_day) <> "" THEN [1] ELSE [] END | SET pf.until = date({year:toInteger(row.mem_end_year),
+                                                                                                      month:toInteger(row.mem_end_month), day:toInteger(row.mem_end_day)}))
+FOREACH (datum IN CASE WHEN row.defense="1" THEN [1] ELSE [] END | MERGE (a)-[:ONE_OF]-(dal) SET a:DefenseAgreement )
+FOREACH (datum IN CASE WHEN row.neutrality="1" THEN [1] ELSE [] END | MERGE (a)-[:ONE_OF]-(nal) SET a:NeutralityAgreement )
+FOREACH (datum IN CASE WHEN row.nonaggression="1" THEN [1] ELSE [] END | MERGE (a)-[:ONE_OF]-(aal) SET a:NonaggressionAgreement )
+FOREACH (datum IN CASE WHEN row.entente="1" THEN [1] ELSE [] END | MERGE (a)-[:ONE_OF]-(eal) SET a:Entente )
+SET e.from = pf.from, e.until = pf.until, e.priorTo1816 = pf.priorTo1816;
+RETURN "Import of alliance_v4.1_by_member.csv was successful. 16 of 24 total files.";
 
-LOAD CSV WITH HEADERS FROM "file:///alliance_v4.1_by_member.csv" AS row
-MATCH (a:Alliance{cowcode:row.version4id})
-FOREACH (datum IN CASE WHEN row.defense="1" THEN [1] ELSE [] END | SET a:DefenseAgreement )
-FOREACH (datum IN CASE WHEN row.neutrality="1" THEN [1] ELSE [] END | SET a:NeutralityAgreement )
-FOREACH (datum IN CASE WHEN row.nonaggression="1" THEN [1] ELSE [] END | SET a:NonaggressionAgreement )
-FOREACH (datum IN CASE WHEN row.entente="1" THEN [1] ELSE [] END | SET a:Entente );
-RETURN "Import of alliance_v4.1_by_member.csv was successful. 16 of 24 total files and part 2 of 2.";
 
 MATCH (:Source{name:"Formal Alliances"})-[:PROVIDES]->(d:Dataset)-[:CONTRIBUTES]->(f:Fact), (w:Week)
   WHERE w.began <= f.from <= w.ended
@@ -204,3 +210,5 @@ FOREACH (var IN CASE WHEN row.deaddate<> "" THEN [1] ELSE [] END | SET j.ended =
 ;
 
 RETURN "Import of igounit_v2.3.csv was successful. 18 of 24 total files.";
+
+
