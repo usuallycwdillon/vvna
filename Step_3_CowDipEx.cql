@@ -53,14 +53,20 @@ LOAD CSV WITH HEADERS FROM "file:///Diplomatic_Exchange_2006v1.csv" AS row
     version:toFloat(row.version),
     year:date({year:toInteger(row.year)}),
     code:toInteger(row.DR_at_1),
-    level:dr1
+    level:dr1,
+    subject:s1.name,
+    predicate:"REPRESENTED",
+    object:s2.name
   })-[:REPRESENTED_AT]->(s2)
   CREATE (d)-[:CONTRIBUTES]->(f2:Fact:DipExFact{
     name:"Diplomatic Exchange",
     version:toFloat(row.version),
     year:date({year:toInteger(row.year)}),
     code:toInteger(row.DR_at_2),
-    level:dr2
+    level:dr2,
+    subject:s2.name,
+    predicate:"REPRESENTED",
+    object:s1.name
   })-[:REPRESENTED_AT]->(s1)
   CREATE (s1)-[r1:REPRESENTED]->(f1)-[:DURING{year:toInteger(row.year)}]->(y)
   CREATE (s2)-[r2:REPRESENTED]->(f2)-[:DURING{year:toInteger(row.year)}]->(y);
