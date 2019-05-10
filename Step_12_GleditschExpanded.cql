@@ -195,25 +195,25 @@ CREATE (d)-[:DEFINES]->(ecw:List{name:"Expanded Civil Wars"});
 
 MATCH (f:Dataset{filename:"exp_cw_modified.csv"}), (ew:List{name:"Expanded Wars"}), (ecw:List{name:"Expanded Civil Wars"})
 LOAD CSV WITH HEADERS FROM "file:///exp_cw_modified.csv" AS row
-WITH row, f, ew, ecw
+MATCH (war:War) WHERE any(c IN split(row.newcow, ';') WHERE substring(c, 3,4) IN  war.cowcode)
+WITH row, f, ew, ecw, war 
 MERGE (f)-[:CONTRIBUTES]->(ewf:Fact:WarFact{
   name:"Expanded War",
   from:date({year:toInteger(row.syear), month:toInteger(row.smon), day:toInteger(row.sday)}),
   until:date({year:toInteger(row.eyear), month:toInteger(row.emon), day:toInteger(row.eday)}),
   subject:row.warname,
   predicate:'IS_ONE',
-  object:ew.name
-})-[:ONE_OF]->(ew)
-CREATE (ewf)-[:ONE_OF]->(ecw)
-CREATE (war:War{
+  object:ew.name,
+  cowReference:split(row.newcow, ';'),
   gwid:row.warid,
-  name:row.warname,
-  cowcode:split(row.newcow, ";")
-})-[:IS_ONE{
+  warName:row.warname
+})-[:ONE_OF]->(ew)
+MERGE (ewf)-[:ONE_OF]->(ecw)
+MERGE (war)-[:IS_ONE{
   from:date({year:toInteger(row.syear), month:toInteger(row.smon), day:toInteger(row.sday)}),
   until:date({year:toInteger(row.eyear), month:toInteger(row.emon), day:toInteger(row.eday)})
 }]->(ewf)
-CREATE (war)-[:IS_ONE{
+MERGE (war)-[:IS_ONE{
   from:date({year:toInteger(row.syear), month:toInteger(row.smon), day:toInteger(row.sday)}),
   until:date({year:toInteger(row.eyear), month:toInteger(row.emon), day:toInteger(row.eday)})
   }]->(ecwf)
@@ -288,7 +288,8 @@ CREATE (d)-[:COVERS]->(eiw:List{name:"Expanded Interstate Wars"});
 
 MATCH (f:Dataset{filename:"exp_iw_modified.csv"}), (ew:List{name:"Expanded Wars"}), (eiw:List{name:"Expanded Interstate Wars"})
 LOAD CSV WITH HEADERS FROM "file:///exp_iw_modified.csv" AS row
-WITH row, f, ew, eiw
+MATCH (war:War) WHERE any(c IN split(row.newcow, ';') WHERE substring(c, 3,4) IN  war.cowcode)
+WITH row, f, ew, eiw, war
 MERGE (f)-[:CONTRIBUTES]->(ewf:Fact:WarFact{
   name:"Expanded Interstate War",
   from:date({year:toInteger(row.syr), month:toInteger(row.smon), day:toInteger(row.sday)}),
@@ -325,7 +326,7 @@ RETURN "Import of exp_iw_modified.csv was successful. File 5 of 6 files from Gle
 //warid,statenum,syr,smon,sday,eyr,emon,eday,side,deaths,outcome,initiate,newcow,cow94,cow00,oldwid,continuation
 MATCH (g:Dataset{filename:"exp_iwpart_modified.csv"})
 LOAD CSV WITH HEADERS FROM "file:///exp_iwpart_modified.csv" AS row
-MATCH (state:Polity:State{cowcode:row.statenum}),(war:War{gwid:row.warid})
+MATCH (state:Polity:State{cowcode:row.statenum}),(war:War) WHERE any(x IN war.gwid WHERE x = row.warid)
 FOREACH (cont in CASE WHEN row.continuation = 'F' THEN [1] ELSE [] END |
   MERGE (g)-[:CONTRIBUTES]->(f:Fact:WarParticipationFact{
     from:date({year:toInteger(row.syr), month:toInteger(row.smon), day:toInteger(row.sday)}),
