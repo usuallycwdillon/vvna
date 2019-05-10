@@ -83,9 +83,17 @@ LOAD CSV WITH HEADERS FROM "file:///National_COW_4.0.csv" AS row
       WHEN "3" THEN "Missing values replaced with reported World Values"
       WHEN "4" THEN "Zero values replaced with missing values"
       END AS esource
-  MERGE (d)-[ic:CONTRIBUTES]->(if:Fact:ImportsFact{name:"Total Imports"})-[:DURING{year:toInteger(row.year)}]->(y)
+  MERGE (d)-[ic:CONTRIBUTES]->(if:Fact:ImportsFact{
+    name:"Total Imports",
+    subject:s.name,
+    predicate:'IMPORTS'
+  })-[:DURING{year:toInteger(row.year)}]->(y)
   MERGE (s)-[:IMPORTS]->(if)
-  MERGE (d)-[ec:CONTRIBUTES]->(ef:Fact:ExportsFact{name:"Total Exports"})-[:DURING{year:toInteger(row.year)}]->(y)
+  MERGE (d)-[ec:CONTRIBUTES]->(ef:Fact:ExportsFact{
+    name:"Total Exports",
+    subject:s.name,
+    predicate:'EXPORTS'
+  })-[:DURING{year:toInteger(row.year)}]->(y)
   MERGE (s)-[:EXPORTS]->(ef)
   SET ic.source = isource
   SET ec.source = esource

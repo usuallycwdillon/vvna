@@ -4,7 +4,7 @@
 # variables for each installation.
 
 CQL_PATH="/home/cw/Code/george/src/main/resources/cypherScripts"
-C_SHELL_PATH="\"/home/cw/.config/Neo4j Desktop/Application/neo4jDatabases/database-eaebf811-5dc3-445d-9133-3689ae02b7de/installation-3.4.9\""
+C_SHELL_PATH="\"/home/cw/.config/Neo4j\ Desktop/Application/neo4jDatabases/database-eaebf811-5dc3-445d-9133-3689ae02b7de/installation-3.4.9\""
 
 SCRIPTS=(
     'Step_0_Timeline.cql'
@@ -13,13 +13,13 @@ SCRIPTS=(
     'Step_3_CowDipEx.cql'
     'Step_4_CowTrade.cql'
     'Step_5_CowCapabilities.cql'
-    'Step_6_GleditschExpanded.cql'
+    'Step_6_CowWars.cql'
     'Step_7_CowAlliance-Orgs.cql'
     'Step_8_CowReligion.cql'
     'Step_9_CowMIDA-B.cql'
 #    'Step_10_CowTerritory.cql'
 #    'Step_11_CowMIDLOC.cql'
-    'Step_12_CowWars.cql'
+#    'Step_12_GleditschExpanded.cql'
 #    'Step_13_CowContiguities.cql'
     'Step_14_CowIGO.cql'
     'Step_19_PolityIV_2016.cql'

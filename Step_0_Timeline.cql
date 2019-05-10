@@ -67,7 +67,7 @@ FOREACH (yr IN years |
     MERGE (w:Week{weekYear:((yr * 100) + wk), forYear:yr})
     SET w.name = (toString(yr) + "-" + toString(wk)),
     w.began = date({year:yr, week:wk}),
-    w.ended = date(w.began + duration('P5D') )
+    w.ended = date(w.began + duration('P6D') )
     CREATE (w)-[:PART_OF{index:wk}]->(y)
   )
 );
