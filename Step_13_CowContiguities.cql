@@ -12,8 +12,8 @@ CREATE (d:Source{
   host:"Paul Hensel (University of North Texas)",
   poc:"Paul Hensel (phensel@unt.edu)",
   url:"http://correlatesofwar.org/data-sets/direct-contiguity",
-  overview:"Version 3.2 of the COW Direct Contiguity data identifies all direct contiguity relationships between states in the international system from 1816 through 2016. The classification system for contiguous dyads is comprised of five categories, one for land contiguity and four for water contiguity. Land contiguity is defined as the intersection of the homeland territory of the two states in the dyad, either through a land boundary or a river (such as the Rio Grande in the case of the US-Mexico border). Water contiguity is divided into four categories, based on a separation by water of 12, 24, 150, and 400 miles.",
-  purpose:"The Direct Contiguity data set registers the land and sea borders of all states since the Congress of Vienna, and covers 1816-2016. This data set is hosted by Paul Hensel, University of North Texas."
+  overview:"Version 3.2 of the COW Direct Contiguity data identifies all direct contiguity relationships between states in the international system from 1816 through 2016. The classification system for contiguous dyads is comprised of five categories, one for land contiguity and four for water contiguity. Land contiguity is defined as the intersection of the homeland territory of the two states in the dyad, either through a land boundary or a river (such as the Rio Grande in the case of the US-Mexico borderRelation). Water contiguity is divided into four categories, based on a separation by water of 12, 24, 150, and 400 miles.",
+  purpose:"The Direct Contiguity data set registers the land and sea borderRelations of all states since the Congress of Vienna, and covers 1816-2016. This data set is hosted by Paul Hensel, University of North Texas."
 })
 CREATE (d)-[:PROVIDES]->(:Dataset{
   name:"Direct Contiguity Data",

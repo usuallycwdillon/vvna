@@ -87,13 +87,13 @@ LOAD CSV WITH HEADERS FROM "file:///National_COW_4.0.csv" AS row
     name:"Total Imports",
     subject:s.name,
     predicate:'IMPORTS'
-  })-[:DURING{year:toInteger(row.year)}]->(y)
+  })-[:DURING{during:toInteger(row.year)}]->(y)
   MERGE (s)-[:IMPORTS]->(if)
   MERGE (d)-[ec:CONTRIBUTES]->(ef:Fact:ExportsFact{
     name:"Total Exports",
     subject:s.name,
     predicate:'EXPORTS'
-  })-[:DURING{year:toInteger(row.year)}]->(y)
+  })-[:DURING{during:toInteger(row.year)}]->(y)
   MERGE (s)-[:EXPORTS]->(ef)
   SET ic.source = isource
   SET ec.source = esource
@@ -122,14 +122,14 @@ LOAD CSV WITH HEADERS FROM "file:///Dyadic_COW_4.0.csv" AS row
     predicate:'IMPORTED_FROM',
     object:s2.name
     })-[:IMPORTED_FROM]->(s2)
-  CREATE (s1)-[:IMPORTED]->(f1)-[:DURING{year:toInteger(row.year)}]->(y)
+  CREATE (s1)-[:IMPORTED]->(f1)-[:DURING{during:toInteger(row.year)}]->(y)
   CREATE (d)-[c2:CONTRIBUTES]->(f2:Fact:ImportFromFact{
     name:"Import", 
     currency:"Millions in 2017 USD",
     subject:s2.name,
     predicate:'IMPORTED_FROM',
     object:s1.name})-[:IMPORTED_FROM]->(s1)
-  CREATE (s2)-[:IMPORTED]->(f2)-[:DURING{year:toInteger(row.year)}]->(y)
+  CREATE (s2)-[:IMPORTED]->(f2)-[:DURING{during:toInteger(row.year)}]->(y)
   WITH *,
     CASE row.source1
       WHEN "-9" THEN "Missing data"

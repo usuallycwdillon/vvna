@@ -4,7 +4,7 @@
 # variables for each installation.
 
 CQL_PATH="/home/cw/Code/george/src/main/resources/cypherScripts"
-C_SHELL_PATH="\"/home/cw/.config/Neo4j\ Desktop/Application/neo4jDatabases/database-eaebf811-5dc3-445d-9133-3689ae02b7de/installation-3.4.9\""
+#C_SHELL_PATH="\"/home/cw/.config/Neo4j\ Desktop/Application/neo4jDatabases/database-eaebf811-5dc3-445d-9133-3689ae02b7de/installation-3.4.9\""
 
 SCRIPTS=(
     'Step_0_Timeline.cql'

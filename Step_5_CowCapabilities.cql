@@ -51,14 +51,16 @@ WITH row,
      CASE WHEN toInteger(row.year) < 1914 THEN row.year + " GBP, thousands" ELSE row.year + " USD, thousands" END AS denom
 MATCH (state:State{cowcode:row.ccode}), (d:Dataset{filename:"NMC_5_0-wsupplementary.csv"}), (y:Year{name:row.year})
 CREATE (state)-[h:MILEX{
-  definition:"Military expenditures are measured in thousands of current-year British Pounds from 1816 until 1913 and in thousands of current-year US Dollars from 1914 onward"
+  definition:"Military expenditures are measured in thousands of current-year British Pounds from 1816 until 1913 and in thousands of current-year US Dollars from 1914 onward", 
+  during:toInteger(row.year)
 }]->(f:Fact:MilExFact{
   name:"Military Expenditures",
   value:myMilex,
   denomination:denom,
   source:myMilexSource,
-  notes:myMilexNote
-})-[:DURING{year:toInteger(row.year)}]->(y)
+  notes:myMilexNote,
+  during:toInteger(row.year)
+})-[:DURING{during:toInteger(row.year)}]->(y)
 CREATE (d)-[:CONTRIBUTES]->(f);
 RETURN "Successfully imported the 9th file, NMC_5_0-wsupplementary.csv, NMC part 1 of 7";
 
@@ -68,13 +70,14 @@ WITH row,
      CASE WHEN row.milpersource='' THEN "Not provided" ELSE row.milpersource END AS mymilpersource,
      CASE WHEN row.milpernote='' THEN "Not provided" ELSE row.milpernote END AS mymilpernote
 MATCH (state:State{cowcode:row.ccode}), (d:Dataset{filename:"NMC_5_0-wsupplementary.csv"}), (y:Year{name:row.year})
-CREATE (state)-[:MILPER{definition:"Thousands of military personnel."}]->(f:Fact:MilPerFact{
+CREATE (state)-[:MILPER{definition:"Thousands of military personnel.", during:toInteger(row.year)}]->(f:Fact:MilPerFact{
   name:"Military PAX",
   value:mymilper,
   denomination:"thousand PAX",
   source:mymilpersource,
-  notes:mymilpernote
-})-[:DURING{year:toInteger(row.year)}]->(y)
+  notes:mymilpernote,
+  during:toInteger(row.year)
+})-[:DURING{during:toInteger(row.year)}]->(y)
 CREATE (d)-[:CONTRIBUTES]->(f);
 RETURN "Successfully imported the 9th file, NMC_5_0-wsupplementary.csv, NMC part 2 of 7";
 
@@ -86,15 +89,16 @@ WITH row,
      CASE WHEN row.irstqualitycode='' THEN "Not provided" ELSE row.irstqualitycode END AS myirstQC,
      CASE WHEN row.irstanomalycode='' THEN "Not provided" ELSE row.irstanomalycode END AS myirstAC
 MATCH (state:State{cowcode:row.ccode}), (d:Dataset{filename:"NMC_5_0-wsupplementary.csv"}), (y:Year{name:row.year})
-CREATE (state)-[:IRON_STEEL_PRODUCTION{definition:"Iron and Steel Production"}]->(f:Fact:ProductionFact{
+CREATE (state)-[:IRON_STEEL_PRODUCTION{definition:"Iron and Steel Production", during:toInteger(row.year)}]->(f:Fact:ProductionFact{
   name:"Iron and Steel Production",
   value:myirst,
   denomination:"thousands of tons",
   source:myirstSource,
   notes:myirstNote,
   quality:myirstQC,
-  anomaly:myirstAC
-})-[:DURING{year:toInteger(row.year)}]->(y)
+  anomaly:myirstAC,
+  during:toInteger(row.year)
+})-[:DURING{during:toInteger(row.year)}]->(y)
 CREATE (d)-[:CONTRIBUTES]->(f);
 RETURN "Successfully imported the 9th file, NMC_5_0-wsupplementary.csv, NMC part 3 of 7";
 
@@ -106,15 +110,16 @@ WITH row,
      CASE WHEN row.pecqualitycode='' THEN "Not provided" ELSE row.pecqualitycode END AS mypecQC,
      CASE WHEN row.pecanomalycode='' THEN "Not provided" ELSE row.pecanomalycode END AS mypecAC
 MATCH (state:State{cowcode:row.ccode}), (d:Dataset{filename:"NMC_5_0-wsupplementary.csv"}), (y:Year{name:row.year})
-CREATE (state)-[:ENERGY_CONSUMPTION{definition:"Primary Energy Consumption"}]->(f:Fact:EnergyConsumptionFact{
+CREATE (state)-[:ENERGY_CONSUMPTION{definition:"Primary Energy Consumption", during:toInteger(row.year)}]->(f:Fact:EnergyConsumptionFact{
   name:"Energy Consumption",
   value:mypec,
   denomination:"thousands of coal-ton equivalents",
   source:mypecSource,
   notes:mypecNote,
   quality:mypecQC,
-  anomaly:mypecAC
-})-[:DURING{year:toInteger(row.year)}]->(y)
+  anomaly:mypecAC,
+  during:toInteger(row.year)
+})-[:DURING{during:toInteger(row.year)}]->(y)
 CREATE (d)-[:CONTRIBUTES]->(f);
 RETURN "Successfully imported the 9th file, NMC_5_0-wsupplementary.csv, NMC part 4 of 7";
 
@@ -126,15 +131,16 @@ WITH row,
      CASE WHEN row.tpopqualitycode='' THEN "Not provided" ELSE row.tpopqualitycode END AS mytpopQC,
      CASE WHEN row.tpopanomalycode='' THEN "Not provided" ELSE row.tpopanomalycode END AS mytpopAC
 MATCH (state:State{cowcode:row.ccode}), (d:Dataset{filename:"NMC_5_0-wsupplementary.csv"}), (y:Year{name:row.year})
-CREATE (state)-[:POPULATION {definition:"Total Population"}]->(f:Fact:PopulationFact{
+CREATE (state)-[:POPULATION {definition:"Total Population", during:toInteger(row.year)}]->(f:Fact:PopulationFact{
   name:"Total Population",
   value:mytpop,
   denomination:"thousands of persons",
   source:mytpopSource,
   notes:mytpopNote,
   quality:mytpopQC,
-  anomaly:mytpopAC
-})-[:DURING{year:toInteger(row.year)}]->(y)
+  anomaly:mytpopAC,
+  during:toInteger(row.year)
+})-[:DURING{during:toInteger(row.year)}]->(y)
 CREATE (d)-[:CONTRIBUTES]->(f);
 RETURN "Successfully imported the 9th file, NMC_5_0-wsupplementary.csv, NMC part 5 of 7";
 
@@ -149,24 +155,27 @@ WITH row,
      CASE WHEN row.upopgrowthsource='' THEN "Not provided" ELSE row.upopgrowthsource END AS myupopgrowthSource,
      CASE WHEN toInteger(row.year) < 2012 THEN "Population in cities >= 100K pax" ELSE "Population in cities >= 300K pax" END AS def
 MATCH (state:State{cowcode:row.ccode}), (d:Dataset{filename:"NMC_5_0-wsupplementary.csv"}), (y:Year{name:row.year})
-CREATE (state)-[:URBAN_POPULATION{definition:def}]->(f:Fact:UrbanPopulationFact{
+CREATE (state)-[:URBAN_POPULATION{definition:def, during:toInteger(row.year)}]->(f:Fact:UrbanPopulationFact{
   name:"Urban Population",
   value:myupop,
   denomination:"thousands of persons",
   source:myupopSource,
   notes:myupopNote,
   quality:myupopQC,
-  anomaly:myupopAC
-})-[:DURING{year:toInteger(row.year)}]->(y)
+  anomaly:myupopAC,
+  during:toInteger(row.year)
+})-[:DURING{during:toInteger(row.year)}]->(y)
 CREATE (d)-[:CONTRIBUTES]->(f);
 RETURN "Successfully imported the 9th file, NMC_5_0-wsupplementary.csv, NMC part 6 of 7";
 
 LOAD CSV WITH HEADERS FROM "file:///NMC_5_0-wsupplementary.csv" AS row
 MATCH (state:State{cowcode:row.ccode}), (d:Dataset{filename:"NMC_5_0-wsupplementary.csv"}), (y:Year{name:row.year})
-CREATE (state)-[:CINC_SCORE{definition:"Composite Index of National Capability (CINC) score"}]->(f:Fact:CINCFact{
+CREATE (state)-[:CINC_SCORE{
+  definition:"Composite Index of National Capability (CINC) score", during:toInteger(row.year)}]->(f:Fact:CINCFact{
   name:"CINC Score",
   value:toFloat(row.cinc),
-  source:"Calculation by original authors"
-})-[:DURING{year:toInteger(row.year)}]->(y)
+  source:"Calculation by original authors",
+  during:toInteger(row.year)
+})-[:DURING{during:toInteger(row.year)}]->(y)
 CREATE (d)-[:CONTRIBUTES]->(f);
 RETURN "Successfully imported the 9th file, NMC_5_0-wsupplementary.csv, NMC part 7 of 7";

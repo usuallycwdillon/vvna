@@ -47,11 +47,11 @@ LOAD CSV WITH HEADERS FROM 'file:///Diplomatic_Exchange_2006v1.csv' AS row
          WHEN '2' THEN 'ambassador'
          ELSE 'other' END AS dr2
   MATCH (s1:State{cowcode:row.ccode1}), (s2:State{cowcode:row.ccode2}), (d:Dataset{name:'Diplomatic Exchange Data'}),
-    (y:Year{name:row.year})
+    (y:Year{name:row.year, value:toInteger(row.year) })
   CREATE (d)-[:CONTRIBUTES]->(f1:Fact:DipExFact{
     name:'Diplomatic Exchange',
     version:toFloat(row.version),
-    year:date({year:toInteger(row.year)}),
+    during:date({year:toInteger(row.year)}),
     code:toInteger(row.DR_at_1),
     level:dr1,
     subject:s1.name,
@@ -61,7 +61,7 @@ LOAD CSV WITH HEADERS FROM 'file:///Diplomatic_Exchange_2006v1.csv' AS row
   CREATE (d)-[:CONTRIBUTES]->(f2:Fact:DipExFact{
     name:'Diplomatic Exchange',
     version:toFloat(row.version),
-    year:date({year:toInteger(row.year)}),
+    during:date({year:toInteger(row.year)}),
     code:toInteger(row.DR_at_2),
     level:dr2,
     subject:s2.name,

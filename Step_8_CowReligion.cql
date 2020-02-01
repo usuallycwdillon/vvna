@@ -95,8 +95,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"chrstprot"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.chrstprot),percentage:toFloat(row.chrstprotpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.chrstprot),percentage:toFloat(row.chrstprotpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -109,8 +109,8 @@ LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"chrstcat"})
 WITH *
   MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.chrstcat),
-    percentage:toFloat(row.chrstcatpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+    percentage:toFloat(row.chrstcatpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year), f.year = toInteger(row.year),
@@ -126,8 +126,8 @@ MATCH (y:Year{name:row.year})
 WITH d, row, s, y
 MATCH (r:Religion{symbol:"chrstorth"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.chrstorth),percentage:toFloat(row.chrstorthpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.chrstorth),percentage:toFloat(row.chrstorthpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -138,8 +138,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"chrstang"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.chrstang),percentage:toFloat(row.chrstangpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.chrstang),percentage:toFloat(row.chrstangpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -150,8 +150,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"chrstothr"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.chrstothr),percentage:toFloat(row.chrstothrpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.chrstothr),percentage:toFloat(row.chrstothrpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -162,8 +162,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"chrstgen"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.chrstgen),percentage:toFloat(row.chrstgenpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.chrstgen),percentage:toFloat(row.chrstgenpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -174,8 +174,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"judorth"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.judorth),percentage:toFloat(row.judorthpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.judorth),percentage:toFloat(row.judorthpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -186,8 +186,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"judcons"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.jdcons),percentage:toFloat(row.judconspct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.jdcons),percentage:toFloat(row.judconspct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -198,8 +198,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"judref"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.judref),percentage:toFloat(row.judrefpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.judref),percentage:toFloat(row.judrefpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -210,8 +210,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"judothr"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.judothr),percentage:toFloat(row.judothrpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.judothr),percentage:toFloat(row.judothrpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -222,8 +222,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"judgen"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.judgen),percentage:toFloat(row.judgenpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.judgen),percentage:toFloat(row.judgenpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -234,8 +234,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"islmsun"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.islmsun),percentage:toFloat(row.islmsunpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.islmsun),percentage:toFloat(row.islmsunpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -246,8 +246,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"islmshi"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.islmshi),percentage:toFloat(row.islmshipct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.islmshi),percentage:toFloat(row.islmshipct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -258,8 +258,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"islmibd"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.islmibd),percentage:toFloat(row.islmibdpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.islmibd),percentage:toFloat(row.islmibdpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -270,8 +270,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"islmnat"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.islmnat),percentage:toFloat(row.islmnatpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.islmnat),percentage:toFloat(row.islmnatpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -282,8 +282,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"islmalw"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.islmalw),percentage:toFloat(row.islmalwpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.islmalw),percentage:toFloat(row.islmalwpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -294,8 +294,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"islmahm"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.islmahm),percentage:toFloat(row.islmahmpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.islmahm),percentage:toFloat(row.islmahmpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -306,8 +306,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"islmothr"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.islmothr),percentage:toFloat(row.islmothrpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.islmothr),percentage:toFloat(row.islmothrpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -318,8 +318,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"islmgen"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.islmgen),percentage:toFloat(row.islmgenpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.islmgen),percentage:toFloat(row.islmgenpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -330,8 +330,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"budmah"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.budmah),percentage:toFloat(row.budmahpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.budmah),percentage:toFloat(row.budmahpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -342,8 +342,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"budthr"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.budthr),percentage:toFloat(row.budthrpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.budthr),percentage:toFloat(row.budthrpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -354,8 +354,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"budothr"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.budothr),percentage:toFloat(row.budothrpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.budothr),percentage:toFloat(row.budothrpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -366,8 +366,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"budgen"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.budgen),percentage:toFloat(row.budgenpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.budgen),percentage:toFloat(row.budgenpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -378,8 +378,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"zorogen"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.zorogen),percentage:toFloat(row.zorogenpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.zorogen),percentage:toFloat(row.zorogenpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -390,8 +390,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"hindgen"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.hindgen),percentage:toFloat(row.hindgenpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.hindgen),percentage:toFloat(row.hindgenpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -402,8 +402,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"sikhgen"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.sikhgen),percentage:toFloat(row.sikhgenpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.sikhgen),percentage:toFloat(row.sikhgenpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -414,8 +414,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"shntgen"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.shntgen),percentage:toFloat(row.shntgenpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.shntgen),percentage:toFloat(row.shntgenpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -426,8 +426,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"bahgen"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.bahgen),percentage:toFloat(row.bahgenpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.bahgen),percentage:toFloat(row.bahgenpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -438,8 +438,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"taogen"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.taogen),percentage:toFloat(row.taogenpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.taogen),percentage:toFloat(row.taogenpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -450,8 +450,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"jaingen"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.jaingen),percentage:toFloat(row.jaingenpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.jaingen),percentage:toFloat(row.jaingenpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -462,8 +462,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"confgen"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.confgen),percentage:toFloat(row.confgenpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.confgen),percentage:toFloat(row.confgenpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -474,8 +474,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"syncgen"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.syncgen),percentage:toFloat(row.syncgenpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.syncgen),percentage:toFloat(row.syncgenpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -486,8 +486,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"anmgen"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.anmgen),percentage:toFloat(row.anmgenpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.anmgen),percentage:toFloat(row.anmgenpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -498,8 +498,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"nonrelig"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.nonrelig),percentage:toFloat(row.nonreligpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.nonrelig),percentage:toFloat(row.nonreligpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -510,8 +510,8 @@ MATCH (d:Dataset{filename:"WRP_national.csv"})
 LOAD CSV WITH HEADERS FROM "file:///WRP_national.csv" AS row
 MATCH (s:State{cowcode:row.state}), (y:Year{name:row.year}), (r:Religion{symbol:"othrgen"})
 WITH *
-  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.othrgen),percentage:toFloat(row.othrgenpct)})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+  MERGE (d)-[:CONTRIBUTES]->(f:Fact:ReligiousPopulationFact{pax:toInteger(row.othrgen),percentage:toFloat(row.othrgenpct)})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),
@@ -527,8 +527,8 @@ MERGE (d)-[:CONTRIBUTES]->(f:Fact{
   sumPercent:toFloat(row.sumreligpct),
   totalPopulation:toInteger(row.pop),
   totalPercentage:toFloat(row.total)
-})-[:DURING{year:toInteger(row.year)}]->(y)
-MERGE (s)-[:RELIGION_POP{year:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
+})-[:DURING{during:toInteger(row.year)}]->(y)
+MERGE (s)-[:RELIGION_POP{during:toInteger(row.year)}]->(f)-[:POPULATION_WITH]->(r)
 SET f.version = toFloat(row.Version), f.method = row.datatype, f.sourceCode = row.sourcecode,
 f.name = "Religion", f.sourceReliability = toInteger(row.sourcereliab),
 f.recordReliability = toInteger(row.recreliab), f.reliabilityLevel = row.reliabilevel, f.year = toInteger(row.year),

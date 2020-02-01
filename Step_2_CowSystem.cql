@@ -137,6 +137,8 @@ MERGE (state)-[:MEMBER{
   from:date({year:toInteger(row.styear), month:toInteger(row.stmonth), day:toInteger(row.stday)}),
   until:date({year:toInteger(row.endyear), month:toInteger(row.endmonth), day:toInteger(row.endday)})
   }]-(f);
+// There were no states that became states on 1 Jan 1816 and the data refects the metadata for COW's definition of the system
+MATCH (s:State)-[m:MEMBER]-(mf:MembershipFact)-[mo:MEMBER_OF]-(y:System) WHERE mf.from = date({year:1816, month:01, day:01}) REMOVE mf.from
 // End of majors2016.csv
 
 MATCH (:Source{name:"State System Membership"})-[:PROVIDES]->(d:Dataset)-[:CONTRIBUTES]->(f:Fact), (w:Week)

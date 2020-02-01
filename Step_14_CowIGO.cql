@@ -7,7 +7,7 @@
 // ## There are 529 columns of IGOs,    so the 19-line script runs 529 times,    once for each IGO.                       ## //
 
 // The data model follows the same pattern as other fact, subject, object year datasets.
-// (PC1)-[c]-(fact1)<-[:MEMBERSHIP{status:membership, year:row.year}]-(state)           
+// (PC1)-[c]-(fact1)<-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]-(state)           
 //           (fact2)<-[c]-(PC2)
 // (year)-[]-/     \-[:WITHIN_ORGANIZATION]-(IGO)-[FORMED]-/      \-[FORMED_WITHIN]->(system)
 //
@@ -30,9 +30,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AAAID) > -1 THEN [1] ELSE [] END |
     object:i.name,
     membershipCode:row.AAAID,
     membership:membership,
-    year:row.year
-})-[:DURING]->(p) 
-  CREATE (s)-[m:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i) );
+    during:toInteger(row.year)
+})-[:DURING{during:toInteger(row.year)}]->(p) 
+  CREATE (s)-[m:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i) );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
 LOAD CSV WITH HEADERS FROM "file:///IGO_stateunit_v2.3.csv" AS row
@@ -52,8 +52,8 @@ FOREACH (datum IN CASE WHEN toInteger(row.AAB) > -1 THEN [1] ELSE [] END |
     predicate:'MEMBERSHIP',
     object:i.name,
     membershipCode:row.AAB,
-    membership:membership, year:row.year})-[:DURING]->(p)
-  CREATE (s)-[m:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year)})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[m:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -73,9 +73,9 @@ FOREACH (datum IN CASE WHEN row.AACB <> "-1" AND row.AACB <> "-9" THEN [1] ELSE 
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AACB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AACB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -95,9 +95,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AACarib) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AACarib})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AACarib})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -117,9 +117,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AALCO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AALCO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AALCO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -139,9 +139,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AARO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AARO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AARO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -161,9 +161,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AATA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AATA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AATA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -183,9 +183,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AATPO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AATPO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AATPO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -205,9 +205,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ABEDA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ABEDA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ABEDA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -227,9 +227,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ABEPSEAC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ABEPSEAC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ABEPSEAC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -249,9 +249,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ACC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ACC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ACC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -271,9 +271,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ACCT) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ACCT})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ACCT})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
 LOAD CSV WITH HEADERS FROM "file:///IGO_stateunit_v2.3.csv" AS row
@@ -292,9 +292,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ACDT) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ACDT})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ACDT})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -314,9 +314,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ACI) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ACI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ACI})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -336,9 +336,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ACML) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ACML})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ACML})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -358,9 +358,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ACP) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ACP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ACP})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -380,9 +380,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ACPEU) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ACPEU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ACPEU})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -402,9 +402,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ACS) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ACS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ACS})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -424,9 +424,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ACSO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ACSO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ACSO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -446,9 +446,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ACSSRB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ACSSRB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ACSSRB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -468,9 +468,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ACU) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ACU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ACU})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -490,9 +490,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ACWL) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ACWL})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ACWL})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -512,9 +512,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AFESD) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AFESD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AFESD})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -534,9 +534,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AFEXIMB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AFEXIMB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AFEXIMB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -556,9 +556,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AFGEC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AFGEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AFGEC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -578,9 +578,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AFPU) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AFPU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AFPU})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -600,9 +600,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AFRAND) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AFRAND})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AFRAND})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -622,9 +622,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AFSPC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AFSPC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AFSPC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -644,9 +644,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AFTE) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AFTE})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AFTE})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -666,9 +666,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AGC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AGC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AGC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -688,9 +688,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AGPUNDO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AGPUNDO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AGPUNDO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -710,9 +710,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AIC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AIC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AIC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -732,9 +732,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AIDC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AIDC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AIDC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -754,9 +754,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AIDO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AIDO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AIDO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -776,9 +776,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AIOEC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AIOEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AIOEC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -798,9 +798,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AIPO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AIPO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AIPO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -820,9 +820,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AITIC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AITIC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AITIC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -842,9 +842,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ALO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ALO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ALO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -864,9 +864,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AMCO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AMCO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AMCO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -886,9 +886,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AMCOW) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AMCOW})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AMCOW})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -908,9 +908,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AMF) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AMF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AMF})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -930,9 +930,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AMIPO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AMIPO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AMIPO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -952,9 +952,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AMPTU) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AMPTU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AMPTU})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -974,9 +974,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AMSC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AMSC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AMSC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -996,9 +996,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AMU) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AMU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AMU})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1018,9 +1018,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ANZUS) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ANZUS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ANZUS})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1040,9 +1040,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AOAD) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AOAD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AOAD})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1062,9 +1062,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AOCRS) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AOCRS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AOCRS})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1084,9 +1084,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AOMR) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AOMR})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AOMR})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1106,9 +1106,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AOPU) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AOPU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AOPU})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1128,9 +1128,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AP) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AP})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1150,9 +1150,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.APCC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.APCC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.APCC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1172,9 +1172,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.APEC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.APEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.APEC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1194,9 +1194,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.APFIC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.APFIC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.APFIC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1216,9 +1216,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.APIBD) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.APIBD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.APIBD})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1238,9 +1238,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.APO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.APO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.APO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1260,9 +1260,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.APPA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.APPA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.APPA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1282,9 +1282,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.APT) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.APT})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.APT})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1304,9 +1304,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.APTU) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.APTU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.APTU})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1326,9 +1326,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ARC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ARC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ARC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1348,9 +1348,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ARCAL) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ARCAL})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ARCAL})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1370,9 +1370,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ARIPO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ARIPO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ARIPO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1392,9 +1392,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ARPU) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ARPU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ARPU})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1414,9 +1414,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ASATP) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ASATP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ASATP})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1436,9 +1436,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ASBLAC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ASBLAC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ASBLAC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1458,9 +1458,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ASCBC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ASCBC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ASCBC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1480,9 +1480,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ASCRubber) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ASCRubber})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ASCRubber})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1502,9 +1502,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ASEAN) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ASEAN})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ASEAN})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1524,9 +1524,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ASECNA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ASECNA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ASECNA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1546,9 +1546,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ASEF) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ASEF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ASEF})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1568,9 +1568,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ASPAC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ASPAC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ASPAC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1590,9 +1590,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ATO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ATO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ATO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1612,9 +1612,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ATPC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ATPC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ATPC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1634,9 +1634,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AU) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AU})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1656,9 +1656,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AVRDC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AVRDC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AVRDC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1678,9 +1678,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AfDB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AfDB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AfDB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1700,9 +1700,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AfrOPDA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AfrOPDA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AfrOPDA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1722,9 +1722,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.Africare) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.Africare})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.Africare})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1744,9 +1744,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AmCC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AmCC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AmCC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1766,9 +1766,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.Andean) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.Andean})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.Andean})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1788,9 +1788,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AralSea) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AralSea})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AralSea})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1810,9 +1810,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ArticC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ArticC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ArticC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1832,9 +1832,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.AsDB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.AsDB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.AsDB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1854,9 +1854,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.BALTBAT) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.BALTBAT})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.BALTBAT})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1876,9 +1876,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.BC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.BC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.BC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1898,9 +1898,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.BCSC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.BCSC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.BCSC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1920,9 +1920,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.BEF) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.BEF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.BEF})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1942,9 +1942,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.BEN) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.BEN})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.BEN})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1964,9 +1964,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.BENELUX) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.BENELUX})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.BENELUX})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -1986,9 +1986,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.BESCC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.BESCC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.BESCC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2008,9 +2008,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.BIISEF) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.BIISEF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.BIISEF})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2030,9 +2030,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.BIONET) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.BIONET})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.BIONET})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2052,9 +2052,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.BIPM) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.BIPM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.BIPM})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2074,9 +2074,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.BIS) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.BIS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.BIS})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2096,9 +2096,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.BNDP) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.BNDP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.BNDP})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2118,9 +2118,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.BOBP) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.BOBP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.BOBP})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2140,9 +2140,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.BONN) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.BONN})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.BONN})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2162,9 +2162,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.BSEC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.BSEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.BSEC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2184,9 +2184,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CAAD) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CAAD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CAAD})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2206,9 +2206,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CAARC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CAARC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CAARC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2228,9 +2228,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CAB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CAB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CAB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2250,9 +2250,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CABI) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CABI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CABI})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2272,9 +2272,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CACB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CACB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CACB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2294,9 +2294,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CACI) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CACI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CACI})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2316,9 +2316,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CAEC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CAEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CAEC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2338,9 +2338,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CAECC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CAECC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CAECC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2360,9 +2360,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CAIPA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CAIPA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CAIPA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2382,9 +2382,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CAMES) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CAMES})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CAMES})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2404,9 +2404,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CAMRSD) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CAMRSD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CAMRSD})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2426,9 +2426,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CAMSF) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CAMSF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CAMSF})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2448,9 +2448,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CARICOM) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CARICOM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CARICOM})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2470,9 +2470,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CARIFTA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CARIFTA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CARIFTA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2492,9 +2492,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CARII) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CARII})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CARII})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2514,9 +2514,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CATC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CATC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CATC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2536,9 +2536,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CBFP) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CBFP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CBFP})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2558,9 +2558,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CBI) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CBI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CBI})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2580,9 +2580,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CBSS) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CBSS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CBSS})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2602,9 +2602,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CCNR) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CCNR})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CCNR})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2624,9 +2624,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CCOM) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CCOM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CCOM})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2646,9 +2646,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CCPA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CCPA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CCPA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2668,9 +2668,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CComm) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CComm})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CComm})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2690,9 +2690,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CDB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CDB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CDB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2712,9 +2712,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CEAO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CEAO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CEAO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2734,9 +2734,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CEC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CEC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2756,9 +2756,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CEEPN) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CEEPN})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CEEPN})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2778,9 +2778,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CEFTA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CEFTA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CEFTA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2800,9 +2800,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CEI) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CEI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CEI})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2822,9 +2822,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CELC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CELC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CELC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2844,9 +2844,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CEMAC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CEMAC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CEMAC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2866,9 +2866,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CENTO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CENTO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CENTO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2888,9 +2888,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CEPGL) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CEPGL})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CEPGL})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2910,9 +2910,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CERN) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CERN})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CERN})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2932,9 +2932,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CFATF) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CFATF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CFATF})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2954,9 +2954,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CFC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CFC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CFC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2976,9 +2976,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CHSTEA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CHSTEA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CHSTEA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -2998,9 +2998,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CICA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CICA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CICA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3020,9 +3020,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CIFC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CIFC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CIFC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3042,9 +3042,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CIMA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CIMA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CIMA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3064,9 +3064,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CIS) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CIS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CIS})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3086,9 +3086,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CMAEC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CMAEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CMAEC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3108,9 +3108,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CMAOC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CMAOC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CMAOC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3130,9 +3130,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CMEA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CMEA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CMEA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3152,9 +3152,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CMHASG) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CMHASG})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CMHASG})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3174,9 +3174,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.COE) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.COE})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.COE})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3196,9 +3196,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.COLOMBO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.COLOMBO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.COLOMBO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3218,9 +3218,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.COMESA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.COMESA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.COMESA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3240,9 +3240,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CONFEJES) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CONFEJES})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CONFEJES})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3262,9 +3262,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.COPTAC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.COPTAC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.COPTAC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3284,9 +3284,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.COSAVE) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.COSAVE})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.COSAVE})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3306,9 +3306,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.COrg) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.COrg})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.COrg})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3328,9 +3328,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CP) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CP})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3350,9 +3350,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CPAB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CPAB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CPAB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3372,9 +3372,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CPSC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CPSC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CPSC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3394,9 +3394,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CPU) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CPU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CPU})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3416,9 +3416,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CSLF) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CSLF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CSLF})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3438,9 +3438,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CTCAf) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CTCAf})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CTCAf})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3460,9 +3460,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CTO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CTO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CTO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3482,9 +3482,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CWGC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CWGC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CWGC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3504,9 +3504,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CXC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CXC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CXC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3526,9 +3526,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.CfRN) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.CfRN})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.CfRN})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3548,9 +3548,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ComAB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ComAB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ComAB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3570,9 +3570,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ComSec) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ComSec})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ComSec})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3592,9 +3592,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.DBGLS) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.DBGLS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.DBGLS})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3614,9 +3614,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.DLCOEA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.DLCOEA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.DLCOEA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3636,9 +3636,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.Danube) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.Danube})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.Danube})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3658,9 +3658,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EACM) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EACM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EACM})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3680,9 +3680,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EACS) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EACS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EACS})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3702,9 +3702,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EACSO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EACSO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EACSO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3724,9 +3724,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EADB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EADB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EADB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3746,9 +3746,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EAPC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EAPC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EAPC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3768,9 +3768,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EAPO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EAPO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EAPO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3790,9 +3790,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EBRD) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EBRD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EBRD})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3812,9 +3812,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ECB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ECB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ECB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3834,9 +3834,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ECCA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ECCA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ECCA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3856,9 +3856,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ECCAS) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ECCAS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ECCAS})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3878,9 +3878,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ECCB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ECCB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ECCB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3900,9 +3900,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ECCD) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ECCD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ECCD})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3922,9 +3922,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ECCM) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ECCM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ECCM})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3944,9 +3944,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ECCPIF) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ECCPIF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ECCPIF})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3966,9 +3966,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ECO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ECO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ECO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -3988,9 +3988,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ECOWAS) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ECOWAS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ECOWAS})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4010,9 +4010,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ECPTA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ECPTA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ECPTA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4032,9 +4032,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ECSC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ECSC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ECSC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4054,9 +4054,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EEC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EEC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4076,9 +4076,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EFCC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EFCC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EFCC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4098,9 +4098,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EFILWC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EFILWC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EFILWC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4120,9 +4120,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EFTA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EFTA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EFTA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4142,9 +4142,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EIB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EIB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EIB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4164,9 +4164,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EIPA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EIPA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EIPA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4186,9 +4186,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ELDO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ELDO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ELDO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4208,9 +4208,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EMB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EMB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EMB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4230,9 +4230,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EMBC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EMBC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EMBC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4252,9 +4252,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EMBL) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EMBL})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EMBL})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4274,9 +4274,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EMI) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EMI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EMI})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4296,9 +4296,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EMPPO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EMPPO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EMPPO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4318,9 +4318,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EPA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EPA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EPA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4340,9 +4340,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EPFSC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EPFSC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EPFSC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4362,9 +4362,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EPO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EPO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EPO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4384,9 +4384,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EPU) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EPU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EPU})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4406,9 +4406,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ESA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ESA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ESA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4428,9 +4428,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ESO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ESO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ESO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4450,9 +4450,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ESRO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ESRO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ESRO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4472,9 +4472,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ETF) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ETF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ETF})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4494,9 +4494,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EU) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EU})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4516,9 +4516,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EUFMD) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EUFMD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EUFMD})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4538,9 +4538,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EURATOM) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EURATOM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EURATOM})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4560,9 +4560,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EUROCONTROL) > -1 THEN [1] ELSE [] END
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EUROCONTROL})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EUROCONTROL})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4582,9 +4582,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EUROFIMA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EUROFIMA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EUROFIMA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4604,9 +4604,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.EUROMET) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.EUROMET})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.EUROMET})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4626,9 +4626,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.Entente) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.Entente})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.Entente})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4648,9 +4648,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.FAO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.FAO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.FAO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4670,9 +4670,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.FAPED) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.FAPED})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.FAPED})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4692,9 +4692,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.FDIPLAC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.FDIPLAC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.FDIPLAC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4714,9 +4714,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.FEC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.FEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.FEC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4736,9 +4736,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.G15) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.G15})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.G15})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4758,9 +4758,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.G24) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.G24})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.G24})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4780,9 +4780,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.G3) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.G3})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.G3})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4802,9 +4802,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.GATT) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.GATT})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.GATT})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4824,9 +4824,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.GBACT) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.GBACT})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.GBACT})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4846,9 +4846,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.GCC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.GCC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.GCC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4868,9 +4868,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.GCRSNC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.GCRSNC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.GCRSNC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4890,9 +4890,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.GEF) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.GEF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.GEF})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4912,9 +4912,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.GEO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.GEO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.GEO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4934,9 +4934,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.GHSI) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.GHSI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.GHSI})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4956,9 +4956,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.GLACSEC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.GLACSEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.GLACSEC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -4978,9 +4978,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.GOIC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.GOIC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.GOIC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5000,9 +5000,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.GRBDO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.GRBDO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.GRBDO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5022,9 +5022,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.HCPIL) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.HCPIL})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.HCPIL})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5044,9 +5044,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IABE) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IABE})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IABE})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5066,9 +5066,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IABath) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IABath})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IABath})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5088,9 +5088,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IACB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IACB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IACB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5110,9 +5110,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IACI) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IACI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IACI})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5132,9 +5132,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IACS) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IACS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IACS})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5154,9 +5154,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IACSS) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IACSS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IACSS})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5176,9 +5176,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IACW) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IACW})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IACW})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5198,9 +5198,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IADB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IADB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IADB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5220,9 +5220,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IADefB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IADefB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IADefB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5242,9 +5242,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IAEA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IAEA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IAEA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5264,9 +5264,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IAFC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IAFC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IAFC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5286,9 +5286,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IAHC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IAHC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IAHC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5308,9 +5308,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IAIAS) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IAIAS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IAIAS})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5330,9 +5330,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IAIC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IAIC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IAIC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5352,9 +5352,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IAIGC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IAIGC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IAIGC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5374,9 +5374,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IAII) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IAII})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IAII})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5396,9 +5396,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IALong) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IALong})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IALong})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5418,9 +5418,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IAMLO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IAMLO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IAMLO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5440,9 +5440,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IAPhy) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IAPhy})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IAPhy})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5462,9 +5462,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IARA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IARA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IARA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5484,9 +5484,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IARHC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IARHC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IARHC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5506,9 +5506,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IARadiO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IARadiO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IARadiO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5528,9 +5528,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IARuhr) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IARuhr})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IARuhr})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5550,9 +5550,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IAS) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IAS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IAS})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5572,9 +5572,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IASAJ) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IASAJ})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IASAJ})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5594,9 +5594,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IATB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IATB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IATB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5616,9 +5616,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IATSJ) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IATSJ})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IATSJ})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5638,9 +5638,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IATTC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IATTC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IATTC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5660,9 +5660,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IBA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IBA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IBA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5682,9 +5682,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IBCS) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IBCS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IBCS})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5704,9 +5704,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IBE) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IBE})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IBE})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5726,9 +5726,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IBEC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IBEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IBEC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5748,9 +5748,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IBI) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IBI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IBI})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5770,9 +5770,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IBIER) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IBIER})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IBIER})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5792,9 +5792,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IBPMP) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IBPMP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IBPMP})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5814,9 +5814,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IBRD) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IBRD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IBRD})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5836,9 +5836,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICAC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICAC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICAC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5858,9 +5858,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICAI) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICAI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICAI})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5880,9 +5880,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICAO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICAO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICAO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5902,9 +5902,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICAmO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICAmO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICAmO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5924,9 +5924,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5946,9 +5946,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICCEC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICCEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICCEC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5968,9 +5968,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICCILMB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICCILMB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICCILMB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -5990,9 +5990,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICCO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICCO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICCO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6012,9 +6012,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICCROM) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICCROM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICCROM})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6034,9 +6034,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICCS) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICCS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICCS})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6056,9 +6056,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICCSLT) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICCSLT})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICCSLT})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6078,9 +6078,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICDR) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICDR})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICDR})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6100,9 +6100,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICES) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICES})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICES})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6122,9 +6122,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICFAM) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICFAM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICFAM})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6144,9 +6144,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICHRB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICHRB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICHRB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6166,9 +6166,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICMMP) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICMMP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICMMP})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6188,9 +6188,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICNC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICNC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICNC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6210,9 +6210,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICNWAF) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICNWAF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICNWAF})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6232,9 +6232,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICPRP) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICPRP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICPRP})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6254,9 +6254,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICPTU) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICPTU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICPTU})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6276,9 +6276,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICRI) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICRI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICRI})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6298,9 +6298,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICRPBC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICRPBC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICRPBC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6320,9 +6320,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICSE) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICSE})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICSE})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6342,9 +6342,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICSEAF) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICSEAF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICSEAF})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6364,9 +6364,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICSG) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICSG})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICSG})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6386,9 +6386,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICTM) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICTM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICTM})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6408,9 +6408,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICWMD) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICWMD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICWMD})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6430,9 +6430,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICfO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICfO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICfO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6452,9 +6452,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IChemO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IChemO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IChemO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6474,9 +6474,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ICivDO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ICivDO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ICivDO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6496,9 +6496,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IComO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IComO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IComO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6518,9 +6518,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IDC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IDC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IDC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6540,9 +6540,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IEA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IEA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IEA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6562,9 +6562,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IEC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IEC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6584,9 +6584,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IES) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IES})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IES})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6606,9 +6606,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IEXB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IEXB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IEXB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6628,9 +6628,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IFAD) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IFAD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IFAD})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6650,9 +6650,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IFC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IFC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IFC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6672,9 +6672,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IFCA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IFCA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IFCA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6694,9 +6694,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IGAD) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IGAD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IGAD})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6716,9 +6716,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IGC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IGC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IGC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6738,9 +6738,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IGCC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IGCC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IGCC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6760,9 +6760,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IHO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IHO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IHO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6782,9 +6782,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IIA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IIA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IIA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6804,9 +6804,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IICom) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IICom})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IICom})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6826,9 +6826,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IIE) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IIE})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IIE})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6848,9 +6848,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IIF) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IIF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IIF})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6870,9 +6870,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IIWEE) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IIWEE})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IIWEE})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6892,9 +6892,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IJO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IJO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IJO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6914,9 +6914,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ILO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ILO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ILO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6936,9 +6936,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ILZSG) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ILZSG})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ILZSG})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6958,9 +6958,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IMBSlav) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IMBSlav})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IMBSlav})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -6980,9 +6980,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IMC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IMC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IMC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7002,9 +7002,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IMF) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IMF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IMF})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7024,9 +7024,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IMI) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IMI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IMI})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7046,9 +7046,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IMO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IMO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IMO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7068,9 +7068,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IMSO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IMSO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IMSO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7090,9 +7090,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.INCAP) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.INCAP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.INCAP})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7112,9 +7112,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.INFOFISH) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.INFOFISH})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.INFOFISH})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7134,9 +7134,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.INFSMK) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.INFSMK})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.INFSMK})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7156,9 +7156,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.INRO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.INRO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.INRO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7178,9 +7178,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.INSG) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.INSG})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.INSG})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7200,9 +7200,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.INTELSAT) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.INTELSAT})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.INTELSAT})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7222,9 +7222,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.INTERPOL) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.INTERPOL})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.INTERPOL})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7244,9 +7244,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IOATHRE) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IOATHRE})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IOATHRE})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7266,9 +7266,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IOCom) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IOCom})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IOCom})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7288,9 +7288,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IOEz) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IOEz})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IOEz})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7310,9 +7310,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IOLM) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IOLM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IOLM})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7332,9 +7332,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IOMig) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IOMig})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IOMig})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7354,9 +7354,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IOOC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IOOC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IOOC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7376,9 +7376,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IOPCF) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IOPCF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IOPCF})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7398,9 +7398,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IOPH) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IOPH})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IOPH})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7420,9 +7420,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IOcC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IOcC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IOcC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7442,9 +7442,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IPC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IPC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IPC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7464,9 +7464,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IPGRI) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IPGRI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IPGRI})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7486,9 +7486,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IPI) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IPI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IPI})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7508,9 +7508,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IPedI) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IPedI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IPedI})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7530,9 +7530,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IPentC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IPentC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IPentC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7552,9 +7552,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IPhyL) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IPhyL})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IPhyL})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7574,9 +7574,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IPrizeC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IPrizeC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IPrizeC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7596,9 +7596,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IRC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IRC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IRC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7618,9 +7618,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IRLCS) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IRLCS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IRLCS})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7640,9 +7640,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IRO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IRO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IRO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7662,9 +7662,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IRSG) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IRSG})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IRSG})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7684,9 +7684,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IRU) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IRU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IRU})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7706,9 +7706,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ISA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ISA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ISA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7728,9 +7728,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ISB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ISB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ISB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7750,9 +7750,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ISDB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ISDB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ISDB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7772,9 +7772,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ISHREST) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ISHREST})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ISHREST})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7794,9 +7794,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ISRBC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ISRBC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ISRBC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7816,9 +7816,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ISUPT) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ISUPT})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ISUPT})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7838,9 +7838,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ISuC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ISuC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ISuC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7860,9 +7860,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ITC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ITC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ITC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7882,9 +7882,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ITCC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ITCC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ITCC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7904,9 +7904,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ITCLE) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ITCLE})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ITCLE})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7926,9 +7926,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ITPA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ITPA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ITPA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7948,9 +7948,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ITRO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ITRO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ITRO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7970,9 +7970,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ITTO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ITTO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ITTO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -7992,9 +7992,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ITU) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ITU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ITU})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8014,9 +8014,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.ITVRC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.ITVRC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.ITVRC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8036,9 +8036,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IUIC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IUIC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IUIC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8058,9 +8058,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IUPCT) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IUPCT})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IUPCT})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8080,9 +8080,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IUPIP) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IUPIP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IUPIP})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8102,9 +8102,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IUPLAW) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IUPLAW})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IUPLAW})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8124,9 +8124,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IUPNVP) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IUPNVP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IUPNVP})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8146,9 +8146,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IUPR) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IUPR})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IUPR})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8168,9 +8168,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IVWO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IVWO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IVWO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8190,9 +8190,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IWSG) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IWSG})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IWSG})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8212,9 +8212,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.IWhale) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.IWhale})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.IWhale})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8234,9 +8234,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.Iocean) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.Iocean})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.Iocean})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8256,9 +8256,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.JALAAO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.JALAAO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.JALAAO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8278,9 +8278,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.JINR) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.JINR})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.JINR})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8300,9 +8300,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.JNOLCRH) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.JNOLCRH})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.JNOLCRH})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8322,9 +8322,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.LACAC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.LACAC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.LACAC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8344,9 +8344,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.LACP) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.LACP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.LACP})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8366,9 +8366,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.LAEO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.LAEO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.LAEO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8388,9 +8388,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.LAFDO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.LAFDO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.LAFDO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8410,9 +8410,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.LAFTA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.LAFTA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.LAFTA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8432,9 +8432,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.LAIA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.LAIA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.LAIA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8454,9 +8454,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.LAIEC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.LAIEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.LAIEC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8476,9 +8476,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.LATIN) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.LATIN})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.LATIN})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8498,9 +8498,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.LCBC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.LCBC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.LCBC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8520,9 +8520,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.LGIDA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.LGIDA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.LGIDA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8542,9 +8542,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.LOAS) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.LOAS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.LOAS})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8564,9 +8564,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.LoN) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.LoN})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.LoN})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8586,9 +8586,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.MARRI) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.MARRI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.MARRI})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8608,9 +8608,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.MCPTTC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.MCPTTC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.MCPTTC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8630,9 +8630,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.MCWCASM) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.MCWCASM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.MCWCASM})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8652,9 +8652,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.MEMTTA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.MEMTTA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.MEMTTA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8674,9 +8674,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.MFO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.MFO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.MFO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8696,9 +8696,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.MIGA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.MIGA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.MIGA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8718,9 +8718,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.MOPAN) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.MOPAN})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.MOPAN})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8740,9 +8740,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.MRU) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.MRU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.MRU})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8762,9 +8762,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.MWN) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.MWN})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.MWN})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8784,9 +8784,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.Mercosur) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.Mercosur})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.Mercosur})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8806,9 +8806,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.Montreal) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.Montreal})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.Montreal})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8828,9 +8828,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.NACAP) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.NACAP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.NACAP})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8850,9 +8850,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.NAFO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.NAFO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.NAFO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8872,9 +8872,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.NAFTA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.NAFTA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.NAFTA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8894,9 +8894,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.NAM) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.NAM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.NAM})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8916,9 +8916,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.NAPPO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.NAPPO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.NAPPO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8938,9 +8938,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.NASCO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.NASCO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.NASCO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8960,9 +8960,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.NATO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.NATO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.NATO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -8982,9 +8982,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.NCM) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.NCM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.NCM})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9004,9 +9004,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.NCRR) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.NCRR})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.NCRR})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9026,9 +9026,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.NCTR) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.NCTR})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.NCTR})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9048,9 +9048,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.NDF) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.NDF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.NDF})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9070,9 +9070,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.NEAFC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.NEAFC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.NEAFC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9092,9 +9092,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.NERC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.NERC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.NERC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9114,9 +9114,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.NIB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.NIB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.NIB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9136,9 +9136,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.NPAFC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.NPAFC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.NPAFC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9158,9 +9158,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.NPFSC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.NPFSC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.NPFSC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9180,9 +9180,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.NRC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.NRC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.NRC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9202,9 +9202,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.NTSC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.NTSC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.NTSC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9224,9 +9224,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.NWHF) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.NWHF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.NWHF})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9246,9 +9246,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.NordC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.NordC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.NordC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9268,9 +9268,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.OAPEC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.OAPEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.OAPEC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9290,9 +9290,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.OAS) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.OAS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.OAS})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9312,9 +9312,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.OAU) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.OAU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.OAU})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9334,9 +9334,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.OCAM) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.OCAM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.OCAM})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9356,9 +9356,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.OCAS) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.OCAS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.OCAS})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9378,9 +9378,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.OCCEDCA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.OCCEDCA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.OCCEDCA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9400,9 +9400,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.OCR) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.OCR})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.OCR})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9422,9 +9422,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.OECD) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.OECD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.OECD})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9444,9 +9444,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.OECS) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.OECS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.OECS})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9466,9 +9466,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.OEEC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.OEEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.OEEC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9488,9 +9488,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.OESAS) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.OESAS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.OESAS})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9510,9 +9510,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.OIC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.OIC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.OIC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9532,9 +9532,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.OIV) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.OIV})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.OIV})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9554,9 +9554,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.OMDKR) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.OMDKR})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.OMDKR})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9576,9 +9576,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.OPANAL) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.OPANAL})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.OPANAL})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9598,9 +9598,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.OPEC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.OPEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.OPEC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9620,9 +9620,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.OSCE) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.OSCE})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.OSCE})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9642,9 +9642,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.OSLO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.OSLO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.OSLO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9664,9 +9664,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.OSPAR) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.OSPAR})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.OSPAR})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9686,9 +9686,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.OTIF) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.OTIF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.OTIF})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9708,9 +9708,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.PAHC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.PAHC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.PAHC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9730,9 +9730,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.PAHO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.PAHO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.PAHO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9752,9 +9752,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.PAIGH) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.PAIGH})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.PAIGH})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9774,9 +9774,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.PAP) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.PAP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.PAP})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9796,9 +9796,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.PC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.PC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.PC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9818,9 +9818,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.PCA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.PCA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.PCA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9840,9 +9840,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.PCB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.PCB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.PCB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9862,9 +9862,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.PCSP) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.PCSP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.PCSP})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9884,9 +9884,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.PED) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.PED})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.PED})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9906,9 +9906,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.PIARC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.PIARC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.PIARC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9928,9 +9928,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.PIBAC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.PIBAC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.PIBAC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9950,9 +9950,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.PICDCS) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.PICDCS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.PICDCS})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9972,9 +9972,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.PICES) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.PICES})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.PICES})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -9994,9 +9994,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.PICS) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.PICS})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.PICS})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10016,9 +10016,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.PIF) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.PIF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.PIF})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10038,9 +10038,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.PIPD) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.PIPD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.PIPD})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10060,9 +10060,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.PMAESA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.PMAESA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.PMAESA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10082,9 +10082,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.PSI) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.PSI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.PSI})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10104,9 +10104,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.PSNARCO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.PSNARCO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.PSNARCO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10126,9 +10126,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.PTASEA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.PTASEA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.PTASEA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10148,9 +10148,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.PUASP) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.PUASP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.PUASP})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10170,9 +10170,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.RASCOM) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.RASCOM})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.RASCOM})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10192,9 +10192,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.RCAELA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.RCAELA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.RCAELA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10214,9 +10214,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.RCC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.RCC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.RCC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10236,9 +10236,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.RECSA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.RECSA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.RECSA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10258,9 +10258,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.RIMMO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.RIMMO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.RIMMO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10280,9 +10280,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.RIOPPAH) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.RIOPPAH})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.RIOPPAH})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10302,9 +10302,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.RIOgroup) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.RIOgroup})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.RIOgroup})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10324,9 +10324,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.RadioU) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.RadioU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.RadioU})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10346,9 +10346,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.RepCom) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.RepCom})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.RepCom})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10368,9 +10368,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.SAAFA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.SAAFA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.SAAFA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10390,9 +10390,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.SAARC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.SAARC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.SAARC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10412,9 +10412,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.SACEP) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.SACEP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.SACEP})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10434,9 +10434,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.SACU) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.SACU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.SACU})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10456,9 +10456,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.SADC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.SADC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.SADC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10478,9 +10478,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.SADCC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.SADCC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.SADCC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10500,9 +10500,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.SAMI) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.SAMI})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.SAMI})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10522,9 +10522,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.SARTC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.SARTC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.SARTC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10544,9 +10544,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.SCA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.SCA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.SCA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10566,9 +10566,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.SCAf) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.SCAf})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.SCAf})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10588,9 +10588,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.SCH) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.SCH})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.SCH})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10610,9 +10610,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.SCHENGEN) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.SCHENGEN})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.SCHENGEN})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10632,9 +10632,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.SEAMEO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.SEAMEO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.SEAMEO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10654,9 +10654,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.SEATO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.SEATO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.SEATO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10676,9 +10676,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.SEGIB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.SEGIB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.SEGIB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10698,9 +10698,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.SELA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.SELA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.SELA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10720,9 +10720,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.SICA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.SICA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.SICA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10742,9 +10742,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.SIECA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.SIECA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.SIECA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10764,9 +10764,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.SITTDEC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.SITTDEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.SITTDEC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10786,9 +10786,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.SPC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.SPC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.SPC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10808,9 +10808,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.SRDO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.SRDO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.SRDO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10830,9 +10830,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.SWAPU) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.SWAPU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.SWAPU})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10852,9 +10852,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.SWPD) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.SWPD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.SWPD})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10874,9 +10874,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.SugU) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.SugU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.SugU})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10896,9 +10896,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.TARHEC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.TARHEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.TARHEC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10918,9 +10918,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.TCRMG) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.TCRMG})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.TCRMG})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10940,9 +10940,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.TIC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.TIC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.TIC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10962,9 +10962,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.Turksoy) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.Turksoy})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.Turksoy})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -10984,9 +10984,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.UASC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.UASC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.UASC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11006,9 +11006,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.UBEC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.UBEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.UBEC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11028,9 +11028,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.UDEAC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.UDEAC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.UDEAC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11050,9 +11050,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.UEMOA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.UEMOA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.UEMOA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11072,9 +11072,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.UIUCV) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.UIUCV})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.UIUCV})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11094,9 +11094,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.UKDWD) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.UKDWD})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.UKDWD})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11116,9 +11116,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.UMAC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.UMAC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.UMAC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11138,9 +11138,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.UMOA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.UMOA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.UMOA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11160,9 +11160,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.UN) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.UN})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.UN})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11182,9 +11182,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.UNDROIT) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.UNDROIT})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.UNDROIT})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11204,9 +11204,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.UNESCO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.UNESCO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.UNESCO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11226,9 +11226,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.UNIDO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.UNIDO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.UNIDO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11248,9 +11248,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.UPU) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.UPU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.UPU})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11270,9 +11270,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.USP) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.USP})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.USP})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11292,9 +11292,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.VALDIVIA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.VALDIVIA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.VALDIVIA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11314,9 +11314,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.VASAB) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.VASAB})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.VASAB})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11336,9 +11336,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.WAEC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.WAEC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.WAEC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11358,9 +11358,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.WAHC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.WAHC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.WAHC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11380,9 +11380,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.WAHO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.WAHO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.WAHO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11402,9 +11402,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.WARDA) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.WARDA})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.WARDA})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11424,9 +11424,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.WCDC) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.WCDC})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.WCDC})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11446,9 +11446,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.WCO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.WCO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.WCO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11468,9 +11468,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.WEU) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.WEU})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.WEU})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11490,9 +11490,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.WHO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.WHO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.WHO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11512,9 +11512,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.WIPO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.WIPO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.WIPO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11534,9 +11534,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.WMO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.WMO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.WMO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11556,9 +11556,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.WNF) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.WNF})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.WNF})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11578,9 +11578,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.WPact) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.WPact})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.WPact})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11600,9 +11600,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.WTO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.WTO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.WTO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11622,9 +11622,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.WTOURO) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.WTOURO})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.WTOURO})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 MATCH (d:Dataset{filename:"IGO_stateunit_v2.3.zip"})
@@ -11644,9 +11644,9 @@ FOREACH (datum IN CASE WHEN toInteger(row.Wassen) > -1 THEN [1] ELSE [] END |
   subject:s.name,
     predicate:'MEMBERSHIP',
     object:i.name,
-    membership:membership, year:row.year,
-    membershipCode:row.Wassen})-[:DURING]->(p)
-  CREATE (s)-[:MEMBERSHIP{status:membership, year:row.year}]->(f)-[:WITHIN_ORGANIZATION]->(i)
+    membership:membership, during:toInteger(row.year),
+    membershipCode:row.Wassen})-[:DURING{during:toInteger(row.year)}]->(p)
+  CREATE (s)-[:MEMBERSHIP{status:membership, during:toInteger(row.year)}]->(f)-[:WITHIN_ORGANIZATION]->(i)
 );
 
 RETURN "Whew! Imported IGO_stateunit_v2.3.csv,
