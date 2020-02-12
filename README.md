@@ -12,7 +12,7 @@ The Cypher scripts to import the data reside with the GEORGE application at:
 
 From the Neo4j terminal, I type: 
 
-`cat ~/Code/george/src/main/resources/cypherScripts/Step_1_LevyGPW.cql | bin/cypher-shell -u neo4j -p george --format plain`.
+`cat ~/Code/george/src/main/resources/cypherScripts/Step_1_LevyGPW.cql | bin/cypher-shell -u neo4j -p <password> --format plain`.
 
 ...of course, replacing <password> with the actual Neo4j password.
 
