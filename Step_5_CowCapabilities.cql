@@ -146,7 +146,7 @@ RETURN "Successfully imported the 9th file, NMC_5_0-wsupplementary.csv, NMC part
 
 LOAD CSV WITH HEADERS FROM "file:///NMC_5_0-wsupplementary.csv" AS row
 WITH row,
-     CASE WHEN toInteger(row.upop)=-9 OR row.upop='' THEN "UNK" ELSE toInteger(row.upop) END AS myupop,
+     CASE WHEN toInteger(row.upop)=-9 OR row.upop='' THEN 0 ELSE toInteger(row.upop) END AS myupop,
      CASE WHEN row.upopsource='' THEN "Not provided" ELSE row.upopsource END AS myupopSource,
      CASE WHEN row.upopnote='' THEN "Not provided" ELSE row.upopnote END AS myupopNote,
      CASE WHEN row.upopqualitycode='' THEN "Not provided" ELSE row.upopqualitycode END AS myupopQC,

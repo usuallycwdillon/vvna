@@ -83,6 +83,14 @@ FOREACH (i in RANGE(0, size(weeks)-2) |
       SET wk1.stepNumber = i
       SET wk1.weekYear = null)));
 
+WITH range(1495, 1815) AS years
+FOREACH (yr IN years |
+  MERGE (y:Year{name:toString(yr), began:date({year:yr, month:1, day:1}), ended:date({year:yr, month:12, day:31}),
+                last:date({year:yr, month:12, day:28}) })
+  SET y.weeksThisYear = y.last.week,
+  y.firstWeekBegins = date({year:yr,week:1}),
+  y.lastWeekBegins = date({year:yr, week:y.weeksThisYear}));
+
 MATCH (y:Year) WITH y ORDER BY y.began.year ASC
 WITH COLLECT(y) AS years
 FOREACH (i IN RANGE (0, size(years)-2) |
@@ -90,5 +98,3 @@ FOREACH (i IN RANGE (0, size(years)-2) |
     FOREACH (yr2 in [years[i+1]] |
       MERGE (yr1)-[:NEXT_YEAR]->(yr2)
     )));
-
-
