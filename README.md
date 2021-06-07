@@ -4,7 +4,7 @@ To use this script, you can invoke Neo4j's cypher-shell from the command line at
 For example, I am using the Neo4j Desktop application to manage graph databases, so I open the `Terminal` tab in the 
 database management view and the root of the Neo4j instance appears as: 
 
-`cw@cresearch:~/.config/Neo4j Desktop/Application/neo4jDatabases/database-eaebf811-5dc3-445d-9133-3689ae02b7de/installation-3.4.9>`. 
+`~/>.config/Neo4j Desktop/Application/neo4jDatabases/database-eaebf811-5dc3-445d-9133-3689ae02b7de/installation-3.4.9>`. 
 
 The Cypher scripts to import the data reside with the GEORGE application at: 
 
