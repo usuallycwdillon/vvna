@@ -56,7 +56,7 @@ CREATE CONSTRAINT ON (w:Week) ASSERT w.name IS UNIQUE;
 //  weekOfYear:toInteger(row.weeknum)}]->(y)
 
 
-WITH range(1815, 2020) AS years
+WITH range(2020, 2200) AS years
 FOREACH (yr IN years |
   MERGE (y:Year{name:toString(yr), began:date({year:yr, month:1, day:1}), ended:date({year:yr, month:12, day:31}),
                 last:date({year:yr, month:12, day:28}) })
@@ -68,7 +68,7 @@ FOREACH (yr IN years |
     SET w.name = (toString(yr) + "-" + toString(wk)),
     w.began = date({year:yr, week:wk}),
     w.ended = date(w.began + duration('P6D') )
-    CREATE (w)-[:PART_OF{index:wk}]->(y)
+    MERGE (w)-[:PART_OF{index:wk}]->(y)
   )
 );
 

@@ -83,7 +83,6 @@ MERGE (state:GreatPower{
   name:row.State,
   levycode:row.levyStNum
 })
-// f is a fact _of system membership_
 CREATE (df)-[:CONTRIBUTES{asOf:date({year:1994, month:4})}]->(f:Fact:MembershipFact{
   name:"System Membership",
   source:"Levy Great Power Wars",
@@ -123,7 +122,6 @@ RETURN "Import of Levy_GPW_system.csv was successful. File 1 of 3 Levy files, 1 
 // extent,durwar,durgpw,magnitud,severity,concent
 
 CREATE CONSTRAINT ON (war:War) ASSERT war.levycode IS UNIQUE;
-
 MATCH (source:Source{name:"Levy Great Power Wars"})
 CREATE (source)-[:DEFINES]->(g:List{name:"Great Power Wars"})
 CREATE (source)-[:DEFINES]->(w:List{name:"Wars"})
@@ -134,7 +132,6 @@ CREATE (war:War:GreatPowerWar{
   levycode:row.warnum,
   name:row.warname
 })
-// gf is the fact _of a great power war_, wf is the fact of a war
 CREATE (d)-[:CONTRIBUTES]->(gf:Fact:WarFact{
   name:"Great Power War",
   from:date({year:toInteger(row.yrgpw), month:toInteger(row.mthgpw)}),
@@ -188,7 +185,6 @@ FOREACH (specific IN CASE WHEN trim(row.daygpw) <> "" THEN [1] ELSE [] END |
   SET gio.from = date({year:toInteger(row.yrgpw), month:toInteger(row.mthgpw), day:toInteger(row.daygpw)}))
 FOREACH (specific IN CASE WHEN trim(row.daygpwe) <> "" THEN [1] ELSE [] END | 
   SET gio.until = date({year:toInteger(row.yrgpwe), month:toInteger(row.mthgpwe), day:toInteger(row.daygpwe)}));
-
 RETURN "Import of GPW_war_data.csv was successful. Files 2 of 3 Levy files, 2 of 24 total files.";
 
 // Levy war participation (when GPs participated in wars)
@@ -196,7 +192,6 @@ MATCH (d:Dataset{filename:"Levy_GPW_participation_data.csv"})
 LOAD CSV WITH HEADERS FROM "file:///Levy_GPW_participation_data.csv" AS row
 WITH d, row
 MATCH (war:War{levycode:row.warnum})
-// p is a fact _of participation in a war_
 CREATE (d)-[:CONTRIBUTES]->(p:Fact:WarParticipationFact{name:"Participation",
                                    from:date({year:toInteger(row.ybegan), month:toInteger(row.mthbegan), day:toInteger(row.daybegan)}),
                                    until:date({year:toInteger(row.yrend), month:toInteger(row.mthend), day:toInteger(row.dayend)}),
@@ -210,15 +205,12 @@ CREATE (d)-[:CONTRIBUTES]->(p:Fact:WarParticipationFact{name:"Participation",
 WITH p, row
 MATCH (state:GreatPower{levycode:row.stnum})
 MERGE (state)-[:PARTICIPATED]->(p);
-
 MATCH (:Source{name:"Levy Great Power Wars"})-[:PROVIDES]->(d:Dataset)-[:CONTRIBUTES]->(f:Fact), (w:Week)
   WHERE w.began <= f.from <= w.ended
 MERGE (f)-[:FROM_WEEK]->(w);
-
 MATCH (:Source{name:"Levy Great Power Wars"})-[:PROVIDES]->(d:Dataset)-[:CONTRIBUTES]->(f:Fact), (w:Week)
   WHERE w.began <= f.until <= w.ended
 MERGE (f)-[:UNTIL_WEEK]->(w);
-
 // end Levy_GPW_participation_data.csv
 RETURN "Import of Levy_GPW_participation_data.csv was successful. Files 3 of 3 Levy files; file 3 of 24";
 // end Levy source

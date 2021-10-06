@@ -118,11 +118,9 @@ CREATE (so)-[:DEFINES {
   from:date({year:1816, month:1, day:1}),
   until:date({year:2016, month:12, day:31})
 });
-
 MATCH (sy:System {name:"COW State System"})
 MATCH (mp:Subsystem {name:"COW Major Powers System"})
 MERGE (mp)-[:PART_OF]->(sy);
-
 MATCH (maj:Dataset{filename:"majors2016.csv"}), (sys:System{name:"COW Major Powers System"})
 LOAD CSV WITH HEADERS FROM "file:///majors2016.csv" AS row
 CREATE (maj)-[:CONTRIBUTES]->(f:Fact:MembershipFact{
@@ -144,7 +142,6 @@ MATCH (s:State)-[m:MEMBER]-(mf:MembershipFact)-[mo:MEMBER_OF]-(y:System) WHERE m
 MATCH (:Source{name:"State System Membership"})-[:PROVIDES]->(d:Dataset)-[:CONTRIBUTES]->(f:Fact), (w:Week)
   WHERE w.began <= f.from <= w.ended
 MERGE (f)-[:FROM_WEEK]->(w);
-
 MATCH (:Source{name:"State System Membership"})-[:PROVIDES]->(d:Dataset)-[:CONTRIBUTES]->(f:Fact), (w:Week)
   WHERE w.began <= f.until <= w.ended
 MERGE (f)-[:UNTIL_WEEK]->(w);

@@ -88,10 +88,10 @@ FOREACH (specific IN CASE WHEN trim(row.mem_end_month) <> "" THEN [1] ELSE [] EN
                                                                                                         month:toInteger(row.mem_end_month)}))
 FOREACH (specific IN CASE WHEN trim(row.mem_end_day) <> "" THEN [1] ELSE [] END | SET pf.until = date({year:toInteger(row.mem_end_year),
                                                                                                       month:toInteger(row.mem_end_month), day:toInteger(row.mem_end_day)}))
-FOREACH (datum IN CASE WHEN row.defense="1" THEN [1] ELSE [] END | MERGE (a)-[:ONE_OF]-(dal) SET a:DefenseAgreement )
-FOREACH (datum IN CASE WHEN row.neutrality="1" THEN [1] ELSE [] END | MERGE (a)-[:ONE_OF]-(nal) SET a:NeutralityAgreement )
-FOREACH (datum IN CASE WHEN row.nonaggression="1" THEN [1] ELSE [] END | MERGE (a)-[:ONE_OF]-(aal) SET a:NonaggressionAgreement )
-FOREACH (datum IN CASE WHEN row.entente="1" THEN [1] ELSE [] END | MERGE (a)-[:ONE_OF]-(eal) SET a:Entente )
+FOREACH (datum IN CASE WHEN row.defense="1" THEN [1] ELSE [] END | MERGE (a)-[:ALLIANCE_TYPE]-(dal) SET a:DefenseAgreement )
+FOREACH (datum IN CASE WHEN row.neutrality="1" THEN [1] ELSE [] END | MERGE (a)-[:ALLIANCE_TYPE]-(nal) SET a:NeutralityAgreement )
+FOREACH (datum IN CASE WHEN row.nonaggression="1" THEN [1] ELSE [] END | MERGE (a)-[:ALLIANCE_TYPE]-(aal) SET a:NonaggressionAgreement )
+FOREACH (datum IN CASE WHEN row.entente="1" THEN [1] ELSE [] END | MERGE (a)-[:ALLIANCE_TYPE]-(eal) SET a:Entente )
 SET e.from = pf.from, e.until = pf.until, e.priorTo1816 = pf.priorTo1816;
 RETURN "Import of alliance_v4.1_by_member.csv was successful. 16 of 24 total files.";
 
